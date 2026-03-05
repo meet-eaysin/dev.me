@@ -1,28 +1,34 @@
 import { Injectable } from '@nestjs/common';
 import { DocumentModel, NoteModel, UserActivityModel } from '@repo/db';
-import { AnalyticsStats } from '@repo/types';
+import { AnalyticsDocumentStatsAggregationResult, AnalyticsStreakDetails } from '@repo/types';
 
 @Injectable()
 export class GetStatsUseCase {
-  async execute(userId: string): Promise<AnalyticsStats> {
+  async execute(userId: string) {
     const [
       totalDocuments,
       docsByType,
       docsByStatus,
       totalNotes,
       activityHistory,
+    ]: [
+      number,
+      AnalyticsDocumentStatsAggregationResult[],
+      AnalyticsDocumentStatsAggregationResult[],
+      number,
+      { _id: string }[],
     ] = await Promise.all([
       DocumentModel.countDocuments({ userId }),
-      DocumentModel.aggregate([
+      DocumentModel.aggregate<AnalyticsDocumentStatsAggregationResult>([
         { $match: { userId } },
         { $group: { _id: '$type', count: { $sum: 1 } } },
-      ]),
-      DocumentModel.aggregate([
+      ]).exec(),
+      DocumentModel.aggregate<AnalyticsDocumentStatsAggregationResult>([
         { $match: { userId } },
         { $group: { _id: '$status', count: { $sum: 1 } } },
-      ]),
+      ]).exec(),
       NoteModel.countDocuments({ userId }),
-      UserActivityModel.aggregate([
+      UserActivityModel.aggregate<{ _id: string }>([
         { $match: { userId } },
         {
           $project: {
@@ -31,24 +37,22 @@ export class GetStatsUseCase {
         },
         { $group: { _id: '$date' } },
         { $sort: { _id: -1 } },
-      ]),
+      ]).exec(),
     ]);
 
     // Format distributions
     const byType: Record<string, number> = {};
-    (docsByType as { _id: string; count: number }[]).forEach((item) => {
+    docsByType.forEach((item: AnalyticsDocumentStatsAggregationResult) => {
       byType[item._id] = item.count;
     });
 
     const byStatus: Record<string, number> = {};
-    (docsByStatus as { _id: string; count: number }[]).forEach((item) => {
+    docsByStatus.forEach((item: AnalyticsDocumentStatsAggregationResult) => {
       byStatus[item._id] = item.count;
     });
 
     // Streak calculation
-    const activeDates = activityHistory.map(
-      (item: { _id: string }) => item._id,
-    );
+    const activeDates: string[] = activityHistory.map((item: { _id: string }) => item._id);
     const { currentStreak, longestStreak, mostActiveDay } =
       await this.calculateStreakDetails(userId, activeDates);
 
@@ -66,17 +70,13 @@ export class GetStatsUseCase {
   private async calculateStreakDetails(
     userId: string,
     activeDates: string[],
-  ): Promise<{
-    currentStreak: number;
-    longestStreak: number;
-    mostActiveDay: string | null;
-  }> {
+  ): Promise<AnalyticsStreakDetails> {
     if (activeDates.length === 0) {
       return { currentStreak: 0, longestStreak: 0, mostActiveDay: null };
     }
 
     // Longest and Most Active
-    const mostActiveAggregation = await UserActivityModel.aggregate([
+    const mostActiveAggregation = await UserActivityModel.aggregate<{ _id: string; count: number }>([
       { $match: { userId } },
       {
         $project: {

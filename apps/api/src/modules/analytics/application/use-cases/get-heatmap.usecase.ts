@@ -1,15 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UserActivityModel } from '@repo/db';
-import { AnalyticsHeatmapItem } from '@repo/types';
-
-interface HeatmapAggregationResult {
-  _id: string;
-  count: number;
-  doc_added: number;
-  doc_opened: number;
-  note_created: number;
-  summary_generated: number;
-}
+import { AnalyticsHeatmapItem, AnalyticsStatsAggregationResult, AnalyticsBreakdown } from '@repo/types';
 
 @Injectable()
 export class GetHeatmapUseCase {
@@ -21,7 +12,7 @@ export class GetHeatmapUseCase {
     startDate.setDate(startDate.getDate() - days);
     startDate.setHours(0, 0, 0, 0);
 
-    const aggregation = (await UserActivityModel.aggregate([
+    const aggregation: AnalyticsStatsAggregationResult[] = await UserActivityModel.aggregate<AnalyticsStatsAggregationResult>([
       {
         $match: {
           userId,
@@ -53,14 +44,16 @@ export class GetHeatmapUseCase {
         },
       },
       { $sort: { _id: 1 } },
-    ])) as HeatmapAggregationResult[];
+    ]).exec();
 
     const statsMap = new Map<
       string,
-      { count: number; breakdown: AnalyticsHeatmapItem['breakdown'] }
+      { count: number; breakdown: AnalyticsBreakdown }
     >();
-    aggregation.forEach((item) => {
-      statsMap.set(item._id, {
+
+    aggregation.forEach((item: AnalyticsStatsAggregationResult) => {
+      const dateStr: string = item._id;
+      statsMap.set(dateStr, {
         count: item.count,
         breakdown: {
           doc_added: item.doc_added,
@@ -72,6 +65,7 @@ export class GetHeatmapUseCase {
     });
 
     const heatmap: AnalyticsHeatmapItem[] = [];
+
     for (let i = 0; i <= days; i++) {
       const date = new Date(startDate);
       date.setDate(date.getDate() + i);

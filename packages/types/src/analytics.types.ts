@@ -1,19 +1,31 @@
+export interface AnalyticsBreakdown {
+  doc_added: number;
+  doc_opened: number;
+  note_created: number;
+  summary_generated: number;
+}
+
 export interface AnalyticsHeatmapItem {
   date: string;
   count: number;
-  breakdown: {
-    doc_added: number;
-    doc_opened: number;
-    note_created: number;
-    summary_generated: number;
-  };
+  breakdown: AnalyticsBreakdown;
 }
 
-export interface AnalyticsStats {
-  totalDocuments: number;
-  byType: Record<string, number>;
-  byStatus: Record<string, number>;
-  totalNotes: number;
+export interface AnalyticsStatsAggregationResult {
+  _id: string;
+  count: number;
+  doc_added: number;
+  doc_opened: number;
+  note_created: number;
+  summary_generated: number;
+}
+
+export interface AnalyticsDocumentStatsAggregationResult {
+  _id: string;
+  count: number;
+}
+
+export interface AnalyticsStreakDetails {
   currentStreak: number;
   longestStreak: number;
   mostActiveDay: string | null;
