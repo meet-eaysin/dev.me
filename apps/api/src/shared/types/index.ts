@@ -8,4 +8,4 @@ export interface Repository<T> {
   delete(id: string): Promise<boolean>;
 }
 
-export type { PaginatedResponse } from './pagination';
+export type { PaginatedResponse } from '@repo/types';

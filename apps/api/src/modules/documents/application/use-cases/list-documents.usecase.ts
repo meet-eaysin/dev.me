@@ -7,7 +7,7 @@ import {
   DocumentPublicView,
   DocumentEntity,
 } from '../../domain/entities/document.entity';
-import { PaginatedResponse } from '../../../../shared/types/pagination';
+import { PaginatedResponse } from '@repo/types';
 import { ListDocumentsDto } from '../../interface/dtos/documents.schema';
 
 @Injectable()

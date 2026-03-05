@@ -5,6 +5,8 @@ import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { env } from './shared/utils/env';
 import { AllExceptionsFilter } from './shared/filters/http-exception.filter';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 
 const logger = new Logger('Bootstrap');
 
@@ -54,9 +56,9 @@ async function bootstrap(): Promise<void> {
         return new BadRequestException({
           message: 'Validation failed',
           error: 'VALIDATION_ERROR',
-          details: Object.entries(messages).map(([field, message]) => ({
+          details: Object.entries(messages).map(([field, msgs]) => ({
             field,
-            message: message[0], // Only take the first message per field for compactness, or join them
+            messages: msgs,
           })),
         });
       },
@@ -66,13 +68,48 @@ async function bootstrap(): Promise<void> {
   // Global Error Handling
   app.useGlobalFilters(new AllExceptionsFilter());
 
+  // Global Response Transformation
+  app.useGlobalInterceptors(new TransformInterceptor());
+
   // Versioned API prefix
   app.setGlobalPrefix('api/v1');
+
+  // Swagger OpenAPI Configuration
+  const config = new DocumentBuilder()
+    .setTitle('Mind Stack API')
+    .setDescription('Production-grade API documentation for the Mind Stack backend.')
+    .setVersion('1.0')
+    .addServer(`http://localhost:${env.PORT}`, 'Local Development')
+    .addBearerAuth({
+      type: 'http',
+      scheme: 'bearer',
+      bearerFormat: 'JWT',
+      description: 'Enter JWT token',
+      in: 'header',
+    }, 'bearerAuth')
+    .build();
+    
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('docs', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+      tagsSorter: 'alpha',
+      operationsSorter: 'alpha',
+    },
+    customSiteTitle: 'Mind Stack API Documentation',
+  });
 
   const PORT = env.PORT;
   const HOST = env.HOST ?? '0.0.0.0';
 
   await app.listen(PORT, HOST);
+  
+  const protocol = 'http';
+  const displayHost = HOST === '0.0.0.0' ? 'localhost' : HOST;
+  const baseUrl = `${protocol}://${displayHost}:${PORT}`;
+  
+  logger.log(`🚀 Application is running on: ${baseUrl}/api/v1`);
+  logger.log(`📖 Swagger documentation available at: ${baseUrl}/docs`);
 }
 
 bootstrap().catch((error) => {

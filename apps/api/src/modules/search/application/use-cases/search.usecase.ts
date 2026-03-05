@@ -4,7 +4,7 @@ import { SemanticSearchService } from '../../domain/services/semantic-search.ser
 import { ProviderFactory } from '@repo/ai';
 import {
   SearchQueryDto,
-  SemanticSearchResult,
+  SemanticSearchResultDto,
 } from '../../interface/schemas/search.schema';
 import { DocumentPublicView } from '../../../documents/domain/entities/document.entity';
 
@@ -19,9 +19,10 @@ export class SearchUseCase {
     userId: string,
     query: SearchQueryDto,
   ): Promise<{
-    documents?: DocumentPublicView[];
-    results?: SemanticSearchResult[];
+    items: (DocumentPublicView | SemanticSearchResultDto)[];
     total: number;
+    page: number;
+    limit: number;
     mode: 'normal' | 'ai';
   }> {
     if (query.mode === 'ai') {
@@ -32,8 +33,10 @@ export class SearchUseCase {
         llmConfig,
       );
       return {
-        results,
+        items: results,
         total: results.length,
+        page: query.page ?? 1,
+        limit: query.limit ?? 20,
         mode: 'ai',
       };
     }
@@ -44,8 +47,10 @@ export class SearchUseCase {
       query,
     );
     return {
-      documents: docs,
+      items: docs,
       total,
+      page: query.page ?? 1,
+      limit: query.limit ?? 20,
       mode: 'normal',
     };
   }

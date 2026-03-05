@@ -10,6 +10,7 @@ import {
   Matches,
 } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { DocumentType, DocumentStatus } from '@repo/types';
 
 export enum SearchMode {
@@ -18,22 +19,27 @@ export enum SearchMode {
 }
 
 export class SearchQueryDto {
+  @ApiProperty({ description: 'Search keywords or phrase', example: 'What is neuroplasticity?' })
   @IsString()
   @IsNotEmpty({ message: 'Query is required' })
   q!: string;
 
+  @ApiPropertyOptional({ enum: SearchMode, description: 'Search execution mode', default: SearchMode.NORMAL })
   @IsEnum(SearchMode)
   @IsOptional()
   mode?: SearchMode = SearchMode.NORMAL;
 
+  @ApiPropertyOptional({ enum: DocumentStatus, description: 'Filter by document status' })
   @IsEnum(DocumentStatus)
   @IsOptional()
   status?: DocumentStatus;
 
+  @ApiPropertyOptional({ enum: DocumentType, description: 'Filter by document type' })
   @IsEnum(DocumentType)
   @IsOptional()
   type?: DocumentType;
 
+  @ApiPropertyOptional({ description: 'Filter results by folder IDs', type: [String] })
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
@@ -44,18 +50,21 @@ export class SearchQueryDto {
   @Transform(({ value }) => (typeof value === 'string' ? [value] : value))
   folderIds?: string[];
 
+  @ApiPropertyOptional({ description: 'Filter results by tag IDs', type: [String] })
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
   @Transform(({ value }) => (typeof value === 'string' ? [value] : value))
   tagIds?: string[];
 
+  @ApiPropertyOptional({ description: 'Page number for pagination', example: 1, default: 1 })
   @Type(() => Number)
   @IsInt()
   @Min(1)
   @IsOptional()
   page?: number = 1;
 
+  @ApiPropertyOptional({ description: 'Items per page limit', example: 20, default: 20 })
   @Type(() => Number)
   @IsInt()
   @Min(1)
@@ -65,10 +74,12 @@ export class SearchQueryDto {
 }
 
 export class AskQueryDto {
+  @ApiProperty({ description: 'Question to ask the AI', example: 'Explain the core concepts of this project.' })
   @IsString()
   @IsNotEmpty({ message: 'Question is required' })
   question!: string;
 
+  @ApiPropertyOptional({ description: 'Optional subset of document IDs to context-limit the AI', type: [String] })
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
@@ -79,27 +90,56 @@ export class AskQueryDto {
   documentIds?: string[];
 }
 
-export interface SemanticSearchResult {
-  documentId: string;
-  title: string;
-  type: DocumentType;
-  status: DocumentStatus;
-  score: number;
-  preview: string;
+export class SemanticSearchResultDto {
+  @ApiProperty()
+  documentId!: string;
+
+  @ApiProperty()
+  title!: string;
+
+  @ApiProperty({ enum: DocumentType })
+  type!: DocumentType;
+
+  @ApiProperty({ enum: DocumentStatus })
+  status!: DocumentStatus;
+
+  @ApiProperty()
+  score!: number;
+
+  @ApiProperty()
+  preview!: string;
+
+  @ApiPropertyOptional({ type: [String] })
   tags?: string[];
-  createdAt: Date;
+
+  @ApiProperty()
+  createdAt!: Date;
 }
 
-export interface SourceRef {
-  documentId: string;
-  title: string;
-  author: string | null;
-  publishedAt: string | null;
-  originalSource: string | null;
+export class SourceRefDto {
+  @ApiProperty()
+  documentId!: string;
+
+  @ApiProperty()
+  title!: string;
+
+  @ApiPropertyOptional({ nullable: true })
+  author!: string | null;
+
+  @ApiPropertyOptional({ nullable: true })
+  publishedAt!: string | null;
+
+  @ApiPropertyOptional({ nullable: true })
+  originalSource!: string | null;
 }
 
-export interface AskResult {
-  answer: string;
-  sources: SourceRef[];
-  tokensUsed: number;
+export class AskResultDto {
+  @ApiProperty({ description: 'The generated AI answer' })
+  answer!: string;
+
+  @ApiProperty({ type: [SourceRefDto], description: 'List of documents cited in the answer' })
+  sources!: SourceRefDto[];
+
+  @ApiProperty()
+  tokensUsed!: number;
 }

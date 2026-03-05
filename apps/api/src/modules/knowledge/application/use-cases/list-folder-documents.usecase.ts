@@ -16,6 +16,8 @@ export class ListFolderDocumentsUseCase {
   async execute(command: ListFolderDocumentsCommand): Promise<{
     items: DocumentPublicView[];
     total: number;
+    page: number;
+    limit: number;
   }> {
     const { docs, total } = await this.documentRepository.findAll(
       command.userId,
@@ -29,6 +31,8 @@ export class ListFolderDocumentsUseCase {
     return {
       items: docs.map((doc) => doc.toPublicView()),
       total,
+      page: command.page,
+      limit: command.limit,
     };
   }
 }

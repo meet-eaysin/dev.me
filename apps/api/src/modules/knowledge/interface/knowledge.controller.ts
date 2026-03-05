@@ -11,6 +11,12 @@ import {
   HttpStatus,
   HttpCode,
 } from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiParam,
+} from '@nestjs/swagger';
 import { CreateFolderUseCase } from '../application/use-cases/create-folder.usecase';
 import { GetFolderUseCase } from '../application/use-cases/get-folder.usecase';
 import { ListFoldersUseCase } from '../application/use-cases/list-folders.usecase';
@@ -38,9 +44,24 @@ import {
   UpdateNoteDto,
   ListNotesDto,
 } from './schemas/note.schema';
+import {
+  FolderViewDto,
+  FolderResponseDto,
+  FoldersResponseDto,
+  TagResponseDto,
+  TagsResponseDto,
+  NoteViewDto,
+  NoteResponseDto,
+  NotesResponseDto,
+} from './dtos/knowledge.response.dto';
+import { DocumentPublicViewDto } from '../../documents/interface/dtos/documents.response.dto';
 import { DevUserGuard } from '../../../shared/guards/dev-user.guard';
 import { User } from '../../../shared/decorators/user.decorator';
+import { ApiSuccessResponse } from '../../../common/decorators/api-success-response.decorator';
+import { ApiPaginatedResponse } from '../../../common/decorators/api-paginated-response.decorator';
 
+@ApiTags('Knowledge Base')
+@ApiBearerAuth('bearerAuth')
 @Controller('knowledge')
 @UseGuards(DevUserGuard)
 export class KnowledgeController {
@@ -65,12 +86,16 @@ export class KnowledgeController {
 
   // Folders
   @Get('folders')
+  @ApiOperation({ summary: 'List all folders for the user' })
+  @ApiSuccessResponse(FoldersResponseDto)
   async listFolders(@User('userId') userId: string) {
     const folders = await this.listFoldersUseCase.execute(userId);
-    return { success: true, data: { folders } };
+    return { folders };
   }
 
   @Post('folders')
+  @ApiOperation({ summary: 'Create a new folder' })
+  @ApiSuccessResponse(FolderResponseDto, 'Folder created')
   @HttpCode(HttpStatus.CREATED)
   async createFolder(
     @User('userId') userId: string,
@@ -80,16 +105,22 @@ export class KnowledgeController {
       userId,
       ...data,
     });
-    return { success: true, data: { folder } };
+    return { folder };
   }
 
   @Get('folders/:id')
+  @ApiOperation({ summary: 'Get folder details by ID' })
+  @ApiParam({ name: 'id', description: 'Folder UUID' })
+  @ApiSuccessResponse(FolderViewDto)
   async getFolder(@User('userId') userId: string, @Param('id') id: string) {
     const result = await this.getFolderUseCase.execute(id, userId);
-    return { success: true, data: result };
+    return result;
   }
 
   @Patch('folders/:id')
+  @ApiOperation({ summary: 'Update folder properties' })
+  @ApiParam({ name: 'id', description: 'Folder UUID' })
+  @ApiSuccessResponse(FolderResponseDto)
   async updateFolder(
     @User('userId') userId: string,
     @Param('id') id: string,
@@ -100,16 +131,21 @@ export class KnowledgeController {
       userId,
       data,
     });
-    return { success: true, data: { folder } };
+    return { folder };
   }
 
   @Delete('folders/:id')
+  @ApiOperation({ summary: 'Delete a folder' })
+  @ApiParam({ name: 'id', description: 'Folder UUID' })
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteFolder(@User('userId') userId: string, @Param('id') id: string) {
     await this.deleteFolderUseCase.execute(id, userId);
   }
 
   @Get('folders/:id/documents')
+  @ApiOperation({ summary: 'List documents within a specific folder' })
+  @ApiParam({ name: 'id', description: 'Folder UUID' })
+  @ApiPaginatedResponse(DocumentPublicViewDto)
   async listFolderDocuments(
     @User('userId') userId: string,
     @Param('id') id: string,
@@ -123,35 +159,34 @@ export class KnowledgeController {
       page,
       limit,
     });
-    return {
-      success: true,
-      data: {
-        items: result.items,
-        total: result.total,
-        page,
-        limit,
-      },
-    };
+    return result;
   }
 
   // Tags
   @Get('tags')
+  @ApiOperation({ summary: 'List all tags created by the user' })
+  @ApiSuccessResponse(TagsResponseDto)
   async listTags(@User('userId') userId: string) {
     const tags = await this.listTagsUseCase.execute(userId);
-    return { success: true, data: { tags } };
+    return { tags };
   }
 
   @Post('tags')
+  @ApiOperation({ summary: 'Create a new organizational tag' })
+  @ApiSuccessResponse(TagResponseDto, 'Tag created')
   @HttpCode(HttpStatus.CREATED)
   async createTag(@User('userId') userId: string, @Body() data: CreateTagDto) {
     const tag = await this.createTagUseCase.execute({
       userId,
       ...data,
     });
-    return { success: true, data: { tag } };
+    return { tag };
   }
 
   @Patch('tags/:id')
+  @ApiOperation({ summary: 'Update tag details' })
+  @ApiParam({ name: 'id', description: 'Tag UUID' })
+  @ApiSuccessResponse(TagResponseDto)
   async updateTag(
     @User('userId') userId: string,
     @Param('id') id: string,
@@ -162,16 +197,21 @@ export class KnowledgeController {
       userId,
       data,
     });
-    return { success: true, data: { tag } };
+    return { tag };
   }
 
   @Delete('tags/:id')
+  @ApiOperation({ summary: 'Delete a tag' })
+  @ApiParam({ name: 'id', description: 'Tag UUID' })
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteTag(@User('userId') userId: string, @Param('id') id: string) {
     await this.deleteTagUseCase.execute(id, userId);
   }
 
   @Get('tags/:id/documents')
+  @ApiOperation({ summary: 'List documents associated with a tag' })
+  @ApiParam({ name: 'id', description: 'Tag UUID' })
+  @ApiPaginatedResponse(DocumentPublicViewDto)
   async listTagDocuments(
     @User('userId') userId: string,
     @Param('id') id: string,
@@ -185,28 +225,24 @@ export class KnowledgeController {
       page,
       limit,
     });
-    return {
-      success: true,
-      data: {
-        items: result.items,
-        total: result.total,
-        page,
-        limit,
-      },
-    };
+    return result;
   }
 
   // Notes
   @Get('notes')
+  @ApiOperation({ summary: 'List all notes for a specific document' })
+  @ApiSuccessResponse(NotesResponseDto)
   async listNotes(
     @User('userId') userId: string,
     @Query() query: ListNotesDto,
   ) {
     const notes = await this.listNotesUseCase.execute(query.documentId, userId);
-    return { success: true, data: { notes } };
+    return { notes };
   }
 
   @Post('notes')
+  @ApiOperation({ summary: 'Create a new note attached to a document' })
+  @ApiSuccessResponse(NoteResponseDto, 'Note created')
   @HttpCode(HttpStatus.CREATED)
   async createNote(
     @User('userId') userId: string,
@@ -216,26 +252,34 @@ export class KnowledgeController {
       userId,
       ...data,
     });
-    return { success: true, data: { note } };
+    return { note };
   }
 
   @Get('notes/:id')
+  @ApiOperation({ summary: 'Get a specific note by ID' })
+  @ApiParam({ name: 'id', description: 'Note UUID' })
+  @ApiSuccessResponse(NoteViewDto)
   async getNote(@User('userId') userId: string, @Param('id') id: string) {
     const note = await this.getNoteUseCase.execute(id, userId);
-    return { success: true, data: { note } };
+    return note;
   }
 
   @Patch('notes/:id')
+  @ApiOperation({ summary: 'Update note content' })
+  @ApiParam({ name: 'id', description: 'Note UUID' })
+  @ApiSuccessResponse(NoteResponseDto)
   async updateNote(
     @User('userId') userId: string,
     @Param('id') id: string,
     @Body() data: UpdateNoteDto,
   ) {
     const note = await this.updateNoteUseCase.execute(id, userId, data.content);
-    return { success: true, data: { note } };
+    return { note };
   }
 
   @Delete('notes/:id')
+  @ApiOperation({ summary: 'Delete a note' })
+  @ApiParam({ name: 'id', description: 'Note UUID' })
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteNote(@User('userId') userId: string, @Param('id') id: string) {
     await this.deleteNoteUseCase.execute(id, userId);

@@ -1,7 +1,6 @@
 import {
   Controller,
   Get,
-  Put,
   Post,
   Delete,
   Body,
@@ -9,6 +8,7 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiNoContentResponse } from '@nestjs/swagger';
 import { DevUserGuard } from '../../../shared/guards/dev-user.guard';
 import { User } from '../../../shared/decorators/user.decorator';
 import { GetLLMConfigUseCase } from '../application/use-cases/get-llm-config.usecase';
@@ -20,7 +20,11 @@ import {
   SaveLLMConfigDto,
   ValidateLLMConfigDto,
 } from './dtos/llm-config.dto';
+import { LLMConfigPublicViewDto } from './dtos/llm-config.response.dto';
+import { ApiSuccessResponse } from '../../../common/decorators/api-success-response.decorator';
 
+@ApiTags('Integrations: LLM Configuration')
+@ApiBearerAuth('bearerAuth')
 @Controller('llm-config')
 @UseGuards(DevUserGuard)
 export class LLMConfigController {
@@ -31,31 +35,39 @@ export class LLMConfigController {
   ) {}
 
   @Get()
+  @ApiOperation({ summary: 'Get current LLM configuration' })
+  @ApiSuccessResponse(LLMConfigPublicViewDto)
   async getConfig(@User('userId') userId: string) {
-    const config = await this.getUseCase.execute(userId);
-    return { success: true, data: config };
+    const result = await this.getUseCase.execute(userId);
+    return result;
   }
 
-  @Put()
+  @Post()
+  @ApiOperation({ summary: 'Save new LLM provider configuration' })
+  @ApiSuccessResponse(LLMConfigPublicViewDto)
   async saveConfig(
     @User('userId') userId: string,
-    @Body() body: SaveLLMConfigDto,
+    @Body() dto: SaveLLMConfigDto,
   ) {
-    const config = await this.saveUseCase.execute(userId, body);
-    return { success: true, data: config };
+    const result = await this.saveUseCase.execute(userId, dto);
+    return result;
   }
 
   @Post('validate')
+  @ApiOperation({ summary: 'Validate current LLM configuration settings' })
+  @ApiSuccessResponse(LLMConfigPublicViewDto)
   async validateConfig(
     @User('userId') userId: string,
-    @Body() body: ValidateLLMConfigDto,
+    @Body() dto: ValidateLLMConfigDto,
   ) {
-    const capabilities = await this.validateUseCase.execute(userId, body);
-    return { success: true, data: capabilities };
+    const result = await this.validateUseCase.execute(userId, dto);
+    return result;
   }
 
   @Delete()
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Delete LLM configuration' })
+  @ApiNoContentResponse({ description: 'LLM configuration deleted successfully' })
   async deleteConfig(@User('userId') userId: string) {
     await LLMConfigModel.deleteOne({
       userId: new Types.ObjectId(userId),

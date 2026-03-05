@@ -3,7 +3,7 @@ import {
   ServiceUnavailableException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { AskResult, SourceRef } from '../../interface/schemas/search.schema';
+import { AskResultDto, SourceRefDto } from '../../interface/schemas/search.schema';
 import { QdrantWrapper, embeddingAdapter, ResolvedLLMConfig } from '@repo/ai';
 import { env } from '../../../../shared/utils/env';
 import { DocumentChunkModel, DocumentModel, IDocument } from '@repo/db';
@@ -38,7 +38,7 @@ export class RagService {
     question: string,
     llmConfig: ResolvedLLMConfig,
     documentIds?: string[],
-  ): Promise<AskResult> {
+  ): Promise<AskResultDto> {
     const internalUserId = this.transformUserId(userId);
 
     // 1. Count embedded docs
@@ -159,7 +159,7 @@ export class RagService {
     // 7. & 8. Build context and limit tokens
     let contextStr = '';
     let estimatedTokens = 0;
-    const sourcesMap = new Map<string, SourceRef>();
+    const sourcesMap = new Map<string, SourceRefDto>();
 
     for (const chunk of validChunks) {
       const doc = docMap.get(chunk.documentId);

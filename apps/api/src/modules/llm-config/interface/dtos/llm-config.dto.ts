@@ -1,4 +1,5 @@
-import { IsEnum, IsOptional, IsString, MinLength, IsUrl } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsIn, IsUrl } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export enum LLMProvider {
   OPENAI = 'openai',
@@ -7,22 +8,28 @@ export enum LLMProvider {
 }
 
 export class SaveLLMConfigDto {
-  @IsEnum(LLMProvider)
-  provider!: LLMProvider;
-
+  @ApiProperty({ enum: ['openai', 'anthropic', 'ollama'], example: 'openai' })
   @IsString()
-  @MinLength(1)
+  @IsNotEmpty()
+  @IsIn(['openai', 'anthropic', 'ollama'])
+  provider!: 'openai' | 'anthropic' | 'ollama';
+
+  @ApiProperty({ example: 'gpt-4o' })
+  @IsString()
+  @IsNotEmpty()
   chatModel!: string;
 
+  @ApiProperty({ example: 'text-embedding-3-small' })
   @IsString()
-  @MinLength(1)
+  @IsNotEmpty()
   embeddingModel!: string;
 
-  @IsOptional()
+  @ApiPropertyOptional({ description: 'API key for the provider (encrypted at rest)' })
   @IsString()
-  @MinLength(1)
+  @IsOptional()
   apiKey?: string;
 
+  @ApiPropertyOptional({ description: 'Custom base URL if using a proxy or Ollama', example: 'http://localhost:11434' })
   @IsOptional()
   @IsUrl()
   baseUrl?: string;

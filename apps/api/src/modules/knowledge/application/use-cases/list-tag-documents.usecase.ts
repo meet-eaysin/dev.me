@@ -20,6 +20,8 @@ export class ListTagDocumentsUseCase {
   async execute(command: ListTagDocumentsCommand): Promise<{
     items: DocumentPublicView[];
     total: number;
+    page: number;
+    limit: number;
   }> {
     const tag = await this.tagRepository.findById(
       command.tagId,
@@ -41,6 +43,8 @@ export class ListTagDocumentsUseCase {
     return {
       items: docs.map((doc) => doc.toPublicView()),
       total,
+      page: command.page,
+      limit: command.limit,
     };
   }
 }

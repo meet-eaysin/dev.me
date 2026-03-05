@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { IDocumentRepository } from '../../../documents/domain/repositories/document.repository';
 import {
   SearchQueryDto,
-  SemanticSearchResult,
+  SemanticSearchResultDto,
 } from '../../interface/schemas/search.schema';
 import { QdrantWrapper, embeddingAdapter, ResolvedLLMConfig } from '@repo/ai';
 import { env } from '../../../../shared/utils/env';
@@ -33,7 +33,7 @@ export class SemanticSearchService {
     userId: string,
     query: SearchQueryDto,
     llmConfig: ResolvedLLMConfig,
-  ): Promise<SemanticSearchResult[]> {
+  ): Promise<SemanticSearchResultDto[]> {
     const internalUserId = this.transformUserId(userId);
     const queryVector = await embeddingAdapter.embedText(query.q, llmConfig);
 
@@ -71,7 +71,7 @@ export class SemanticSearchService {
     );
     const docs = await Promise.all(docsPromises);
 
-    const semanticResults: SemanticSearchResult[] = [];
+    const semanticResults: SemanticSearchResultDto[] = [];
 
     for (const doc of docs) {
       if (!doc) continue;

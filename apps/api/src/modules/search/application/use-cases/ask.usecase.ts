@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { RagService } from '../../domain/services/rag.service';
 import { ProviderFactory } from '@repo/ai';
-import { AskQueryDto, AskResult } from '../../interface/schemas/search.schema';
+import { AskQueryDto, AskResultDto } from '../../interface/schemas/search.schema';
 import { UserActivityModel } from '@repo/db';
 import { Types } from 'mongoose';
 
@@ -9,7 +9,7 @@ import { Types } from 'mongoose';
 export class AskUseCase {
   constructor(private readonly ragService: RagService) {}
 
-  async execute(userId: string, query: AskQueryDto): Promise<AskResult> {
+  async execute(userId: string, query: AskQueryDto): Promise<AskResultDto> {
     if (!query.question || query.question.trim().length === 0) {
       throw new BadRequestException('Question cannot be empty');
     }
