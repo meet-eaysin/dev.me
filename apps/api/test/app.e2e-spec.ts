@@ -3,9 +3,10 @@ import { INestApplication } from '@nestjs/common';
 import { describe, it, beforeEach } from '@jest/globals';
 import request from 'supertest';
 import { AppModule } from './../src/app.module';
+import { Server } from 'http';
 
 describe('AppController (e2e)', () => {
-  let app: INestApplication;
+  let app: INestApplication<Server>;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({

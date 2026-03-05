@@ -1,0 +1,26 @@
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  UnauthorizedException,
+} from '@nestjs/common';
+
+@Injectable()
+export class DevUserGuard implements CanActivate {
+  canActivate(context: ExecutionContext): boolean {
+    const request = context.switchToHttp().getRequest();
+    let userId = request.headers['x-user-id'];
+
+    if (!userId || typeof userId !== 'string') {
+      throw new UnauthorizedException('Missing x-user-id header');
+    }
+
+    if (!/^[0-9a-fA-F]{24}$/.test(userId)) {
+      const hex = Buffer.from(userId).toString('hex');
+      userId = hex.padEnd(24, '0').slice(0, 24);
+    }
+
+    request.user = { userId };
+    return true;
+  }
+}
