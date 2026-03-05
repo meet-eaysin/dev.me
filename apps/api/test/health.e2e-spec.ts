@@ -39,7 +39,7 @@ describe('AppController (e2e)', () => {
         .send({})
         .expect(400);
 
-      assertErrorShape(response.body, 400, 'Bad Request');
+      assertErrorShape(response.body, 400, 'VALIDATION_ERROR');
     });
 
     it('should have Global Exception Filter active', async () => {
@@ -48,7 +48,7 @@ describe('AppController (e2e)', () => {
         .set('x-user-id', TEST_USER_ID)
         .expect(404);
 
-      assertErrorShape(response.body, 404, 'Not Found');
+      assertErrorShape(response.body, 404, 'NOT_FOUND');
     });
   });
 });

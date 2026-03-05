@@ -9,9 +9,13 @@ export interface HealthResponse {
 }
 
 export interface ErrorResponse {
+  success: boolean;
   statusCode: number;
-  message: string | string[] | Record<string, unknown>;
   error: string;
+  message: string;
+  details?: Array<{ field: string; message: string }>;
+  timestamp: string;
+  path: string;
 }
 
 export function isHealthResponse(body: unknown): body is HealthResponse {
@@ -27,9 +31,13 @@ export function isErrorResponse(body: unknown): body is ErrorResponse {
   return (
     typeof body === 'object' &&
     body !== null &&
+    'success' in body &&
+    body.success === false &&
     'statusCode' in body &&
     'message' in body &&
-    'error' in body
+    'error' in body &&
+    'timestamp' in body &&
+    'path' in body
   );
 }
 
@@ -44,8 +52,12 @@ export function assertHealthSuccess(body: unknown): void {
 
 export function assertErrorShape(body: unknown, statusCode: number, error: string): void {
   if (isErrorResponse(body)) {
+    expect(body.success).toBe(false);
     expect(body.statusCode).toBe(statusCode);
     expect(body.error).toBe(error);
+    expect(typeof body.message).toBe('string');
+    expect(typeof body.timestamp).toBe('string');
+    expect(typeof body.path).toBe('string');
   } else {
     throw new Error('Response body does not match ErrorResponse shape');
   }

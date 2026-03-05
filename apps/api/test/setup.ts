@@ -1,10 +1,27 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { INestApplication, ValidationPipe, BadRequestException, ValidationError } from '@nestjs/common';
 import { AppModule } from '../src/app.module';
 import { AllExceptionsFilter } from '../src/shared/filters/http-exception.filter';
 import { connectMongoDB, disconnectMongoDB } from '@repo/db';
 import { env } from '../src/shared/utils/env';
 import mongoose from 'mongoose';
+
+function formatValidationErrors(errs: ValidationError[]): Record<string, string[]> {
+  const result: Record<string, string[]> = {};
+  for (const error of errs) {
+    if (error.constraints) {
+      const constraints = error.constraints as Record<string, string>;
+      result[error.property] = Object.values(constraints);
+    }
+    if (error.children && error.children.length > 0) {
+      const childErrors = formatValidationErrors(error.children);
+      for (const [key, val] of Object.entries(childErrors)) {
+        result[`${error.property}.${key}`] = val;
+      }
+    }
+  }
+  return result;
+}
 
 export async function setupApp(): Promise<INestApplication> {
   await connectMongoDB(env.MONGODB_URI);
@@ -18,6 +35,17 @@ export async function setupApp(): Promise<INestApplication> {
       whitelist: true,
       transform: true,
       forbidNonWhitelisted: true,
+      exceptionFactory: (errors: ValidationError[]) => {
+        const messages = formatValidationErrors(errors);
+        return new BadRequestException({
+          message: 'Validation failed',
+          error: 'VALIDATION_ERROR',
+          details: Object.entries(messages).map(([field, message]) => ({
+            field,
+            message: message[0],
+          })),
+        });
+      },
     }),
   );
   app.useGlobalFilters(new AllExceptionsFilter());

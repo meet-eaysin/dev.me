@@ -64,7 +64,7 @@ describe('Documents (e2e)', () => {
         .send(payload)
         .expect(400);
 
-      assertErrorShape(response.body, 400, 'Bad Request');
+      assertErrorShape(response.body, 400, 'VALIDATION_ERROR');
     });
   });
 
@@ -112,7 +112,7 @@ describe('Documents (e2e)', () => {
         .set('x-user-id', TEST_USER_ID)
         .expect(404);
 
-      assertErrorShape(response.body, 404, 'Not Found');
+      assertErrorShape(response.body, 404, 'NOT_FOUND');
     });
   });
 

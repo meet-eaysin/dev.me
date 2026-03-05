@@ -113,9 +113,12 @@ describe('Performance and Edge Cases (e2e)', () => {
         .set('x-user-id', TEST_USER_ID)
         .expect(404);
 
+      expect(response.body).toHaveProperty('success', false);
       expect(response.body).toHaveProperty('statusCode', 404);
-      expect(response.body).toHaveProperty('error', 'Not Found');
+      expect(response.body).toHaveProperty('error', 'NOT_FOUND');
       expect(response.body).toHaveProperty('message');
+      expect(response.body).toHaveProperty('timestamp');
+      expect(response.body).toHaveProperty('path');
     });
 
     it('should strictly return standardized 400 shape for invalid UUID/ObjectId', async () => {
@@ -123,10 +126,13 @@ describe('Performance and Edge Cases (e2e)', () => {
         .get('/api/v1/knowledge/folders/invalid-id')
         .set('x-user-id', TEST_USER_ID);
         
+      expect(response.body).toHaveProperty('success', false);
       expect(response.body).toHaveProperty('statusCode');
       expect([400, 404]).toContain(response.body.statusCode);
       expect(response.body).toHaveProperty('error');
       expect(response.body).toHaveProperty('message');
+      expect(response.body).toHaveProperty('timestamp');
+      expect(response.body).toHaveProperty('path');
     });
   });
 });

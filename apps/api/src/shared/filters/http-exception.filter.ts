@@ -6,7 +6,7 @@ import {
   HttpStatus,
   Logger,
 } from '@nestjs/common';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -15,14 +15,18 @@ export class AllExceptionsFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
+    const request = ctx.getRequest<Request>();
+    const timestamp = new Date().toISOString();
+    const path = request.url;
 
     // Handle NestJS native HttpExceptions (like from ValidationPipe)
     if (exception instanceof HttpException) {
       const statusCode = exception.getStatus();
       const responseBody = exception.getResponse();
 
-      let message: string | string[] = exception.message;
-      let error = HttpStatus[statusCode] ?? 'Error';
+      let message: string = exception.message;
+      let error = this.mapStatusCodeToErrorString(statusCode);
+      let details: Array<{ field: string; message: string }> | undefined;
 
       if (typeof responseBody === 'string') {
         message = responseBody;
@@ -30,19 +34,28 @@ export class AllExceptionsFilter implements ExceptionFilter {
         const body = responseBody as {
           message?: string | string[];
           error?: string;
+          details?: Array<{ field: string; message: string }>;
         };
+        
         if (body.message !== undefined) {
-          message = body.message;
+          message = Array.isArray(body.message) ? body.message.join(', ') : body.message;
         }
-        if (body.error) {
+        if (body.error && /^[A-Z][A-Z_]+$/.test(body.error)) {
           error = body.error;
+        }
+        if (body.details) {
+          details = body.details;
         }
       }
 
       return response.status(statusCode).json({
+        success: false,
         statusCode,
-        message,
         error,
+        message,
+        ...(details && { details }),
+        timestamp,
+        path,
       });
     }
 
@@ -52,9 +65,33 @@ export class AllExceptionsFilter implements ExceptionFilter {
     );
 
     return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+      success: false,
       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      error: 'INTERNAL_SERVER_ERROR',
       message: 'Internal server error',
-      error: 'Internal Server Error',
+      timestamp,
+      path,
     });
+  }
+
+  private mapStatusCodeToErrorString(statusCode: number): string {
+    switch (statusCode) {
+      case HttpStatus.BAD_REQUEST:
+        return 'BAD_REQUEST';
+      case HttpStatus.UNAUTHORIZED:
+        return 'UNAUTHORIZED';
+      case HttpStatus.FORBIDDEN:
+        return 'FORBIDDEN';
+      case HttpStatus.NOT_FOUND:
+        return 'NOT_FOUND';
+      case HttpStatus.CONFLICT:
+        return 'CONFLICT';
+      case HttpStatus.UNPROCESSABLE_ENTITY:
+        return 'UNPROCESSABLE_ENTITY';
+      case HttpStatus.TOO_MANY_REQUESTS:
+        return 'TOO_MANY_REQUESTS';
+      default:
+        return 'INTERNAL_SERVER_ERROR';
+    }
   }
 }

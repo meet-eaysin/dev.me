@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe, Logger } from '@nestjs/common';
+import { ValidationPipe, Logger, BadRequestException, ValidationError } from '@nestjs/common';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { env } from './shared/utils/env';
@@ -31,6 +31,35 @@ async function bootstrap(): Promise<void> {
       whitelist: true,
       transform: true,
       forbidNonWhitelisted: true,
+      exceptionFactory: (errors: ValidationError[]) => {
+        const formatErrors = (errs: ValidationError[]): Record<string, string[]> => {
+          const result: Record<string, string[]> = {};
+          for (const error of errs) {
+            if (error.constraints) {
+              const constraints = error.constraints as Record<string, string>;
+              result[error.property] = Object.values(constraints);
+            }
+            if (error.children && error.children.length > 0) {
+              const childErrors = formatErrors(error.children);
+              for (const [key, val] of Object.entries(childErrors)) {
+                result[`${error.property}.${key}`] = val;
+              }
+            }
+          }
+          return result;
+        };
+
+        const messages = formatErrors(errors);
+        
+        return new BadRequestException({
+          message: 'Validation failed',
+          error: 'VALIDATION_ERROR',
+          details: Object.entries(messages).map(([field, message]) => ({
+            field,
+            message: message[0], // Only take the first message per field for compactness, or join them
+          })),
+        });
+      },
     }),
   );
 
