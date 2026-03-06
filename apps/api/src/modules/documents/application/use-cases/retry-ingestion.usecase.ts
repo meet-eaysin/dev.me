@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   UnprocessableEntityException,
+  Logger,
 } from '@nestjs/common';
 import { IDocumentRepository } from '../../domain/repositories/document.repository';
 import { ingestionQueue } from '@repo/queue';
@@ -9,6 +10,8 @@ import { IngestionStatus } from '@repo/types';
 
 @Injectable()
 export class RetryIngestionUseCase {
+  private readonly logger = new Logger(RetryIngestionUseCase.name);
+
   constructor(private readonly documentRepository: IDocumentRepository) {}
 
   async execute(id: string, userId: string): Promise<{ jobId: string }> {
@@ -30,7 +33,9 @@ export class RetryIngestionUseCase {
     });
 
     // Re-push to ingestion queue
-    ingestionQueue.addJob(id, userId).catch(console.error);
+    ingestionQueue.addJob(id, userId).catch((err: Error) => {
+      this.logger.error(`Failed to re-push job: ${err.message}`);
+    });
 
     return { jobId: `dummy-job-${id}` };
   }

@@ -1,5 +1,6 @@
 import {
   Injectable,
+  Logger,
   ServiceUnavailableException,
   UnprocessableEntityException,
 } from '@nestjs/common';
@@ -19,6 +20,7 @@ interface QdrantPayload {
 
 @Injectable()
 export class RagService {
+  private readonly logger = new Logger(RagService.name);
   private qdrant: QdrantWrapper;
 
   constructor() {
@@ -249,7 +251,8 @@ export class RagService {
         }
       }
     } catch (error) {
-      console.error('[RagService] LLM call failed:', error);
+      const message = error instanceof Error ? error.message : String(error);
+      this.logger.error(`LLM call failed: ${message}`);
       throw new ServiceUnavailableException(
         'LLM service is currently unavailable',
       );

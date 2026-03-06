@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { LLMConfigModel } from '@repo/db';
 import { LLMConfigPublicView, SaveLLMConfigRequest } from '@repo/types';
 import { LLMConfigEntity } from '../../domain/entities/llm-config.entity';
-import { encrypt } from '../../../../shared/infrastructure/crypto/encryption';
+import { encrypt } from '@repo/crypto';
 import { env } from '../../../../shared/utils/env';
 import { LLMValidatorService } from '../../domain/services/llm-validator.service';
 import { Types } from 'mongoose';

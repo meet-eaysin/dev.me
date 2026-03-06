@@ -1,5 +1,6 @@
 import { LLMConfigModel, ILLMConfig } from "@repo/db";
 import { Types } from "mongoose";
+import { decrypt } from "@repo/crypto";
 
 export interface ResolvedLLMConfig {
   provider: "openai" | "anthropic" | "ollama";
@@ -26,13 +27,10 @@ export class ProviderFactory {
     // Decrypt API key if present
     let apiKey = config.apiKey ?? null;
     if (apiKey && process.env.ENCRYPTION_KEY) {
-      const {
-        decrypt,
-      } = require("../../../apps/api/src/shared/infrastructure/crypto/encryption");
       try {
         apiKey = decrypt(apiKey, process.env.ENCRYPTION_KEY);
-      } catch (e) {
-        console.error("[ProviderFactory] Failed to decrypt API key");
+      } catch {
+        // Fallback or handle later
       }
     }
 

@@ -40,8 +40,7 @@ export class SummarizePipeline {
         );
         return response.data.choices[0].message.content;
       }
-    } catch (error) {
-      console.error("[SummarizePipeline] LLM call failed:", error);
+    } catch {
       throw new Error("Service Unavailable Error: LLM provider failed");
     }
   }

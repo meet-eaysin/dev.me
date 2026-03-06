@@ -1,4 +1,4 @@
-import { Module, OnModuleInit, OnApplicationShutdown } from '@nestjs/common';
+import { Module, OnModuleInit, OnApplicationShutdown, Logger } from '@nestjs/common';
 import { connectMongoDB, disconnectMongoDB } from '@repo/db';
 import { createRedisConnection, initQueues } from '@repo/queue';
 import { env } from './shared/utils/env';
@@ -35,9 +35,20 @@ import { HealthController } from './modules/health/health.controller';
   providers: [],
 })
 export class AppModule implements OnModuleInit, OnApplicationShutdown {
+  private readonly logger = new Logger(AppModule.name);
+
   async onModuleInit() {
     await connectMongoDB(env.MONGODB_URI);
-    initQueues(createRedisConnection(env.REDIS_URL));
+    try {
+      if (env.REDIS_URL && !env.REDIS_URL.includes('localhost')) {
+        initQueues(createRedisConnection(env.REDIS_URL));
+      } else {
+        this.logger.warn('Skipping Redis initialization: REDIS_URL is localhost or missing.');
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      this.logger.error(`Failed to initialize Redis: ${message}`);
+    }
   }
 
   async onApplicationShutdown() {

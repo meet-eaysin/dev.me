@@ -30,9 +30,6 @@ export class EmbeddingAdapter {
     }
 
     // Default to OpenAI-compatible
-    console.log(
-      `[AI] Generating embedding with OpenAI/Compatible (${config.embeddingModel})...`,
-    );
     const response = await axios.post(
       `${config.baseUrl || "https://api.openai.com/v1"}/embeddings`,
       {

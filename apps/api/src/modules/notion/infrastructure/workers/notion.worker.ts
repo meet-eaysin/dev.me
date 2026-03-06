@@ -4,7 +4,7 @@ import { NotionSyncJobData, createRedisConnection } from '@repo/queue';
 import { NotionConfigModel, DocumentModel } from '@repo/db';
 import { NotionAction } from '@repo/types';
 import { NotionClient } from '../notion-client';
-import { decrypt } from '../../../../shared/infrastructure/crypto/encryption';
+import { decrypt } from '@repo/crypto';
 import { env } from '../../../../shared/utils/env';
 
 @Injectable()
@@ -56,43 +56,66 @@ export class NotionWorker {
       return;
     }
 
-    const token = decrypt(config.accessToken, env.ENCRYPTION_KEY);
+    const accessToken = config.accessToken;
+    if (typeof accessToken !== 'string') {
+      this.logger.error(`Invalid access token for user ${userId}`);
+      return;
+    }
+
+    const token = decrypt(accessToken, env.ENCRYPTION_KEY);
+    if (typeof token !== 'string') {
+      this.logger.error(`Decryption failed for user ${userId}`);
+      return;
+    }
 
     try {
+      const targetDatabaseId = config.targetDatabaseId;
+      if (typeof targetDatabaseId !== 'string') {
+        this.logger.error(`Database not configured for user ${userId}`);
+        return;
+      }
+
       if (action === NotionAction.CREATE) {
         if (!doc) return;
-        const pageId = await this.notionClient.createPage(
-          token,
-          config.targetDatabaseId,
-          {
-            title: doc.title,
-            content: (doc.summary || doc.content) ?? undefined,
-            url: doc.sourceUrl ?? undefined,
-          },
-        );
+
+        const title = doc.title;
+        if (typeof title !== 'string') return;
+
+        const pageId = await this.notionClient.createPage(token, targetDatabaseId, {
+          title,
+          content: (doc.summary || doc.content) || undefined,
+          url: doc.sourceUrl || undefined,
+        });
         doc.notionPageId = pageId;
         await doc.save();
       } else if (action === NotionAction.UPDATE) {
-        if (!doc || !doc.notionPageId) return;
-        await this.notionClient.updatePage(token, doc.notionPageId, {
-          title: doc.title,
-          content: (doc.summary || doc.content) ?? undefined,
-          url: doc.sourceUrl ?? undefined,
+        const pageId = doc?.notionPageId;
+        if (!doc || typeof pageId !== 'string') return;
+
+        const title = doc.title;
+        if (typeof title !== 'string') return;
+
+        await this.notionClient.updatePage(token, pageId, {
+          title,
+          content: (doc.summary || doc.content) || undefined,
+          url: doc.sourceUrl || undefined,
         });
       } else if (action === NotionAction.DELETE) {
-        // We might not have the doc anymore, but hopefully notionPageId was in job if needed
-        // But the job only has documentId. Usually DELETE happens while doc exists or we pass pageId.
-        // If doc is null, we can't get pageId.
-        // In this implementation, let's assume doc is still there or we don't support delete-after-doc-removed easily without passing pageId.
-        if (doc && doc.notionPageId) {
-          await this.notionClient.deletePage(token, doc.notionPageId);
+        const pageId = doc?.notionPageId;
+        if (doc && typeof pageId === 'string') {
+          try {
+            await this.notionClient.deletePage(token, pageId);
+          } catch (error) {
+            const message = error instanceof Error ? error.message : String(error);
+            this.logger.error(`Failed to delete Notion page: ${message}`);
+          }
           doc.notionPageId = undefined;
           await doc.save();
         }
       }
     } catch (error) {
-      const msg = error instanceof Error ? error.message : String(error);
-      console.error(`[NotionWorker] Sync failed for doc ${documentId}: ${msg}`);
+      const message = error instanceof Error ? error.message : String(error);
+      this.logger.error(`Sync failed for doc ${documentId}: ${message}`);
       throw error; // Let BullMQ handle retries
     }
   }

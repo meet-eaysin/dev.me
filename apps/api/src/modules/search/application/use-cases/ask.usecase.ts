@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, Logger } from '@nestjs/common';
 import { RagService } from '../../domain/services/rag.service';
 import { ProviderFactory } from '@repo/ai';
 import { AskQueryDto, AskResultDto } from '../../interface/schemas/search.schema';
@@ -7,6 +7,8 @@ import { Types } from 'mongoose';
 
 @Injectable()
 export class AskUseCase {
+  private readonly logger = new Logger(AskUseCase.name);
+
   constructor(private readonly ragService: RagService) {}
 
   async execute(userId: string, query: AskQueryDto): Promise<AskResultDto> {
@@ -34,8 +36,9 @@ export class AskUseCase {
           sourcesCount: result.sources.length,
         },
       });
-    } catch (error) {
-      console.error('[AskUseCase] Failed to log user activity:', error);
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : String(error);
+      this.logger.error(`Failed to log user activity: ${msg}`);
     }
 
     return result;

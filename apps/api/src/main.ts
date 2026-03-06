@@ -1,6 +1,11 @@
-import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe, Logger, BadRequestException, ValidationError } from '@nestjs/common';
+import {
+  ValidationPipe,
+  Logger,
+  BadRequestException,
+  ValidationError,
+  INestApplication,
+} from '@nestjs/common';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { env } from './shared/utils/env';
@@ -10,7 +15,11 @@ import { TransformInterceptor } from './common/interceptors/transform.intercepto
 
 const logger = new Logger('Bootstrap');
 
-async function bootstrap(): Promise<void> {
+let cachedApp: INestApplication;
+
+export async function bootstrap(): Promise<INestApplication> {
+  if (cachedApp) return cachedApp;
+
   const app = await NestFactory.create(AppModule, {
     logger:
       env.NODE_ENV === 'production'
@@ -75,44 +84,55 @@ async function bootstrap(): Promise<void> {
   app.setGlobalPrefix('api/v1');
 
   // Swagger OpenAPI Configuration
-  const config = new DocumentBuilder()
-    .setTitle('Mind Stack API')
-    .setDescription('Production-grade API documentation for the Mind Stack backend.')
-    .setVersion('1.0')
-    .addServer(`http://localhost:${env.PORT}`, 'Local Development')
-    .addBearerAuth({
-      type: 'http',
-      scheme: 'bearer',
-      bearerFormat: 'JWT',
-      description: 'Enter JWT token',
-      in: 'header',
-    }, 'bearerAuth')
-    .build();
-    
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('docs', app, document, {
-    swaggerOptions: {
-      persistAuthorization: true,
-      tagsSorter: 'alpha',
-      operationsSorter: 'alpha',
-    },
-    customSiteTitle: 'Mind Stack API Documentation',
-  });
+  if (env.NODE_ENV !== 'production') {
+    const config = new DocumentBuilder()
+      .setTitle('Mind Stack API')
+      .setDescription('Production-grade API documentation for the Mind Stack backend.')
+      .setVersion('1.0')
+      .addBearerAuth({
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        description: 'Enter JWT token',
+        in: 'header',
+      }, 'bearerAuth')
+      .build();
+      
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('docs', app, document, {
+      swaggerOptions: {
+        persistAuthorization: true,
+        tagsSorter: 'alpha',
+        operationsSorter: 'alpha',
+      },
+      customSiteTitle: 'Mind Stack API Documentation',
+    });
+  }
 
-  const PORT = env.PORT;
-  const HOST = env.HOST ?? '0.0.0.0';
-
-  await app.listen(PORT, HOST);
-  
-  const protocol = 'http';
-  const displayHost = HOST === '0.0.0.0' ? 'localhost' : HOST;
-  const baseUrl = `${protocol}://${displayHost}:${PORT}`;
-  
-  logger.log(`🚀 Application is running on: ${baseUrl}/api/v1`);
-  logger.log(`📖 Swagger documentation available at: ${baseUrl}/docs`);
+  await app.init();
+  cachedApp = app;
+  return app;
 }
 
-bootstrap().catch((error) => {
-  logger.error('Application failed to start:', error);
-  process.exit(1);
-});
+// For local development
+if (require.main === module) {
+  bootstrap()
+    .then(async (app) => {
+      const PORT = env.PORT;
+      const HOST = env.HOST ?? '0.0.0.0';
+      await app.listen(PORT, HOST);
+      
+      logger.log(`🚀 Application is running on: http://localhost:${PORT}/api/v1`);
+    })
+    .catch((err) => {
+      logger.error('💥 Failed to start application:', err);
+      process.exit(1);
+    });
+}
+
+// Vercel handler
+export default async (req: unknown, res: unknown): Promise<void> => {
+  const app = await bootstrap();
+  const server = app.getHttpAdapter().getInstance();
+  return server(req, res);
+};

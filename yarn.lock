@@ -2291,6 +2291,7 @@ __metadata:
     "@extractus/article-extractor": "npm:^8.0.20"
     "@napi-rs/canvas": "npm:^0.1.65"
     "@qdrant/js-client-rest": "npm:^1.8.0"
+    "@repo/crypto": "npm:*"
     "@repo/db": "npm:*"
     "@repo/types": "npm:*"
     "@types/node": "npm:^20.0.0"
@@ -2318,6 +2319,15 @@ __metadata:
     ts-loader: "npm:^9.4.3"
     ts-node: "npm:^10.9.2"
     typescript: "npm:5.5.4"
+  languageName: unknown
+  linkType: soft
+
+"@repo/crypto@npm:*, @repo/crypto@workspace:packages/crypto":
+  version: 0.0.0-use.local
+  resolution: "@repo/crypto@workspace:packages/crypto"
+  dependencies:
+    "@types/node": "npm:^20.0.0"
+    typescript: "npm:^5.0.0"
   languageName: unknown
   linkType: soft
 
@@ -3495,6 +3505,7 @@ __metadata:
     "@nestjs/testing": "npm:^11.1.11"
     "@repo/ai": "npm:*"
     "@repo/api": "npm:*"
+    "@repo/crypto": "npm:*"
     "@repo/db": "npm:*"
     "@repo/eslint-config": "npm:*"
     "@repo/jest-config": "npm:*"

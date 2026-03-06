@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { NotionConfigModel } from '@repo/db';
 import { NotionConfigPublicView, NotionSyncDirectionType } from '@repo/types';
 import { NotionClient } from '../../infrastructure/notion-client';
-import { encrypt } from '../../../../shared/infrastructure/crypto/encryption';
+import { encrypt } from '@repo/crypto';
 import { env } from '../../../../shared/utils/env';
 
 @Injectable()

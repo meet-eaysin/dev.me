@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
 import { LLMCapabilities } from '@repo/types';
 
 @Injectable()
 export class LLMValidatorService {
+  private readonly logger = new Logger(LLMValidatorService.name);
   async validate(
     provider: string,
     apiKey: string | null,
@@ -64,8 +65,8 @@ export class LLMValidatorService {
     } catch (error) {
       // Masking API key in logs
       const errorMsg = error instanceof Error ? error.message : String(error);
-      console.error(
-        `[LLMValidator] Chat test failed: ${errorMsg.replace(apiKey || '', '***')}`,
+      this.logger.error(
+        `Chat test failed: ${errorMsg.replace(apiKey || '', '***')}`,
       );
       return false;
     }
@@ -110,8 +111,8 @@ export class LLMValidatorService {
       return false;
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
-      console.error(
-        `[LLMValidator] Embedding test failed: ${errorMsg.replace(apiKey || '', '***')}`,
+      this.logger.error(
+        `Embedding test failed: ${errorMsg.replace(apiKey || '', '***')}`,
       );
       return false;
     }

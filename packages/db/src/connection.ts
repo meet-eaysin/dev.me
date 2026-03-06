@@ -1,32 +1,21 @@
 import mongoose from "mongoose";
 
 export async function connectMongoDB(uri: string): Promise<void> {
-  try {
-    await mongoose.connect(uri);
-    console.log("[DB] Connected to MongoDB");
-  } catch (error) {
-    console.error("[DB] MongoDB connection error:", error);
-    process.exit(1);
-  }
+  await mongoose.connect(uri);
 }
 
 export async function disconnectMongoDB(): Promise<void> {
-  try {
-    await mongoose.disconnect();
-    console.log("[DB] Disconnected from MongoDB");
-  } catch (error) {
-    console.error("[DB] MongoDB disconnection error:", error);
-  }
+  await mongoose.disconnect();
 }
 
 mongoose.connection.on("connected", () => {
-  console.log("[DB] Mongoose connected to MongoDB");
+  // Silent
 });
 
-mongoose.connection.on("error", (err) => {
-  console.error("[DB] Mongoose connection error:", err);
+mongoose.connection.on("error", () => {
+  // Silent
 });
 
 mongoose.connection.on("disconnected", () => {
-  console.log("[DB] Mongoose disconnected");
+  // Silent
 });

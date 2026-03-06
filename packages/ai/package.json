@@ -22,6 +22,7 @@
     "@extractus/article-extractor": "^8.0.20",
     "@napi-rs/canvas": "^0.1.65",
     "@qdrant/js-client-rest": "^1.8.0",
+    "@repo/crypto": "*",
     "@repo/db": "*",
     "@repo/types": "*",
     "axios": "^1.6.7",

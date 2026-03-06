@@ -2,7 +2,7 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { NotionConfigModel, DocumentModel } from '@repo/db';
 import { NotionSyncResult } from '@repo/types';
 import { NotionClient } from '../../infrastructure/notion-client';
-import { decrypt } from '../../../../shared/infrastructure/crypto/encryption';
+import { decrypt } from '@repo/crypto';
 import { env } from '../../../../shared/utils/env';
 
 @Injectable()
@@ -10,17 +10,20 @@ export class SyncAllToNotionUseCase {
   constructor(private readonly notionClient: NotionClient) {}
 
   async execute(userId: string): Promise<NotionSyncResult> {
-    const config = await NotionConfigModel.findOne({ userId });
-    if (
-      !config ||
-      !config.accessToken ||
-      !config.targetDatabaseId ||
-      !config.syncEnabled
-    ) {
+    const config = await NotionConfigModel.findOne({ userId, syncEnabled: true }).lean();
+    if (!config || !config.accessToken) {
       throw new BadRequestException('Notion sync not configured or enabled');
     }
 
-    const token = decrypt(config.accessToken, env.ENCRYPTION_KEY);
+    const accessToken = config.accessToken;
+    if (typeof accessToken !== 'string') {
+      throw new BadRequestException('Invalid Notion access token');
+    }
+
+    const token = decrypt(accessToken, env.ENCRYPTION_KEY);
+    if (typeof token !== 'string') {
+      throw new BadRequestException('Invalid Notion token');
+    }
     const documents = await DocumentModel.find({ userId });
 
     let synced = 0;
@@ -34,30 +37,37 @@ export class SyncAllToNotionUseCase {
       await Promise.all(
         batch.map(async (doc) => {
           try {
-            if (doc.notionPageId) {
-              await this.notionClient.updatePage(token, doc.notionPageId, {
-                title: doc.title,
-                content: (doc.summary || doc.content) ?? undefined,
-                url: doc.sourceUrl ?? undefined,
+            const pageId = doc.notionPageId;
+            const targetDatabaseId = config.targetDatabaseId;
+            const title = doc.title;
+
+            if (typeof title !== 'string') return;
+
+            if (typeof pageId === 'string') {
+              await this.notionClient.updatePage(token, pageId, {
+                title,
+                content: (doc.summary || doc.content) || undefined,
+                url: doc.sourceUrl || undefined,
               });
-            } else {
-              const pageId = await this.notionClient.createPage(
+            } else if (typeof targetDatabaseId === 'string') {
+              const newPageId = await this.notionClient.createPage(
                 token,
-                config.targetDatabaseId as string,
+                targetDatabaseId,
                 {
-                  title: doc.title,
-                  content: (doc.summary || doc.content) ?? undefined,
-                  url: doc.sourceUrl ?? undefined,
+                  title,
+                  content: (doc.summary || doc.content) || undefined,
+                  url: doc.sourceUrl || undefined,
                 },
               );
-              doc.notionPageId = pageId;
+              doc.notionPageId = newPageId;
               await doc.save();
             }
             synced++;
           } catch (error) {
+            const message = error instanceof Error ? error.message : String(error);
             failed++;
             errors.push(
-              `Failed to sync doc ${doc._id}: ${error instanceof Error ? error.message : String(error)}`,
+              `Failed to sync doc ${doc._id}: ${message}`,
             );
           }
         }),

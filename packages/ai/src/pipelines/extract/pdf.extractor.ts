@@ -41,14 +41,8 @@ function isCanvasContext(ctx: unknown): ctx is CanvasRenderingContext2D {
 export class PdfExtractor {
   async extractPdf(
     buffer: Buffer,
-    _documentId?: string,
   ): Promise<PdfExtractResult> {
     try {
-      // Use documentId in a log to satisfy unused variable check
-      if (_documentId) {
-        console.log(`[PdfExtractor] Extracting PDF for document: ${_documentId}`);
-      }
-
       const data = await pdf(buffer);
       const text = data.text;
       const pageCount = data.numpages;

@@ -63,7 +63,7 @@ export class IngestionWorker {
     );
 
     this._worker.on('failed', async (job, err) => {
-      console.error(`Job ${job?.id} failed: ${err.message}`);
+      this.logger.error(`Job ${job?.id} failed: ${err.message}`);
       if (job) {
         await this.ingestionJobRepository.markFailed(
           job.data.documentId,
@@ -114,7 +114,7 @@ export class IngestionWorker {
 
       if (type === 'pdf') {
         const buffer = await this.localStorage.getFile(source);
-        const result = await pdfExtractor.extractPdf(buffer, documentId);
+        const result = await pdfExtractor.extractPdf(buffer);
         text = result.text;
         ocrConfidence = result.ocrConfidence;
         await this.documentRepository.update(documentId, userId, {
@@ -182,7 +182,7 @@ export class IngestionWorker {
         }
       } catch (error) {
         const msg = error instanceof Error ? error.message : String(error);
-        console.warn(`Classification failed: ${msg}, skipping...`);
+        this.logger.warn(`Classification failed: ${msg}, skipping...`);
       }
 
       await this.ingestionJobRepository.updateStage(
@@ -272,7 +272,7 @@ export class IngestionWorker {
         error instanceof Error
           ? error.message
           : 'Unknown error during ingestion';
-      console.error('Ingestion failed:', error);
+      this.logger.error(`Ingestion failed: ${errorMessage}`);
       throw new Error(errorMessage);
     }
   }

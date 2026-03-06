@@ -57,7 +57,9 @@ export class CreateDocumentUseCase {
     );
 
     // Push to ingestion queue - do NOT await
-    ingestionQueue.addJob(savedDoc.id, command.userId).catch(console.error);
+    ingestionQueue.addJob(savedDoc.id, command.userId).catch((err: Error) => {
+      this.logger.error(`Failed to push job for doc ${savedDoc.id}: ${err.message}`);
+    });
 
     return savedDoc.toPublicView();
   }

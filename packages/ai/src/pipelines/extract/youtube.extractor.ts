@@ -44,8 +44,8 @@ export class YouTubeExtractor {
     let transcript: YTTranscriptResponse[] = [];
     try {
       transcript = await YoutubeTranscript.fetchTranscript(videoId);
-    } catch (e) {
-      console.warn("Transcript extraction failed:", e);
+    } catch {
+      // Transcript is optional
     }
 
     const metadata = await this.fetchMetadata(videoId);
@@ -75,8 +75,7 @@ export class YouTubeExtractor {
         description: "", // OEmbed doesn't provide description
         thumbnail: data.thumbnail_url,
       };
-    } catch (error) {
-      console.error("Failed to fetch metadata via OEmbed:", error);
+    } catch {
       return {
         title: "Unknown Title",
         channelTitle: "Unknown Channel",
@@ -88,7 +87,7 @@ export class YouTubeExtractor {
 
   private extractVideoId(url: string): string | null {
     const regex =
-      /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
+      /(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/i;
     const match = url.match(regex);
     return match ? (match[1] ?? null) : null;
   }

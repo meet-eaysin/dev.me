@@ -1,7 +1,7 @@
 import { Injectable , Logger } from '@nestjs/common';
 import { LLMConfigModel } from '@repo/db';
 import { LLMCapabilities, ValidateLLMConfigRequest } from '@repo/types';
-import { decrypt } from '../../../../shared/infrastructure/crypto/encryption';
+import { decrypt } from '@repo/crypto';
 import { env } from '../../../../shared/utils/env';
 import { LLMValidatorService } from '../../domain/services/llm-validator.service';
 
@@ -19,10 +19,15 @@ export class ValidateLLMConfigUseCase {
 
     // If no API key provided, try to fetch and decrypt stored one
     if (!apiKey) {
-      const stored = await LLMConfigModel.findOne({ userId });
+      const stored = await LLMConfigModel.findOne({ userId }).lean();
       if (stored && stored.apiKey) {
         try {
-          apiKey = decrypt(stored.apiKey, env.ENCRYPTION_KEY);
+          if (typeof stored.apiKey === 'string') {
+            const decryptedKey = decrypt(stored.apiKey, env.ENCRYPTION_KEY);
+            if (typeof decryptedKey === 'string') {
+              apiKey = decryptedKey;
+            }
+          }
         } catch {
           this.logger.error(
             '[ValidateLLMConfig] Failed to decrypt stored API key',
