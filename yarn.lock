@@ -2284,7 +2284,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@repo/ai@workspace:packages/ai":
+"@repo/ai@npm:*, @repo/ai@workspace:packages/ai":
   version: 0.0.0-use.local
   resolution: "@repo/ai@workspace:packages/ai"
   dependencies:
@@ -3493,6 +3493,7 @@ __metadata:
     "@nestjs/schematics": "npm:^11.0.9"
     "@nestjs/swagger": "npm:^11.2.6"
     "@nestjs/testing": "npm:^11.1.11"
+    "@repo/ai": "npm:*"
     "@repo/api": "npm:*"
     "@repo/db": "npm:*"
     "@repo/eslint-config": "npm:*"
