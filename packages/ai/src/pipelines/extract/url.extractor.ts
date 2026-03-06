@@ -1,4 +1,3 @@
-import { extract } from "@extractus/article-extractor";
 import axios from "axios";
 import https from "https";
 
@@ -17,6 +16,7 @@ export interface UrlExtractResult {
 export class UrlExtractor {
   async extractFromUrl(url: string, retryCount = 1): Promise<UrlExtractResult> {
     try {
+      const { extract } = await import("@extractus/article-extractor");
       const article = await extract(url);
 
       if (article && article.content) {
