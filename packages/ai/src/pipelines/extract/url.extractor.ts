@@ -3,9 +3,7 @@ import axios from "axios";
 import https from "https";
 
 // In development, handle self-signed or missing local issuer certificates
-if (process.env.NODE_ENV !== "production") {
-  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-}
+if (process.env.NODE_ENV !== "production") process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 export interface UrlExtractResult {
   title: string;
@@ -40,7 +38,7 @@ export class UrlExtractor {
       }
 
       throw new Error("Could not extract content from URL");
-    } catch (error) {
+    } catch {
       if (retryCount > 0) {
         await new Promise((resolve) => setTimeout(resolve, 2000));
         return this.extractFromUrl(url, retryCount - 1);
