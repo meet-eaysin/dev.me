@@ -1,6 +1,5 @@
 import pdf from "pdf-parse";
 import { createWorker } from "tesseract.js";
-import pLimit from "p-limit";
 import * as pdfjs from "pdfjs-dist";
 import { createCanvas, SKRSContext2D } from "@napi-rs/canvas";
 
@@ -87,6 +86,7 @@ export class PdfExtractor {
     buffer: Buffer,
     pageCount: number,
   ): Promise<PdfExtractResult> {
+    const pLimit = (await import("p-limit")).default;
     const limit = pLimit(10);
 
     const loadingTask = pdfjs.getDocument({
