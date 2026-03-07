@@ -1,8 +1,7 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { GetHeatmapUseCase } from '../../application/use-cases/get-heatmap.usecase';
 import { GetStatsUseCase } from '../../application/use-cases/get-stats.usecase';
-import { DevUserGuard } from '../../../../shared/guards/dev-user.guard';
 import { User } from '../../../../shared/decorators/user.decorator';
 import {
   AnalyticsStatsResponseDto,
@@ -13,7 +12,6 @@ import { ApiSuccessResponse } from '../../../../shared/decorators/api-success-re
 @ApiTags('Analytics')
 @ApiBearerAuth()
 @Controller('analytics')
-@UseGuards(DevUserGuard)
 export class AnalyticsController {
   constructor(
     private readonly getHeatmapUseCase: GetHeatmapUseCase,

@@ -5,7 +5,6 @@ import {
   Delete,
   Put,
   Body,
-  UseGuards,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
@@ -15,7 +14,6 @@ import {
   ApiBearerAuth,
   ApiNoContentResponse,
 } from '@nestjs/swagger';
-import { DevUserGuard } from '../../../shared/guards/dev-user.guard';
 import { User } from '../../../shared/decorators/user.decorator';
 import { GetLLMConfigUseCase } from '../application/use-cases/get-llm-config.usecase';
 import { SaveLLMConfigUseCase } from '../application/use-cases/save-llm-config.usecase';
@@ -29,7 +27,6 @@ import { ApiSuccessResponse } from '../../../shared/decorators/api-success-respo
 @ApiTags('Integrations: LLM Configuration')
 @ApiBearerAuth('bearerAuth')
 @Controller('llm-config')
-@UseGuards(DevUserGuard)
 export class LLMConfigController {
   constructor(
     private readonly getUseCase: GetLLMConfigUseCase,

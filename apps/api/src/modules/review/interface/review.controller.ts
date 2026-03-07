@@ -1,11 +1,10 @@
-import { Controller, Get, Post, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Param } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
   ApiBearerAuth,
   ApiParam,
 } from '@nestjs/swagger';
-import { DevUserGuard } from '../../../shared/guards/dev-user.guard';
 import { GetDailyReviewUseCase } from '../application/use-cases/get-daily-review.usecase';
 import { DismissReviewUseCase } from '../application/use-cases/dismiss-review.usecase';
 import { GetRecommendationsUseCase } from '../application/use-cases/get-recommendations.usecase';
@@ -19,7 +18,6 @@ import { ApiSuccessResponse } from '../../../shared/decorators/api-success-respo
 @ApiTags('Spaced Repetition Review')
 @ApiBearerAuth('bearerAuth')
 @Controller('review')
-@UseGuards(DevUserGuard)
 export class ReviewController {
   constructor(
     private readonly getDailyReviewUseCase: GetDailyReviewUseCase,

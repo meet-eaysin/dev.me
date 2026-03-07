@@ -1,6 +1,5 @@
-import { Controller, Get, Post, Query, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Query, Body } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { DevUserGuard } from '../../../shared/guards/dev-user.guard';
 import { SearchUseCase } from '../application/use-cases/search.usecase';
 import { AskUseCase } from '../application/use-cases/ask.usecase';
 import {
@@ -16,7 +15,6 @@ import { ApiSuccessResponse } from '../../../shared/decorators/api-success-respo
 @ApiTags('Search & AI')
 @ApiBearerAuth('bearerAuth')
 @Controller('search')
-@UseGuards(DevUserGuard)
 export class SearchController {
   constructor(
     private readonly searchUseCase: SearchUseCase,

@@ -4,11 +4,15 @@ import {
   ExecutionContext,
   UnauthorizedException,
 } from '@nestjs/common';
+import { AuthenticatedUser } from '../types/authenticated-user.type';
 
 @Injectable()
 export class DevUserGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest();
+    if (request.user) {
+      return true;
+    }
     let userId = request.headers['x-user-id'];
 
     if (!userId || typeof userId !== 'string') {
@@ -20,7 +24,12 @@ export class DevUserGuard implements CanActivate {
       userId = hex.padEnd(24, '0').slice(0, 24);
     }
 
-    request.user = { userId };
+    request.user = {
+      userId,
+      authId: `dev:${userId}`,
+      provider: 'dev',
+      sessionId: 'dev-session',
+    } satisfies AuthenticatedUser;
     return true;
   }
 }

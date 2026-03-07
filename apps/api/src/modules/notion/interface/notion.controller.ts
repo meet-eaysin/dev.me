@@ -5,7 +5,6 @@ import {
   Patch,
   Delete,
   Body,
-  UseGuards,
   HttpCode,
   HttpStatus,
   NotFoundException,
@@ -17,7 +16,6 @@ import { UpdateNotionConfigUseCase } from '../application/use-cases/update-notio
 import { SyncAllToNotionUseCase } from '../application/use-cases/sync-all-to-notion.usecase';
 import { DisconnectNotionUseCase } from '../application/use-cases/disconnect-notion.usecase';
 import { NotionConfigModel } from '@repo/db';
-import { DevUserGuard } from '../../../shared/guards/dev-user.guard';
 import { User } from '../../../shared/decorators/user.decorator';
 import { ConnectNotionDto, UpdateNotionConfigDto } from './dtos/notion.dto';
 import {
@@ -30,7 +28,6 @@ import { ApiSuccessResponse } from '../../../shared/decorators/api-success-respo
 @ApiTags('Integrations: Notion')
 @ApiBearerAuth('bearerAuth')
 @Controller('notion')
-@UseGuards(DevUserGuard)
 export class NotionController {
   constructor(
     private readonly connectUseCase: ConnectNotionUseCase,

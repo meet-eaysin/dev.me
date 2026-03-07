@@ -7,7 +7,6 @@ import {
   Body,
   Param,
   Query,
-  UseGuards,
   HttpStatus,
   HttpCode,
   UseInterceptors,
@@ -46,7 +45,6 @@ import {
   IngestionStatusViewDto,
   TranscriptResponseDto,
 } from './dtos/documents.response.dto';
-import { DevUserGuard } from '../../../shared/guards/dev-user.guard';
 import { User } from '../../../shared/decorators/user.decorator';
 import { ApiPaginatedResponse } from '../../../shared/decorators/api-paginated-response.decorator';
 import { ApiSuccessResponse } from '../../../shared/decorators/api-success-response.decorator';
@@ -54,7 +52,6 @@ import { ApiSuccessResponse } from '../../../shared/decorators/api-success-respo
 @ApiTags('Documents')
 @ApiBearerAuth('bearerAuth')
 @Controller('documents')
-@UseGuards(DevUserGuard)
 export class DocumentsController {
   constructor(
     private readonly createDocumentUseCase: CreateDocumentUseCase,

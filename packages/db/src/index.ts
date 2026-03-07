@@ -13,6 +13,8 @@ export * from './models/llm-config.model';
 export * from './models/notion-config.model';
 export * from './models/user-activity.model';
 export * from './models/review-dismissal.model';
+export * from './models/external-identity.model';
+export * from './models/refresh-session.model';
 
 export * from './types/user.type';
 export * from './types/document.type';
@@ -28,6 +30,8 @@ export * from './types/llm-config.type';
 export * from './types/notion-config.type';
 export * from './types/user-activity.type';
 export * from './types/review-dismissal.type';
+export * from './types/external-identity.type';
+export * from './types/refresh-session.type';
 
 export {
   GraphNodeType,

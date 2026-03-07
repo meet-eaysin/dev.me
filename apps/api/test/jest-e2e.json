@@ -7,7 +7,7 @@
     "^.+\\.(t|j)s$": "ts-jest"
   },
   "transformIgnorePatterns": [
-    "/node_modules/(?!(p-limit|yocto-queue|@extractus/article-extractor)/)"
+    "/node_modules/(?!(p-limit|yocto-queue|@extractus/article-extractor|jose|openid-client|oauth4webapi)/)"
   ],
   "moduleNameMapper": {
     "^src/(.*)$": "<rootDir>/src/$1"

@@ -1,4 +1,4 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Model, Schema } from 'mongoose';
 import { IUserDocument } from '../types/user.type';
 
 const userSchema = new Schema<IUserDocument>(
@@ -11,5 +11,6 @@ const userSchema = new Schema<IUserDocument>(
   { timestamps: true },
 );
 
-export const UserModel =
-  mongoose.models['User'] || mongoose.model<IUserDocument>('User', userSchema);
+export const UserModel: Model<IUserDocument> =
+  (mongoose.models['User'] as Model<IUserDocument> | undefined) ??
+  mongoose.model<IUserDocument>('User', userSchema);

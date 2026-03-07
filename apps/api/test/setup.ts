@@ -9,6 +9,7 @@ import { AppModule } from '../src/app.module';
 import { connectMongoDB, disconnectMongoDB } from '@repo/db';
 import { env } from '../src/shared/utils/env';
 import mongoose from 'mongoose';
+import cookieParser from 'cookie-parser';
 
 function formatValidationErrors(
   errs: ValidationError[],
@@ -36,6 +37,7 @@ export async function setupApp(): Promise<INestApplication> {
   }).compile();
 
   const app = moduleFixture.createNestApplication();
+  app.use(cookieParser());
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

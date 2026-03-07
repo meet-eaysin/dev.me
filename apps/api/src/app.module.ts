@@ -4,7 +4,7 @@ import {
   OnApplicationShutdown,
   Logger,
 } from '@nestjs/common';
-import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { connectMongoDB, disconnectMongoDB } from '@repo/db';
 import { createRedisConnection, initQueues } from '@repo/queue';
 import { env } from './shared/utils/env';
@@ -13,6 +13,7 @@ import { AllExceptionsFilter } from './shared/filters/http-exception.filter';
 // Modules
 import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { AppAuthGuard } from './modules/auth/infrastructure/guards/app-auth.guard';
 import { DocumentsModule } from './modules/documents/documents.module';
 import { GraphModule } from './modules/graph/graph.module';
 import { IngestionModule } from './modules/ingestion/ingestion.module';
@@ -22,6 +23,7 @@ import { NotionModule } from './modules/notion/notion.module';
 import { ReviewModule } from './modules/review/review.module';
 import { SearchModule } from './modules/search/search.module';
 import { SummaryModule } from './modules/summary/summary.module';
+import { UsersModule } from './modules/users/users.module';
 import { HealthController } from './modules/health/health.controller';
 import { TransformInterceptor } from './shared/interceptors/transform.interceptor';
 
@@ -38,12 +40,17 @@ import { TransformInterceptor } from './shared/interceptors/transform.intercepto
     ReviewModule,
     SearchModule,
     SummaryModule,
+    UsersModule,
   ],
   controllers: [HealthController],
   providers: [
     {
       provide: APP_INTERCEPTOR,
       useClass: TransformInterceptor,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: AppAuthGuard,
     },
     {
       provide: APP_FILTER,

@@ -7,6 +7,7 @@ import {
   INestApplication,
 } from '@nestjs/common';
 import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { env } from './shared/utils/env';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
@@ -27,6 +28,7 @@ export async function bootstrap(): Promise<INestApplication> {
 
   // Security & Middleware
   app.use(helmet());
+  app.use(cookieParser());
 
   // CORS Configuration
   app.enableCors({

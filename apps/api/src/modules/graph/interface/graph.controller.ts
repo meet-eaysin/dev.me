@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Param,
-  UseGuards,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
@@ -13,7 +12,6 @@ import {
   ApiBearerAuth,
   ApiParam,
 } from '@nestjs/swagger';
-import { DevUserGuard } from '../../../shared/guards/dev-user.guard';
 import { GetFullGraphUseCase } from '../application/use-cases/get-full-graph.usecase';
 import { GetDocumentSubgraphUseCase } from '../application/use-cases/get-document-subgraph.usecase';
 import { RebuildDocumentGraphUseCase } from '../application/use-cases/rebuild-document-graph.usecase';
@@ -24,7 +22,6 @@ import { ApiSuccessResponse } from '../../../shared/decorators/api-success-respo
 @ApiTags('Knowledge Graph')
 @ApiBearerAuth('bearerAuth')
 @Controller('graph')
-@UseGuards(DevUserGuard)
 export class GraphController {
   constructor(
     private readonly getFullGraphUseCase: GetFullGraphUseCase,

@@ -1,5 +1,8 @@
 import { expect } from '@jest/globals';
+import { INestApplication } from '@nestjs/common';
 import mongoose from 'mongoose';
+import request from 'supertest';
+import { Server } from 'http';
 
 export const TEST_USER_ID = '65f1a2b3c4d5e6f7a8b9c0d1';
 
@@ -76,4 +79,31 @@ export function assertErrorShape(
 
 export function generateId(): string {
   return new mongoose.Types.ObjectId().toHexString();
+}
+
+export async function loginTestUser(
+  app: INestApplication<Server>,
+  overrides: {
+    authId?: string;
+    email?: string;
+    name?: string;
+    avatarUrl?: string;
+  } = {},
+): Promise<string[]> {
+  const response = await request(app.getHttpServer())
+    .post('/api/v1/auth/dev/login')
+    .send({
+      authId: overrides.authId ?? 'dev:test-user',
+      email: overrides.email ?? 'dev@test.local',
+      name: overrides.name ?? 'Dev Test User',
+      avatarUrl: overrides.avatarUrl,
+    })
+    .expect(200);
+
+  const cookies = response.headers['set-cookie'];
+  if (!Array.isArray(cookies) || cookies.length === 0) {
+    throw new Error('Auth response did not set session cookies');
+  }
+
+  return cookies;
 }

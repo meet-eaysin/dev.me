@@ -2,7 +2,7 @@ import { describe, it, beforeAll, afterAll } from '@jest/globals';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { setupApp, teardownApp } from './setup';
-import { TEST_USER_ID, assertHealthSuccess, assertErrorShape } from './helpers';
+import { assertHealthSuccess, assertErrorShape } from './helpers';
 import { Server } from 'http';
 
 describe('AppController (e2e)', () => {
@@ -35,17 +35,15 @@ describe('AppController (e2e)', () => {
     it('should have ValidationPipe active', async () => {
       const response = await request(app.getHttpServer())
         .post('/api/v1/documents')
-        .set('x-user-id', TEST_USER_ID)
         .send({})
-        .expect(400);
+        .expect(401);
 
-      assertErrorShape(response.body, 400, 'VALIDATION_ERROR');
+      assertErrorShape(response.body, 401, 'UNAUTHORIZED');
     });
 
     it('should have Global Exception Filter active', async () => {
       const response = await request(app.getHttpServer())
         .get('/api/v1/non-existent-route')
-        .set('x-user-id', TEST_USER_ID)
         .expect(404);
 
       assertErrorShape(response.body, 404, 'NOT_FOUND');

@@ -7,7 +7,6 @@ import {
   Body,
   Param,
   Query,
-  UseGuards,
   HttpStatus,
   HttpCode,
 } from '@nestjs/common';
@@ -55,7 +54,6 @@ import {
   NotesResponseDto,
 } from './dtos/knowledge.response.dto';
 import { DocumentPublicViewDto } from '../../documents/interface/dtos/documents.response.dto';
-import { DevUserGuard } from '../../../shared/guards/dev-user.guard';
 import { User } from '../../../shared/decorators/user.decorator';
 import { ApiPaginatedResponse } from '../../../shared/decorators/api-paginated-response.decorator';
 import { ApiSuccessResponse } from '../../../shared/decorators/api-success-response.decorator';
@@ -63,7 +61,6 @@ import { ApiSuccessResponse } from '../../../shared/decorators/api-success-respo
 @ApiTags('Knowledge Base')
 @ApiBearerAuth('bearerAuth')
 @Controller('knowledge')
-@UseGuards(DevUserGuard)
 export class KnowledgeController {
   constructor(
     private readonly listFoldersUseCase: ListFoldersUseCase,
