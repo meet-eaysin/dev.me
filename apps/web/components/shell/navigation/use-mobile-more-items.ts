@@ -1,30 +1,17 @@
 import type { NavigationItemType } from './navigation-item';
 
-const useSession = () => ({
-  data: {
-    user: {
-      role: 'ADMIN',
-      username: 'mockuser',
-      org: { slug: 'mockorg' },
-      orgAwareUsername: 'mockuser',
-    },
-  },
-});
-
-const getBookerBaseUrlSync = (_slug: string | null) => 'https://cal.com';
-
-const useBottomNavItems = (_props: unknown) => [
+const useBottomNavItems = (): NavigationItemType[] => [
   {
-    name: 'event_types',
-    label: 'Event Types',
-    href: '/event-types',
-    icon: 'link' as const,
+    name: 'documents',
+    label: 'Documents',
+    href: '/documents',
+    icon: 'file-text' as const,
   },
   {
-    name: 'bookings',
-    label: 'Bookings',
-    href: '/bookings',
-    icon: 'calendar' as const,
+    name: 'search',
+    label: 'Search',
+    href: '/search',
+    icon: 'search' as const,
   },
   {
     name: 'settings',
@@ -35,19 +22,10 @@ const useBottomNavItems = (_props: unknown) => [
 ];
 
 export function useMobileMoreItems(): NavigationItemType[] {
-  const { data: session } = useSession();
-  const user = session?.user;
-  const isAdmin = true;
-  const publicPageUrl = `${getBookerBaseUrlSync(user?.org?.slug ?? null)}/${user?.orgAwareUsername ?? user?.username}`;
-
-  const bottomNavItems = useBottomNavItems({
-    publicPageUrl,
-    isAdmin,
-    user,
-  });
+  const bottomNavItems = useBottomNavItems();
 
   const filteredBottomNavItems = bottomNavItems.filter(
-    (item: NavigationItemType) => item.name !== 'settings',
+    (item: NavigationItemType) => item.name !== 'documents',
   );
   return filteredBottomNavItems;
 }

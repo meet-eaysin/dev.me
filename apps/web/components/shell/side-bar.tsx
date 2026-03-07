@@ -9,9 +9,9 @@ export type SideBarProps = {
 };
 
 const utilityLinks = [
-  { name: 'View public page', href: '#', icon: 'external-link' as const },
-  { name: 'Copy public page link', href: '#', icon: 'link-2' as const },
-  { name: 'Refer and earn', href: '#', icon: 'gift' as const },
+  { name: 'Add Document', href: '/documents/new', icon: 'plus' as const },
+  { name: 'Notion Sync', href: '/integrations/notion', icon: 'webhook' as const },
+  { name: 'Daily Review', href: '/review', icon: 'calendar-check-2' as const },
 ];
 
 export function SideBarContainer(props: SideBarProps) {

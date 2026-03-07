@@ -5,72 +5,66 @@ import {
   NavigationItem,
   NavigationItemType,
 } from './navigation-item';
-import UnconfirmedBookingBadge from '../unconfirmed-booking-badge';
 import { useMobileMoreItems } from './use-mobile-more-items';
 
 export const MORE_SEPARATOR_NAME = 'more';
 
 const getNavigationItems = (): NavigationItemType[] => [
   {
-    name: 'inbox',
-    label: 'Inbox',
-    href: '/event-types',
-    icon: 'link',
+    name: 'dashboard',
+    label: 'Dashboard',
+    href: '/',
+    icon: 'layout-dashboard',
+    isCurrent: ({ pathname }) => pathname === '/',
   },
   {
-    name: 'bookings',
-    label: 'Bookings',
-    href: '/bookings/upcoming',
-    icon: 'calendar',
-    badge: <UnconfirmedBookingBadge />,
-    isCurrent: ({ pathname }) => pathname?.startsWith('/bookings') ?? false,
+    name: 'documents',
+    label: 'Documents',
+    href: '/documents',
+    icon: 'file-text',
+    isCurrent: ({ pathname }) => pathname?.startsWith('/documents') ?? false,
   },
   {
-    name: 'availability',
-    label: 'Availability',
-    href: '/availability',
-    icon: 'clock',
+    name: 'folders',
+    label: 'Folders',
+    href: '/folders',
+    icon: 'folder',
+    isCurrent: ({ pathname }) => pathname?.startsWith('/folders') ?? false,
   },
   {
-    name: 'teams',
-    label: 'Teams',
-    href: '/teams',
-    icon: 'users',
-    isCurrent: ({ pathname }) => pathname?.startsWith('/teams') ?? false,
+    name: 'tags',
+    label: 'Tags',
+    href: '/tags',
+    icon: 'tags',
+    isCurrent: ({ pathname }) => pathname?.startsWith('/tags') ?? false,
   },
   {
-    name: 'apps',
-    label: 'Apps',
-    href: '/apps',
-    icon: 'grid-3x3',
-    moreOnMobile: true,
+    name: 'notes',
+    label: 'Notes',
+    href: '/notes',
+    icon: 'book-open',
+    isCurrent: ({ pathname }) => pathname?.startsWith('/notes') ?? false,
+  },
+  {
+    name: 'search',
+    label: 'Search',
+    href: '/search',
+    icon: 'search',
     isCurrent: ({ pathname: path, item }) => {
-      return (
-        (path?.startsWith(item.href) ?? false) &&
-        !(path?.includes('routing-forms/') ?? false)
-      );
+      return path?.startsWith(item.href) ?? false;
     },
     child: [
       {
-        name: 'app_store',
-        label: 'App Store',
-        href: '/apps',
-        isCurrent: ({ pathname: path, item }) => {
-          // During Server rendering path is /v2/apps but on client it becomes /apps(weird..)
-          return (
-            (path?.startsWith(item.href) ?? false) &&
-            !(path?.includes('routing-forms/') ?? false) &&
-            !(path?.includes('/installed') ?? false)
-          );
-        },
+        name: 'semantic_search',
+        label: 'Semantic Search',
+        href: '/search',
+        isCurrent: ({ pathname }) => pathname === '/search',
       },
       {
-        name: 'installed_apps',
-        label: 'Installed Apps',
-        href: '/apps/installed/calendar',
-        isCurrent: ({ pathname: path }) =>
-          (path?.startsWith('/apps/installed/') ?? false) ||
-          (path?.startsWith('/v2/apps/installed/') ?? false),
+        name: 'ask_ai',
+        label: 'Ask AI',
+        href: '/search/ask',
+        isCurrent: ({ pathname }) => pathname?.startsWith('/search/ask') ?? false,
       },
     ],
   },
@@ -80,65 +74,57 @@ const getNavigationItems = (): NavigationItemType[] => [
     icon: 'ellipsis',
   },
   {
-    name: 'routing',
-    label: 'Routing',
-    href: '/routing',
-    icon: 'split',
-    isCurrent: ({ pathname }) => pathname?.startsWith('/routing') ?? false,
+    name: 'knowledge_graph',
+    label: 'Graph',
+    href: '/graph',
+    icon: 'waypoints',
+    isCurrent: ({ pathname }) => pathname?.startsWith('/graph') ?? false,
+  },
+  {
+    name: 'daily_review',
+    label: 'Review',
+    href: '/review',
+    icon: 'calendar-check-2',
+    isCurrent: ({ pathname }) => pathname?.startsWith('/review') ?? false,
+  },
+  {
+    name: 'analytics',
+    label: 'Analytics',
+    href: '/analytics',
+    icon: 'chart-line',
+    isCurrent: ({ pathname }) => pathname?.startsWith('/analytics') ?? false,
     moreOnMobile: true,
   },
   {
-    name: 'workflows',
-    label: 'Workflows',
-    href: '/workflows',
-    icon: 'zap',
-    moreOnMobile: true,
-  },
-  {
-    name: 'insights',
-    label: 'Insights',
-    href: '/insights',
-    icon: 'chart-bar',
-    isCurrent: ({ pathname: path, item }) =>
-      path?.startsWith(item.href) ?? false,
+    name: 'integrations',
+    label: 'Integrations',
+    href: '/integrations',
+    icon: 'webhook',
+    isCurrent: ({ pathname }) => pathname?.startsWith('/integrations') ?? false,
     moreOnMobile: true,
     child: [
       {
-        name: 'bookings',
-        label: 'Bookings',
-        href: '/insights',
-        isCurrent: ({ pathname: path }) => path === '/insights',
+        name: 'notion',
+        label: 'Notion',
+        href: '/integrations/notion',
+        isCurrent: ({ pathname }) =>
+          pathname?.startsWith('/integrations/notion') ?? false,
       },
       {
-        name: 'routing',
-        label: 'Routing',
-        href: '/insights/routing',
-        isCurrent: ({ pathname: path }) =>
-          path?.startsWith('/insights/routing') ?? false,
-      },
-      {
-        name: 'router_position',
-        label: 'Router Position',
-        href: '/insights/router-position',
-        isCurrent: ({ pathname: path }) =>
-          path?.startsWith('/insights/router-position') ?? false,
-      },
-      {
-        name: 'call_history',
-        label: 'Call History',
-        href: '/insights/call-history',
-        // icon: "phone",
-        isCurrent: ({ pathname: path }) =>
-          path?.startsWith('/insights/call-history') ?? false,
-      },
-      {
-        name: 'wrong_routing',
-        label: 'Wrong Routing',
-        href: '/insights/wrong-routing',
-        isCurrent: ({ pathname: path }) =>
-          path?.startsWith('/insights/wrong-routing') ?? false,
+        name: 'llm_config',
+        label: 'LLM Config',
+        href: '/settings/llm',
+        isCurrent: ({ pathname }) => pathname?.startsWith('/settings/llm') ?? false,
       },
     ],
+  },
+  {
+    name: 'settings',
+    label: 'Settings',
+    href: '/settings',
+    icon: 'settings',
+    isCurrent: ({ pathname }) => pathname?.startsWith('/settings') ?? false,
+    moreOnMobile: true,
   },
 ];
 
