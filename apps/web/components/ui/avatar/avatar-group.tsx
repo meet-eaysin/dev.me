@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { Avatar } from './Avatar';
+import { Avatar } from './avatar';
 
 export type AvatarGroupProps = {
   size: 'sm' | 'lg';

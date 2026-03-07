@@ -10,12 +10,12 @@ import type {
 } from 'react';
 import React, { cloneElement } from 'react';
 
-import { MobileNavigationContainer } from './navigation/Navigation';
+import { MobileNavigationContainer } from './navigation/navigation';
 import { Provider as TooltipProvider } from '@radix-ui/react-tooltip';
 import { cn } from '@/lib/utils';
-import { SideBarContainer } from './SideBar';
-import { TopNavContainer } from './TopNav';
-import { Button } from '../button';
+import { SideBarContainer } from './side-bar';
+import { TopNavContainer } from './top-nav';
+import { Button } from '../ui/button';
 
 const Layout = (props: LayoutProps) => {
   return (
@@ -167,9 +167,8 @@ export function ShellMain(props: LayoutProps) {
 }
 
 function MainContainer({
-  isPlatformUser,
   MobileNavigationContainer: MobileNavigationContainerProp = (
-    <MobileNavigationContainer isPlatformNavigation={isPlatformUser} />
+    <MobileNavigationContainer />
   ),
   TopNavContainer: TopNavContainerProp = <TopNavContainer />,
   ...props

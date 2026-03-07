@@ -3,7 +3,7 @@ const useFlagMap = () => ({}) as Record<string, boolean>;
 const isKeyInObject = (key: string, obj: object): key is keyof typeof obj =>
   key in obj;
 
-import type { NavigationItemType } from './NavigationItem';
+import type { NavigationItemType } from './navigation-item';
 
 export function useShouldDisplayNavigationItem(item: NavigationItemType) {
   const flags = useFlagMap();

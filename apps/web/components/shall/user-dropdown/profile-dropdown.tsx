@@ -1,15 +1,15 @@
-import { Avatar } from '@/components/avatar';
 import {
   Dropdown,
   DropdownItem,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuPortal,
   DropdownMenuTrigger,
-} from '@/components/dropdown';
+} from '@/components/ui/dropdown';
 import { cn } from '@/lib/utils';
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
 import { useState } from 'react';
+import { Avatar, AvatarGroup } from '../../ui/avatar';
+import { DropdownMenuItem } from '@/components/ui/menu';
 
 export function ProfileDropdown() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -37,7 +37,7 @@ export function ProfileDropdown() {
           )}
         >
           <span className="flex w-full grow items-center justify-around gap-2 text-sm font-medium leading-none">
-            <Avatar alt={currentOption?.label || ''} size="xsm" />
+            <AvatarGroup items={[]} size="sm" />
             <span className="block w-20 overflow-hidden text-ellipsis whitespace-nowrap">
               {currentOption?.label}
             </span>

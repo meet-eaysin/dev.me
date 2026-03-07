@@ -4,9 +4,9 @@ import { ChevronDown as ChevronDownIcon } from 'lucide-react';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import type { ReactNode } from 'react';
 import { forwardRef } from 'react';
-import { Icon } from '../icon';
-import type { ButtonBaseProps, ButtonProps } from './Button';
-import { Button, buttonClasses } from './Button';
+import type { ButtonBaseProps, ButtonProps } from './button';
+import { Button, buttonClasses } from './button';
+import { Icon } from '@/components/icon';
 
 export interface SplitButtonProps extends ButtonBaseProps {
   children?: ReactNode;

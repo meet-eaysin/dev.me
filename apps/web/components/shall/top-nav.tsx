@@ -1,7 +1,7 @@
 import Link from 'next/link';
 const useIsEmbed = () => false;
 const useIsStandalone = () => false;
-import { UserDropdown } from './user-dropdown/UserDropdown';
+import { UserDropdown } from './user-dropdown/user-dropdown';
 import { LogOut, SettingsIcon } from 'lucide-react';
 
 export function TopNavContainer() {

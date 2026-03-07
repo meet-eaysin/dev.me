@@ -3,8 +3,8 @@ import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import Link from 'next/link';
 import type { ComponentProps } from 'react';
 import { forwardRef } from 'react';
-import { Icon, IconName } from '../icon';
 import { ButtonColor } from '../button';
+import { Icon, IconName } from '@/components/icon';
 
 export const Dropdown = DropdownMenuPrimitive.Root;
 

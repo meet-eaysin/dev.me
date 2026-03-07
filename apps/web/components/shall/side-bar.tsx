@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Navigation } from './navigation/Navigation';
+import { Navigation } from './navigation/navigation';
 import { cn } from '@/lib/utils';
 import { ArrowLeftIcon, ArrowRightIcon, LogOut } from 'lucide-react';
-import { Avatar } from '../avatar';
+import { Avatar } from '../ui/avatar';
 
 export type SideBarProps = {
   bannersHeight?: number;
@@ -67,7 +67,7 @@ export function SideBar({ bannersHeight = 0 }: SideBarProps) {
           <Link href="/event-types" className="text-center md:inline lg:hidden">
             <LogOut />
           </Link>
-          <Navigation isPlatformNavigation={false} />
+          <Navigation />
         </div>
       </aside>
     </div>

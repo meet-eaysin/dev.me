@@ -5,12 +5,12 @@ const useIsEmbed = () => false;
 const useMobileMoreItems = () => [];
 const useIsStandalone = () => false;
 
-import type { NavigationItemType } from './NavigationItem';
+import type { NavigationItemType } from './navigation-item';
 import {
   NavigationItem,
   MobileNavigationItem,
   MobileNavigationMoreItem,
-} from './NavigationItem';
+} from './navigation-item';
 import { cn } from '@/lib/utils';
 
 export const MORE_SEPARATOR_NAME = 'more';

@@ -12,4 +12,4 @@ export {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "./Dropdown";
+} from './dropdown';

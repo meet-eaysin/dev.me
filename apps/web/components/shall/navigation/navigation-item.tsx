@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { Icon } from '@/components/icon';
 import type { IconName } from '@/components/icon';
-import { Tooltip } from '@/components/tooltip';
+import { Tooltip } from '@/components/ui/tooltip/index';
+import { useShouldDisplayNavigationItem } from './use-should-display-navigation-item';
 
 const posthog = {
   capture: (event: string, properties?: Record<string, unknown>) => {
@@ -20,15 +21,9 @@ const useLocale = () => ({
 const useMediaQuery = (_query: string) => false;
 
 const sessionStorage = {
-  getItem: (_key: string) => null,
-  setItem: (_key: string, _value: string) => {},
+  getItem: () => null,
+  setItem: () => {},
 };
-
-const Badge = ({ children }: { children: React.ReactNode }) => (
-  <span className="bg-emphasis inline-flex items-center rounded-full px-1.5 py-0.5 text-xs font-medium text-white">
-    {children}
-  </span>
-);
 
 const SkeletonText = ({ className }: { className?: string }) => (
   <div
@@ -36,13 +31,11 @@ const SkeletonText = ({ className }: { className?: string }) => (
   />
 );
 
-import { useShouldDisplayNavigationItem } from './useShouldDisplayNavigationItem';
-
 const usePersistedExpansionState = (itemName: string) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
-    const stored = sessionStorage.getItem(`nav-expansion-${itemName}`);
+    const stored = sessionStorage.getItem();
     if (stored !== null) {
       setIsExpanded(JSON.parse(stored));
     }
@@ -50,10 +43,7 @@ const usePersistedExpansionState = (itemName: string) => {
 
   const setPersistedExpansion = (expanded: boolean) => {
     setIsExpanded(expanded);
-    sessionStorage.setItem(
-      `nav-expansion-${itemName}`,
-      JSON.stringify(expanded),
-    );
+    sessionStorage.setItem();
   };
 
   return [isExpanded, setPersistedExpansion] as const;

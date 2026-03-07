@@ -51,8 +51,6 @@ import { usePathname } from 'next/navigation';
 import type { MouseEvent } from 'react';
 import React, { useEffect, useState } from 'react';
 
-import { Avatar } from '@/components/avatar';
-
 import {
   AppleIcon,
   ChromeIcon,
@@ -62,7 +60,8 @@ import {
   PlayStoreIcon,
   SafariIcon,
   WindowsIcon,
-} from './DownloadIcons';
+} from './download-icons';
+import { Avatar } from '@/components/ui/avatar';
 
 declare global {
   interface Window {

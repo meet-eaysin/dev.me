@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 
-import { Avatar } from './Avatar';
+import { Avatar } from './avatar';
 import Image from 'next/image';
 
 // Mock types to remove @calcom dependencies

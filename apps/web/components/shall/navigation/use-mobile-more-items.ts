@@ -1,4 +1,4 @@
-import type { NavigationItemType } from './NavigationItem';
+import type { NavigationItemType } from './navigation-item';
 
 const useSession = () => ({
   data: {

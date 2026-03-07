@@ -4,10 +4,9 @@ import type { LinkProps } from 'next/link';
 import Link from 'next/link';
 import React, { forwardRef, JSX } from 'react';
 
-import { Icon } from '../icon/Icon';
-import type { IconName } from '../icon/Icon';
-import { Tooltip } from '../tooltip/Tooltip';
+import { Tooltip } from '../tooltip/tooltip';
 import { cn } from '@/lib/utils';
+import { Icon, IconName } from '@/components/icon';
 
 type InferredVariantProps = VariantProps<typeof buttonClasses>;
 
