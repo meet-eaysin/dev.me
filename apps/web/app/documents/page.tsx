@@ -28,7 +28,9 @@ export default async function DocumentsPage() {
   let loadError: string | null = null;
 
   try {
-    data = await apiGet<DocumentsListData>('/documents?page=1&limit=20');
+    data = await apiGet<DocumentsListData>('/documents?page=1&limit=20', {
+      next: { revalidate: 15 },
+    });
   } catch (error) {
     loadError =
       error instanceof Error ? error.message : 'Unable to load documents';
