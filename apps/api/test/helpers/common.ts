@@ -24,8 +24,38 @@ export interface ErrorResponse {
   path: string;
 }
 
+interface AuthSessionResponse {
+  data: {
+    user: {
+      id: string;
+      email: string | null;
+    };
+    session: {
+      id: string;
+    };
+  };
+}
+
 export function isObject(v: unknown): v is Record<string, unknown> {
   return typeof v === 'object' && v !== null;
+}
+
+function isStringArray(value: unknown): value is string[] {
+  return (
+    Array.isArray(value) && value.every((item) => typeof item === 'string')
+  );
+}
+
+function isAuthSessionResponse(body: unknown): body is AuthSessionResponse {
+  if (!isObject(body) || !isObject(body.data)) return false;
+  if (!isObject(body.data.user) || !isObject(body.data.session)) return false;
+
+  return (
+    typeof body.data.user.id === 'string' &&
+    (typeof body.data.user.email === 'string' ||
+      body.data.user.email === null) &&
+    typeof body.data.session.id === 'string'
+  );
 }
 
 export function isHealthResponse(body: unknown): body is HealthResponse {
@@ -100,10 +130,44 @@ export async function loginTestUser(
     })
     .expect(200);
 
-  const cookies = response.headers['set-cookie'];
-  if (!Array.isArray(cookies) || cookies.length === 0) {
+  const setCookieHeader: unknown = response.headers['set-cookie'];
+  if (!isStringArray(setCookieHeader) || setCookieHeader.length === 0) {
     throw new Error('Auth response did not set session cookies');
   }
 
-  return cookies;
+  return [...setCookieHeader];
+}
+
+export async function createTestAuthContext(
+  app: INestApplication<Server>,
+  overrides: {
+    authId?: string;
+    email?: string;
+    name?: string;
+    avatarUrl?: string;
+  } = {},
+): Promise<{
+  cookies: string[];
+  userId: string;
+  sessionId: string;
+  email: string | null;
+}> {
+  const cookies = await loginTestUser(app, overrides);
+
+  const response = await request(app.getHttpServer())
+    .get('/api/v1/auth/session')
+    .set('Cookie', cookies)
+    .expect(200);
+
+  const body: unknown = response.body;
+  if (!isAuthSessionResponse(body)) {
+    throw new Error('Auth session response did not match expected shape');
+  }
+
+  return {
+    cookies,
+    userId: body.data.user.id,
+    sessionId: body.data.session.id,
+    email: body.data.user.email,
+  };
 }

@@ -10,7 +10,7 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { setupApp, teardownApp, cleanupDatabase } from './setup';
 import {
-  TEST_USER_ID,
+  createTestAuthContext,
   seedDocument,
   seedFolder,
   isListDocumentsResponse,
@@ -36,18 +36,23 @@ describe('Performance and Edge Cases (e2e)', () => {
 
   describe('Large Lists Pagination', () => {
     it('should handle fetching 100+ documents efficiently', async () => {
+      const auth = await createTestAuthContext(app, {
+        authId: 'dev:performance-docs',
+        email: 'performance-docs@test.local',
+      });
       // Seed 105 documents
       const docsToSeed = Array.from({ length: 105 }).map((_, i) => ({
         title: `Bulk Doc ${i}`,
         type: DocumentType.TEXT,
         content: `Content for doc ${i}`,
+        userId: auth.userId,
       }));
 
       await Promise.all(docsToSeed.map((d) => seedDocument(d)));
 
       const page1Res = await request(app.getHttpServer())
         .get('/api/v1/documents?page=1&limit=50')
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .expect(200);
 
       if (isListDocumentsResponse(page1Res.body)) {
@@ -60,7 +65,7 @@ describe('Performance and Edge Cases (e2e)', () => {
 
       const page3Res = await request(app.getHttpServer())
         .get('/api/v1/documents?page=3&limit=50')
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .expect(200);
 
       if (isListDocumentsResponse(page3Res.body)) {
@@ -72,13 +77,17 @@ describe('Performance and Edge Cases (e2e)', () => {
     });
 
     it('should handle large nested folder structures', async () => {
+      const auth = await createTestAuthContext(app, {
+        authId: 'dev:performance-folders',
+        email: 'performance-folders@test.local',
+      });
       // Seed 50 folders in a flat list just to check limits
       const folders = Array.from({ length: 50 }).map((_, i) => `Folder ${i}`);
-      await Promise.all(folders.map((f) => seedFolder(f)));
+      await Promise.all(folders.map((f) => seedFolder(f, auth.userId)));
 
       const response = await request(app.getHttpServer())
         .get('/api/v1/knowledge/folders')
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .expect(200);
 
       expect(response.body.success).toBe(true);
@@ -89,9 +98,13 @@ describe('Performance and Edge Cases (e2e)', () => {
 
   describe('Empty Results', () => {
     it('should return valid empty response shapes (Documents)', async () => {
+      const auth = await createTestAuthContext(app, {
+        authId: 'dev:performance-empty-docs',
+        email: 'performance-empty-docs@test.local',
+      });
       const response = await request(app.getHttpServer())
         .get('/api/v1/documents')
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .expect(200);
 
       if (isListDocumentsResponse(response.body)) {
@@ -103,9 +116,13 @@ describe('Performance and Edge Cases (e2e)', () => {
     });
 
     it('should return valid empty response shapes (Folders)', async () => {
+      const auth = await createTestAuthContext(app, {
+        authId: 'dev:performance-empty-folders',
+        email: 'performance-empty-folders@test.local',
+      });
       const response = await request(app.getHttpServer())
         .get('/api/v1/knowledge/folders')
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .expect(200);
 
       expect(response.body.success).toBe(true);
@@ -115,9 +132,13 @@ describe('Performance and Edge Cases (e2e)', () => {
 
   describe('Error Response Shapes Consistency', () => {
     it('should strictly return standardized 404 shape', async () => {
+      const auth = await createTestAuthContext(app, {
+        authId: 'dev:performance-404',
+        email: 'performance-404@test.local',
+      });
       const response = await request(app.getHttpServer())
         .get('/api/v1/documents/000000000000000000000000')
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .expect(404);
 
       expect(response.body).toHaveProperty('success', false);
@@ -129,9 +150,13 @@ describe('Performance and Edge Cases (e2e)', () => {
     });
 
     it('should strictly return standardized 400 shape for invalid UUID/ObjectId', async () => {
+      const auth = await createTestAuthContext(app, {
+        authId: 'dev:performance-invalid-id',
+        email: 'performance-invalid-id@test.local',
+      });
       const response = await request(app.getHttpServer())
         .get('/api/v1/knowledge/folders/invalid-id')
-        .set('x-user-id', TEST_USER_ID);
+        .set('Cookie', auth.cookies);
 
       expect(response.body).toHaveProperty('success', false);
       expect(response.body).toHaveProperty('statusCode');

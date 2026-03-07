@@ -37,6 +37,7 @@ export function isRecommendationResponse(
 export async function seedReviewDismissal(
   targetId: string,
   targetType: 'document' | 'note' | 'graph-node' = 'document',
+  userId: string = TEST_USER_ID,
 ): Promise<void> {
   const { ReviewDismissalModel } = await import('@repo/db');
   const { Types } = await import('mongoose');
@@ -44,7 +45,7 @@ export async function seedReviewDismissal(
   const today = new Date().toISOString().split('T')[0] ?? '';
 
   await new ReviewDismissalModel({
-    userId: new Types.ObjectId(TEST_USER_ID),
+    userId: new Types.ObjectId(userId),
     targetId: new Types.ObjectId(targetId),
     targetType,
     date: today,

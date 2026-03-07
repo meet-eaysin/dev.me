@@ -10,7 +10,7 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { setupApp, teardownApp, cleanupDatabase } from './setup';
 import {
-  TEST_USER_ID,
+  createTestAuthContext,
   seedFolder,
   seedDocument,
   isFolderResponse,
@@ -36,11 +36,15 @@ describe('Knowledge (e2e)', () => {
 
   describe('Folders', () => {
     it('should create and get a folder', async () => {
+      const auth = await createTestAuthContext(app, {
+        authId: 'dev:knowledge-folder',
+        email: 'knowledge-folder@test.local',
+      });
       const payload = { name: 'E2E Folder' };
 
       const createResponse = await request(app.getHttpServer())
         .post('/api/v1/knowledge/folders')
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .send(payload)
         .expect(201);
 
@@ -50,7 +54,7 @@ describe('Knowledge (e2e)', () => {
 
         const getResponse = await request(app.getHttpServer())
           .get(`/api/v1/knowledge/folders/${folderId}`)
-          .set('x-user-id', TEST_USER_ID)
+          .set('Cookie', auth.cookies)
           .expect(200);
 
         // Note: Looking at controller, getFolder returns { success: true, data: result }
@@ -63,27 +67,35 @@ describe('Knowledge (e2e)', () => {
     });
 
     it('should delete a folder', async () => {
-      const folderId = await seedFolder('Delete Me');
+      const auth = await createTestAuthContext(app, {
+        authId: 'dev:knowledge-folder-delete',
+        email: 'knowledge-folder-delete@test.local',
+      });
+      const folderId = await seedFolder('Delete Me', auth.userId);
       await request(app.getHttpServer())
         .delete(`/api/v1/knowledge/folders/${folderId}`)
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .expect(204);
     });
   });
 
   describe('Tags', () => {
     it('should create and list tags', async () => {
+      const auth = await createTestAuthContext(app, {
+        authId: 'dev:knowledge-tag',
+        email: 'knowledge-tag@test.local',
+      });
       const payload = { name: 'E2E Tag' };
 
       await request(app.getHttpServer())
         .post('/api/v1/knowledge/tags')
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .send(payload)
         .expect(201);
 
       const listResponse = await request(app.getHttpServer())
         .get('/api/v1/knowledge/tags')
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .expect(200);
 
       expect(listResponse.body.success).toBe(true);
@@ -93,12 +105,19 @@ describe('Knowledge (e2e)', () => {
 
   describe('Notes', () => {
     it('should create and update a note', async () => {
-      const docId = await seedDocument({ title: 'Note Doc' });
+      const auth = await createTestAuthContext(app, {
+        authId: 'dev:knowledge-note',
+        email: 'knowledge-note@test.local',
+      });
+      const docId = await seedDocument({
+        title: 'Note Doc',
+        userId: auth.userId,
+      });
       const payload = { content: 'Initial Note', documentId: docId };
 
       const createResponse = await request(app.getHttpServer())
         .post('/api/v1/knowledge/notes')
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .send(payload)
         .expect(201);
 
@@ -108,7 +127,7 @@ describe('Knowledge (e2e)', () => {
 
         const updateResponse = await request(app.getHttpServer())
           .patch(`/api/v1/knowledge/notes/${noteId}`)
-          .set('x-user-id', TEST_USER_ID)
+          .set('Cookie', auth.cookies)
           .send(updatePayload)
           .expect(200);
 

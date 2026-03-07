@@ -9,7 +9,11 @@ import {
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { setupApp, teardownApp, cleanupDatabase } from './setup';
-import { TEST_USER_ID, seedLLMConfig, isLLMConfigResponse } from './helpers';
+import {
+  createTestAuthContext,
+  seedLLMConfig,
+  isLLMConfigResponse,
+} from './helpers';
 import { Server } from 'http';
 
 describe('LLM Config (e2e)', () => {
@@ -30,6 +34,10 @@ describe('LLM Config (e2e)', () => {
 
   describe('PUT /llm-config', () => {
     it('should save a new LLM config', async () => {
+      const auth = await createTestAuthContext(app, {
+        authId: 'dev:llm-config-save',
+        email: 'llm-config-save@test.local',
+      });
       const payload = {
         provider: 'openai',
         chatModel: 'gpt-4',
@@ -39,7 +47,7 @@ describe('LLM Config (e2e)', () => {
 
       const response = await request(app.getHttpServer())
         .put('/api/v1/llm-config')
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .send(payload)
         .expect(200);
 
@@ -54,18 +62,26 @@ describe('LLM Config (e2e)', () => {
 
   describe('GET /llm-config', () => {
     it('should return 404 if no config exists', async () => {
+      const auth = await createTestAuthContext(app, {
+        authId: 'dev:llm-config-missing',
+        email: 'llm-config-missing@test.local',
+      });
       await request(app.getHttpServer())
         .get('/api/v1/llm-config')
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .expect(404);
     });
 
     it('should return config if seeded', async () => {
-      await seedLLMConfig();
+      const auth = await createTestAuthContext(app, {
+        authId: 'dev:llm-config-get',
+        email: 'llm-config-get@test.local',
+      });
+      await seedLLMConfig(auth.userId);
 
       const response = await request(app.getHttpServer())
         .get('/api/v1/llm-config')
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .expect(200);
 
       if (isLLMConfigResponse(response.body)) {
@@ -78,6 +94,10 @@ describe('LLM Config (e2e)', () => {
 
   describe('POST /llm-config/validate', () => {
     it('should validate config capabilities', async () => {
+      const auth = await createTestAuthContext(app, {
+        authId: 'dev:llm-config-validate',
+        email: 'llm-config-validate@test.local',
+      });
       const payload = {
         provider: 'openai',
         chatModel: 'gpt-4',
@@ -87,7 +107,7 @@ describe('LLM Config (e2e)', () => {
 
       const response = await request(app.getHttpServer())
         .post('/api/v1/llm-config/validate')
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .send(payload)
         .expect(201);
 
@@ -98,17 +118,21 @@ describe('LLM Config (e2e)', () => {
 
   describe('DELETE /llm-config', () => {
     it('should delete existing config', async () => {
-      await seedLLMConfig();
+      const auth = await createTestAuthContext(app, {
+        authId: 'dev:llm-config-delete',
+        email: 'llm-config-delete@test.local',
+      });
+      await seedLLMConfig(auth.userId);
 
       await request(app.getHttpServer())
         .delete('/api/v1/llm-config')
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .expect(204);
 
       // Verify it's gone
       await request(app.getHttpServer())
         .get('/api/v1/llm-config')
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .expect(404);
     });
   });

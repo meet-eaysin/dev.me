@@ -10,7 +10,7 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { setupApp, teardownApp, cleanupDatabase } from './setup';
 import {
-  TEST_USER_ID,
+  createTestAuthContext,
   seedNotionConfig,
   isNotionConfigResponse,
 } from './helpers';
@@ -34,18 +34,26 @@ describe('Notion (e2e)', () => {
 
   describe('GET /notion/config', () => {
     it('should return 404 if not connected', async () => {
+      const auth = await createTestAuthContext(app, {
+        authId: 'dev:notion-missing',
+        email: 'notion-missing@test.local',
+      });
       await request(app.getHttpServer())
         .get('/api/v1/notion/config')
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .expect(404);
     });
 
     it('should return config if connected', async () => {
-      await seedNotionConfig();
+      const auth = await createTestAuthContext(app, {
+        authId: 'dev:notion-config',
+        email: 'notion-config@test.local',
+      });
+      await seedNotionConfig(auth.userId);
 
       const response = await request(app.getHttpServer())
         .get('/api/v1/notion/config')
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .expect(200);
 
       if (isNotionConfigResponse(response.body)) {
@@ -58,7 +66,11 @@ describe('Notion (e2e)', () => {
 
   describe('PATCH /notion/config', () => {
     it('should update sync settings', async () => {
-      await seedNotionConfig();
+      const auth = await createTestAuthContext(app, {
+        authId: 'dev:notion-update',
+        email: 'notion-update@test.local',
+      });
+      await seedNotionConfig(auth.userId);
 
       const payload = {
         syncEnabled: false,
@@ -67,7 +79,7 @@ describe('Notion (e2e)', () => {
 
       const response = await request(app.getHttpServer())
         .patch('/api/v1/notion/config')
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .send(payload)
         .expect(200);
 
@@ -78,17 +90,21 @@ describe('Notion (e2e)', () => {
 
   describe('DELETE /notion/config', () => {
     it('should disconnect notion', async () => {
-      await seedNotionConfig();
+      const auth = await createTestAuthContext(app, {
+        authId: 'dev:notion-delete',
+        email: 'notion-delete@test.local',
+      });
+      await seedNotionConfig(auth.userId);
 
       await request(app.getHttpServer())
         .delete('/api/v1/notion/config')
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .expect(204);
 
       // Verify it's gone
       await request(app.getHttpServer())
         .get('/api/v1/notion/config')
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .expect(404);
     });
   });

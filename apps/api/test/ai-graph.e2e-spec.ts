@@ -10,7 +10,7 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { setupApp, teardownApp, cleanupDatabase } from './setup';
 import {
-  TEST_USER_ID,
+  createTestAuthContext,
   seedGraphNode,
   seedGraphEdge,
   isFullGraphResponse,
@@ -36,11 +36,15 @@ describe('AI Knowledge Graph (e2e)', () => {
   });
 
   it('should retrieve the full knowledge graph with seeded nodes', async () => {
-    await seedGraphNode('Artificial Intelligence', 'Concept');
+    const auth = await createTestAuthContext(app, {
+      authId: 'dev:ai-graph-full',
+      email: 'ai-graph-full@test.local',
+    });
+    await seedGraphNode('Artificial Intelligence', 'Concept', undefined, auth.userId);
 
     const response = await request(app.getHttpServer())
       .get('/api/v1/graph')
-      .set('x-user-id', TEST_USER_ID)
+      .set('Cookie', auth.cookies)
       .expect(200);
 
     if (isFullGraphResponse(response.body)) {
@@ -52,13 +56,27 @@ describe('AI Knowledge Graph (e2e)', () => {
   });
 
   it('should create and link nodes via edges', async () => {
-    const nodeAId = await seedGraphNode('Machine Learning', 'Concept');
-    const nodeBId = await seedGraphNode('Deep Learning', 'Concept');
-    await seedGraphEdge(nodeAId, nodeBId, 'specializes');
+    const auth = await createTestAuthContext(app, {
+      authId: 'dev:ai-graph-edges',
+      email: 'ai-graph-edges@test.local',
+    });
+    const nodeAId = await seedGraphNode(
+      'Machine Learning',
+      'Concept',
+      undefined,
+      auth.userId,
+    );
+    const nodeBId = await seedGraphNode(
+      'Deep Learning',
+      'Concept',
+      undefined,
+      auth.userId,
+    );
+    await seedGraphEdge(nodeAId, nodeBId, 'specializes', 1, auth.userId);
 
     const response = await request(app.getHttpServer())
       .get('/api/v1/graph')
-      .set('x-user-id', TEST_USER_ID)
+      .set('Cookie', auth.cookies)
       .expect(200);
 
     if (isFullGraphResponse(response.body)) {
@@ -73,12 +91,16 @@ describe('AI Knowledge Graph (e2e)', () => {
   });
 
   it('should retrieve document-specific subgraph', async () => {
+    const auth = await createTestAuthContext(app, {
+      authId: 'dev:ai-graph-subgraph',
+      email: 'ai-graph-subgraph@test.local',
+    });
     const docId = generateId();
-    await seedGraphNode('Project Plan', 'Document', docId);
+    await seedGraphNode('Project Plan', 'Document', docId, auth.userId);
 
     const response = await request(app.getHttpServer())
       .get(`/api/v1/graph/document/${docId}`)
-      .set('x-user-id', TEST_USER_ID)
+      .set('Cookie', auth.cookies)
       .expect(200);
 
     if (isDocumentSubgraphResponse(response.body)) {
@@ -90,10 +112,14 @@ describe('AI Knowledge Graph (e2e)', () => {
   });
 
   it('should return 404 for non-existent document subgraph', async () => {
+    const auth = await createTestAuthContext(app, {
+      authId: 'dev:ai-graph-missing',
+      email: 'ai-graph-missing@test.local',
+    });
     const fakeId = generateId();
     await request(app.getHttpServer())
       .get(`/api/v1/graph/document/${fakeId}`)
-      .set('x-user-id', TEST_USER_ID)
+      .set('Cookie', auth.cookies)
       .expect(404);
   });
 });

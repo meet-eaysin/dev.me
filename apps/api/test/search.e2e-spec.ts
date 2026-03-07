@@ -10,7 +10,7 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { setupApp, teardownApp, cleanupDatabase } from './setup';
 import {
-  TEST_USER_ID,
+  createTestAuthContext,
   seedDocument,
   isSearchResponse,
   isAskResponse,
@@ -36,12 +36,16 @@ describe('Search (e2e)', () => {
 
   describe('GET /search', () => {
     it('should perform normal search', async () => {
-      await seedDocument({ title: 'Searchable Doc' });
+      const auth = await createTestAuthContext(app, {
+        authId: 'dev:search-normal',
+        email: 'search-normal@test.local',
+      });
+      await seedDocument({ title: 'Searchable Doc', userId: auth.userId });
 
       const response = await request(app.getHttpServer())
         .get('/api/v1/search')
         .query({ q: 'Searchable', mode: 'normal' })
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .expect(200);
 
       if (isSearchResponse(response.body)) {
@@ -54,12 +58,20 @@ describe('Search (e2e)', () => {
     });
 
     it('should perform AI search', async () => {
-      await seedDocument({ title: 'AI Search Doc', embeddingsReady: true });
+      const auth = await createTestAuthContext(app, {
+        authId: 'dev:search-ai',
+        email: 'search-ai@test.local',
+      });
+      await seedDocument({
+        title: 'AI Search Doc',
+        embeddingsReady: true,
+        userId: auth.userId,
+      });
 
       const response = await request(app.getHttpServer())
         .get('/api/v1/search')
         .query({ q: 'AI', mode: 'ai' })
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .expect(200);
 
       if (isSearchResponse(response.body)) {
@@ -72,23 +84,32 @@ describe('Search (e2e)', () => {
 
   describe('POST /search/ask', () => {
     it('should reject empty question', async () => {
+      const auth = await createTestAuthContext(app, {
+        authId: 'dev:search-empty',
+        email: 'search-empty@test.local',
+      });
       await request(app.getHttpServer())
         .post('/api/v1/search/ask')
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .send({ question: '' })
         .expect(400);
     });
 
     it('should answer a question from indexed documents', async () => {
+      const auth = await createTestAuthContext(app, {
+        authId: 'dev:search-ask',
+        email: 'search-ask@test.local',
+      });
       const docId = await seedDocument({
         title: 'Knowledge Base',
         embeddingsReady: true,
+        userId: auth.userId,
       });
 
       const { DocumentChunkModel } = await import('@repo/db');
       await new DocumentChunkModel({
         documentId: new Types.ObjectId(docId),
-        userId: new Types.ObjectId(TEST_USER_ID),
+        userId: new Types.ObjectId(auth.userId),
         index: 0,
         content: 'This is the knowledge base content.',
         tokenCount: 10,
@@ -100,7 +121,7 @@ describe('Search (e2e)', () => {
 
       const response = await request(app.getHttpServer())
         .post('/api/v1/search/ask')
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .send({ question: 'What is in the knowledge base?' })
         .expect(201);
 

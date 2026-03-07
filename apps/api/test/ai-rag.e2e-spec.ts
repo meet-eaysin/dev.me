@@ -10,7 +10,7 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { setupApp, teardownApp, cleanupDatabase } from './setup';
 import {
-  TEST_USER_ID,
+  createTestAuthContext,
   seedDocument,
   isAskResponse,
   isSearchResponse,
@@ -34,16 +34,20 @@ describe('AI RAG & Search (e2e)', () => {
     await cleanupDatabase();
   });
 
-  async function seedDocumentWithChunks(content: string): Promise<string> {
+  async function seedDocumentWithChunks(
+    userId: string,
+    content: string,
+  ): Promise<string> {
     const docId = await seedDocument({
       title: 'RAG Knowledge Doc',
       embeddingsReady: true,
+      userId,
     });
 
     const { DocumentChunkModel } = await import('@repo/db');
     await new DocumentChunkModel({
       documentId: new Types.ObjectId(docId),
-      userId: new Types.ObjectId(TEST_USER_ID),
+      userId: new Types.ObjectId(userId),
       index: 0,
       content,
       tokenCount: content.split(' ').length,
@@ -55,13 +59,18 @@ describe('AI RAG & Search (e2e)', () => {
   }
 
   it('should answer a question grounded in ingested content (RAG)', async () => {
+    const auth = await createTestAuthContext(app, {
+      authId: 'dev:ai-rag-ask',
+      email: 'ai-rag-ask@test.local',
+    });
     await seedDocumentWithChunks(
+      auth.userId,
       'The project codename is Antigravity and it focuses on advanced propulsion systems using Carbon Nanotubes.',
     );
 
     const response = await request(app.getHttpServer())
       .post('/api/v1/search/ask')
-      .set('x-user-id', TEST_USER_ID)
+      .set('Cookie', auth.cookies)
       .send({ question: 'What is the project codename?' })
       .expect(201);
 
@@ -74,14 +83,19 @@ describe('AI RAG & Search (e2e)', () => {
   }, 60000);
 
   it('should perform semantic search with AI mode', async () => {
+    const auth = await createTestAuthContext(app, {
+      authId: 'dev:ai-rag-search',
+      email: 'ai-rag-search@test.local',
+    });
     await seedDocumentWithChunks(
+      auth.userId,
       'Carbon Nanotubes provide structural integrity for the propulsion module.',
     );
 
     const response = await request(app.getHttpServer())
       .get('/api/v1/search')
       .query({ q: 'Carbon Nanotubes', mode: 'ai' })
-      .set('x-user-id', TEST_USER_ID)
+      .set('Cookie', auth.cookies)
       .expect(200);
 
     if (isSearchResponse(response.body)) {
@@ -92,9 +106,13 @@ describe('AI RAG & Search (e2e)', () => {
   });
 
   it('should reject an empty question with 400', async () => {
+    const auth = await createTestAuthContext(app, {
+      authId: 'dev:ai-rag-empty',
+      email: 'ai-rag-empty@test.local',
+    });
     await request(app.getHttpServer())
       .post('/api/v1/search/ask')
-      .set('x-user-id', TEST_USER_ID)
+      .set('Cookie', auth.cookies)
       .send({ question: '' })
       .expect(400);
   });

@@ -10,7 +10,7 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { setupApp, teardownApp, cleanupDatabase } from './setup';
 import {
-  TEST_USER_ID,
+  createTestAuthContext,
   seedActivity,
   isHeatmapResponse,
   isStatsResponse,
@@ -36,13 +36,17 @@ describe('Analytics (e2e)', () => {
 
   describe('GET /analytics/heatmap', () => {
     it('should return heatmap data with seeded activities', async () => {
+      const auth = await createTestAuthContext(app, {
+        authId: 'dev:analytics-heatmap',
+        email: 'analytics-heatmap@test.local',
+      });
       // Seed some activity today
-      await seedActivity('doc_added');
-      await seedActivity('doc_opened');
+      await seedActivity('doc_added', auth.userId);
+      await seedActivity('doc_opened', auth.userId);
 
       const response = await request(app.getHttpServer())
         .get('/api/v1/analytics/heatmap')
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .expect(200);
 
       const { body } = response;
@@ -66,19 +70,23 @@ describe('Analytics (e2e)', () => {
 
   describe('GET /analytics/stats', () => {
     it('should return aggregate stats spanning multiple days', async () => {
+      const auth = await createTestAuthContext(app, {
+        authId: 'dev:analytics-stats',
+        email: 'analytics-stats@test.local',
+      });
       // Seed a document to affect document stats
-      await seedDocument({ title: 'Stats Doc' });
+      await seedDocument({ title: 'Stats Doc', userId: auth.userId });
 
       // Seed activity for streak calculation (today and yesterday)
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
 
-      await seedActivity('doc_added', TEST_USER_ID, yesterday);
-      await seedActivity('doc_added', TEST_USER_ID, new Date());
+      await seedActivity('doc_added', auth.userId, yesterday);
+      await seedActivity('doc_added', auth.userId, new Date());
 
       const response = await request(app.getHttpServer())
         .get('/api/v1/analytics/stats')
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .expect(200);
 
       const { body } = response;

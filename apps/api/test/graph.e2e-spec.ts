@@ -10,7 +10,7 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { setupApp, teardownApp, cleanupDatabase } from './setup';
 import {
-  TEST_USER_ID,
+  createTestAuthContext,
   seedDocument,
   seedGraphNode,
   seedGraphEdge,
@@ -38,23 +38,36 @@ describe('Graph (e2e)', () => {
 
   describe('GET /graph', () => {
     it('should return the full knowledge graph', async () => {
+      const auth = await createTestAuthContext(app, {
+        authId: 'dev:graph-full',
+        email: 'graph-full@test.local',
+      });
       // Seed root node (Concept)
-      const rootId = await seedGraphNode('Artificial Intelligence', 'Concept');
+      const rootId = await seedGraphNode(
+        'Artificial Intelligence',
+        'Concept',
+        undefined,
+        auth.userId,
+      );
 
       // Seed document node
-      const docId = await seedDocument({ title: 'AI Research Paper' });
+      const docId = await seedDocument({
+        title: 'AI Research Paper',
+        userId: auth.userId,
+      });
       const docNodeId = await seedGraphNode(
         'AI Research Paper',
         'Document',
         docId,
+        auth.userId,
       );
 
       // Link them
-      await seedGraphEdge(docNodeId, rootId, 'mentions', 1.0);
+      await seedGraphEdge(docNodeId, rootId, 'mentions', 1.0, auth.userId);
 
       const response = await request(app.getHttpServer())
         .get('/api/v1/graph')
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .expect(200);
 
       if (isFullGraphResponse(response.body)) {
@@ -70,9 +83,13 @@ describe('Graph (e2e)', () => {
     });
 
     it('should return empty arrays when no graph exists', async () => {
+      const auth = await createTestAuthContext(app, {
+        authId: 'dev:graph-empty',
+        email: 'graph-empty@test.local',
+      });
       const response = await request(app.getHttpServer())
         .get('/api/v1/graph')
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .expect(200);
 
       if (isFullGraphResponse(response.body)) {
@@ -86,18 +103,40 @@ describe('Graph (e2e)', () => {
 
   describe('GET /graph/document/:docId', () => {
     it('should return the subgraph for a specific document', async () => {
-      const docId = await seedDocument({ title: 'Subgraph Doc' });
-      const docNodeId = await seedGraphNode('Subgraph Doc', 'Document', docId);
+      const auth = await createTestAuthContext(app, {
+        authId: 'dev:graph-subgraph',
+        email: 'graph-subgraph@test.local',
+      });
+      const docId = await seedDocument({
+        title: 'Subgraph Doc',
+        userId: auth.userId,
+      });
+      const docNodeId = await seedGraphNode(
+        'Subgraph Doc',
+        'Document',
+        docId,
+        auth.userId,
+      );
 
-      const conceptId1 = await seedGraphNode('Machine Learning', 'Concept');
-      const conceptId2 = await seedGraphNode('Deep Learning', 'Concept');
+      const conceptId1 = await seedGraphNode(
+        'Machine Learning',
+        'Concept',
+        undefined,
+        auth.userId,
+      );
+      const conceptId2 = await seedGraphNode(
+        'Deep Learning',
+        'Concept',
+        undefined,
+        auth.userId,
+      );
 
-      await seedGraphEdge(docNodeId, conceptId1, 'mentions', 0.8);
-      await seedGraphEdge(docNodeId, conceptId2, 'mentions', 0.9);
+      await seedGraphEdge(docNodeId, conceptId1, 'mentions', 0.8, auth.userId);
+      await seedGraphEdge(docNodeId, conceptId2, 'mentions', 0.9, auth.userId);
 
       const response = await request(app.getHttpServer())
         .get(`/api/v1/graph/document/${docId}`)
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .expect(200);
 
       if (isDocumentSubgraphResponse(response.body)) {
@@ -111,22 +150,33 @@ describe('Graph (e2e)', () => {
     });
 
     it('should return 404 for nonexistent document subgraph', async () => {
+      const auth = await createTestAuthContext(app, {
+        authId: 'dev:graph-missing',
+        email: 'graph-missing@test.local',
+      });
       const fakeDocId = '507f1f77bcf86cd799439011';
 
       await request(app.getHttpServer())
         .get(`/api/v1/graph/document/${fakeDocId}`)
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .expect(404);
     });
   });
 
   describe('POST /graph/rebuild/:docId', () => {
     it('should trigger graph rebuild successfully', async () => {
-      const docId = await seedDocument({ title: 'Rebuild Doc' });
+      const auth = await createTestAuthContext(app, {
+        authId: 'dev:graph-rebuild',
+        email: 'graph-rebuild@test.local',
+      });
+      const docId = await seedDocument({
+        title: 'Rebuild Doc',
+        userId: auth.userId,
+      });
 
       const response = await request(app.getHttpServer())
         .post(`/api/v1/graph/rebuild/${docId}`)
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .expect(202);
 
       if (isRebuildGraphResponse(response.body)) {

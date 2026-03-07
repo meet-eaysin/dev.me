@@ -10,7 +10,7 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { setupApp, teardownApp, cleanupDatabase } from './setup';
 import {
-  TEST_USER_ID,
+  createTestAuthContext,
   isDocumentResponse,
   isIngestionStatusResponse,
   assertErrorShape,
@@ -35,10 +35,14 @@ describe('AI Ingestion (e2e)', () => {
   });
 
   it('should upload a PDF document and return a valid document response', async () => {
+    const auth = await createTestAuthContext(app, {
+      authId: 'dev:ai-ingestion-upload',
+      email: 'ai-ingestion-upload@test.local',
+    });
     const filePath = path.join(__dirname, 'fixtures/documents/test.pdf');
     const response = await request(app.getHttpServer())
       .post('/api/v1/documents/upload')
-      .set('x-user-id', TEST_USER_ID)
+      .set('Cookie', auth.cookies)
       .attach('file', filePath)
       .field('title', 'Ingestion E2E Doc')
       .expect(201);
@@ -53,10 +57,14 @@ describe('AI Ingestion (e2e)', () => {
   });
 
   it('should report ingestion status for an uploaded document', async () => {
+    const auth = await createTestAuthContext(app, {
+      authId: 'dev:ai-ingestion-status',
+      email: 'ai-ingestion-status@test.local',
+    });
     const filePath = path.join(__dirname, 'fixtures/documents/test.pdf');
     const uploadResponse = await request(app.getHttpServer())
       .post('/api/v1/documents/upload')
-      .set('x-user-id', TEST_USER_ID)
+      .set('Cookie', auth.cookies)
       .attach('file', filePath)
       .field('title', 'Status Check Doc')
       .expect(201);
@@ -68,7 +76,7 @@ describe('AI Ingestion (e2e)', () => {
 
     const statusResponse = await request(app.getHttpServer())
       .get(`/api/v1/documents/${docId}/ingestion-status`)
-      .set('x-user-id', TEST_USER_ID)
+      .set('Cookie', auth.cookies)
       .expect(200);
 
     if (isIngestionStatusResponse(statusResponse.body)) {
@@ -82,18 +90,26 @@ describe('AI Ingestion (e2e)', () => {
   });
 
   it('should reject upload without a file', async () => {
+    const auth = await createTestAuthContext(app, {
+      authId: 'dev:ai-ingestion-no-file',
+      email: 'ai-ingestion-no-file@test.local',
+    });
     await request(app.getHttpServer())
       .post('/api/v1/documents/upload')
-      .set('x-user-id', TEST_USER_ID)
+      .set('Cookie', auth.cookies)
       .field('title', 'No File Doc')
       .expect(400);
   });
 
   it('should reject upload of invalid file type', async () => {
+    const auth = await createTestAuthContext(app, {
+      authId: 'dev:ai-ingestion-invalid',
+      email: 'ai-ingestion-invalid@test.local',
+    });
     const filePath = path.join(__dirname, 'fixtures/documents/sample.txt');
     const response = await request(app.getHttpServer())
       .post('/api/v1/documents/upload')
-      .set('x-user-id', TEST_USER_ID)
+      .set('Cookie', auth.cookies)
       .attach('file', filePath)
       .field('title', 'Invalid Type Doc')
       .expect(400);

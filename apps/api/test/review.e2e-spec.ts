@@ -10,7 +10,7 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { setupApp, teardownApp, cleanupDatabase } from './setup';
 import {
-  TEST_USER_ID,
+  createTestAuthContext,
   seedDocument,
   seedReviewDismissal,
   isDailyReviewResponse,
@@ -37,13 +37,17 @@ describe('Review (e2e)', () => {
 
   describe('GET /review/daily', () => {
     it('should return review items', async () => {
+      const auth = await createTestAuthContext(app, {
+        authId: 'dev:review-daily',
+        email: 'review-daily@test.local',
+      });
       // Seed some documents to trigger review logic
-      await seedDocument({ title: 'Important Doc 1' });
-      await seedDocument({ title: 'Important Doc 2' });
+      await seedDocument({ title: 'Important Doc 1', userId: auth.userId });
+      await seedDocument({ title: 'Important Doc 2', userId: auth.userId });
 
       const response = await request(app.getHttpServer())
         .get('/api/v1/review/daily')
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .expect(200);
 
       if (isDailyReviewResponse(response.body)) {
@@ -55,12 +59,19 @@ describe('Review (e2e)', () => {
     });
 
     it('should exclude dismissed items', async () => {
-      const docId = await seedDocument({ title: 'Dismissed Doc' });
-      await seedReviewDismissal(docId);
+      const auth = await createTestAuthContext(app, {
+        authId: 'dev:review-dismissed',
+        email: 'review-dismissed@test.local',
+      });
+      const docId = await seedDocument({
+        title: 'Dismissed Doc',
+        userId: auth.userId,
+      });
+      await seedReviewDismissal(docId, 'document', auth.userId);
 
       const response = await request(app.getHttpServer())
         .get('/api/v1/review/daily')
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .expect(200);
 
       if (isDailyReviewResponse(response.body)) {
@@ -74,17 +85,24 @@ describe('Review (e2e)', () => {
 
   describe('POST /review/dismiss/:docId', () => {
     it('should dismiss a document from review', async () => {
-      const docId = await seedDocument({ title: 'To Dismiss' });
+      const auth = await createTestAuthContext(app, {
+        authId: 'dev:review-dismiss-route',
+        email: 'review-dismiss-route@test.local',
+      });
+      const docId = await seedDocument({
+        title: 'To Dismiss',
+        userId: auth.userId,
+      });
 
       await request(app.getHttpServer())
         .post(`/api/v1/review/dismiss/${docId}`)
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .expect(201); // Controller uses @Post which defaults to 201
 
       // Verify it's dismissed in daily review
       const response = await request(app.getHttpServer())
         .get('/api/v1/review/daily')
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .expect(200);
 
       if (isDailyReviewResponse(response.body)) {
@@ -96,15 +114,20 @@ describe('Review (e2e)', () => {
 
   describe('GET /recommendations', () => {
     it('should return recommendations based on tags', async () => {
+      const auth = await createTestAuthContext(app, {
+        authId: 'dev:review-recommendations',
+        email: 'review-recommendations@test.local',
+      });
       // Seed some documents with tags
       await seedDocument({
         title: 'AI Doc',
         status: DocumentStatus.TO_READ,
+        userId: auth.userId,
       });
 
       const response = await request(app.getHttpServer())
         .get('/api/v1/review/recommendations')
-        .set('x-user-id', TEST_USER_ID)
+        .set('Cookie', auth.cookies)
         .expect(200);
 
       if (isRecommendationResponse(response.body)) {
