@@ -25,7 +25,7 @@ import {
   NotionDatabaseDto,
   NotionSyncResultDto,
 } from './dtos/notion.response.dto';
-import { ApiSuccessResponse } from 'src/shared/decorators/api-success-response.decorator';
+import { ApiSuccessResponse } from '../../../shared/decorators/api-success-response.decorator';
 
 @ApiTags('Integrations: Notion')
 @ApiBearerAuth('bearerAuth')

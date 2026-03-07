@@ -49,7 +49,7 @@ import {
 import { DevUserGuard } from '../../../shared/guards/dev-user.guard';
 import { User } from '../../../shared/decorators/user.decorator';
 import { ApiPaginatedResponse } from '../../../shared/decorators/api-paginated-response.decorator';
-import { ApiSuccessResponse } from 'src/shared/decorators/api-success-response.decorator';
+import { ApiSuccessResponse } from '../../../shared/decorators/api-success-response.decorator';
 
 @ApiTags('Documents')
 @ApiBearerAuth('bearerAuth')

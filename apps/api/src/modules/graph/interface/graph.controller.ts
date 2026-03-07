@@ -19,7 +19,7 @@ import { GetDocumentSubgraphUseCase } from '../application/use-cases/get-documen
 import { RebuildDocumentGraphUseCase } from '../application/use-cases/rebuild-document-graph.usecase';
 import { User } from '../../../shared/decorators/user.decorator';
 import { FullGraphResponseDto } from './dtos/graph.response.dto';
-import { ApiSuccessResponse } from 'src/shared/decorators/api-success-response.decorator';
+import { ApiSuccessResponse } from '../../../shared/decorators/api-success-response.decorator';
 
 @ApiTags('Knowledge Graph')
 @ApiBearerAuth('bearerAuth')
