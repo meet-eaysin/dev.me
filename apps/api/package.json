@@ -20,7 +20,6 @@
     "@nestjs/platform-express": "^11.1.11",
     "@nestjs/swagger": "^11.2.6",
     "@repo/ai": "*",
-    "@repo/api": "*",
     "@repo/crypto": "*",
     "@repo/db": "*",
     "@repo/queue": "*",
