@@ -1,18 +1,11 @@
 'use client';
 
-import Link from 'next/link';
 import { Badge } from '../ui/badge';
 
 export default function UnconfirmedBookingBadge() {
   return (
-    <Link href="/bookings/unconfirmed">
-      <Badge
-        title={''}
-        variant="success"
-        className="cursor-pointer hover:bg-orange-800 hover:text-orange-100"
-      >
-        Test
-      </Badge>
-    </Link>
+    <Badge title="Unconfirmed bookings" variant="success" className="h-5 px-1.5 text-[10px] font-semibold leading-none">
+      Test
+    </Badge>
   );
 }

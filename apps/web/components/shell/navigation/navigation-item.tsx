@@ -138,7 +138,11 @@ export const NavigationItem: React.FC<{
           )}
           <span className={itemLabelClass} data-testid={`${item.name}-test`}>
             {itemLabel}
-            {item.badge && item.badge}
+            {item.badge && (
+              <span className="ml-2 inline-flex shrink-0 items-center">
+                {item.badge}
+              </span>
+            )}
           </span>
           {shouldShowChevron && (
             <NavIcon
@@ -173,7 +177,11 @@ export const NavigationItem: React.FC<{
           )}
           <span className={itemLabelClass} data-testid={`${item.name}-test`}>
             {itemLabel}
-            {item.badge && item.badge}
+            {item.badge && (
+              <span className="ml-2 inline-flex shrink-0 items-center">
+                {item.badge}
+              </span>
+            )}
           </span>
         </Link>
       )}
