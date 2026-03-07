@@ -2,7 +2,6 @@ import { cn } from '@/lib/utils';
 import {
   User as UserIcon,
   Settings as SettingsIcon,
-  Moon as MoonIcon,
   LogOut as LogOutIcon,
   ChevronDown as ChevronDownIcon,
   ChevronUp as ChevronUpIcon,
@@ -24,6 +23,7 @@ import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
 
 import { Avatar } from '@/components/ui/avatar';
+import { ThemeToggle } from '../theme-toggle';
 
 interface UserDropdownProps {
   small?: boolean;
@@ -50,7 +50,7 @@ export function UserDropdown({ small }: UserDropdownProps) {
           <button
             data-testid="user-dropdown-trigger-button"
             className={cn(
-              'hover:bg-emphasis todesktop:bg-transparent! group mx-0 flex w-full cursor-pointer appearance-none items-center rounded-full text-left outline-none transition focus:outline-none focus:ring-0 md:rounded-none lg:rounded',
+              'hover:bg-emphasis group mx-0 flex w-full cursor-pointer appearance-none items-center rounded-full text-left outline-none transition focus:outline-none focus:ring-0 md:rounded-none lg:rounded',
               small ? 'p-2' : 'px-2 py-1.5',
             )}
           />
@@ -65,7 +65,7 @@ export function UserDropdown({ small }: UserDropdownProps) {
           <Avatar
             size={small ? 'xs' : 'xsm'}
             imageSrc={user?.avatarUrl}
-            alt={'Nameless User Avatar'}
+            alt="Nameless User Avatar"
             className="overflow-hidden"
           />
           <span
@@ -106,21 +106,16 @@ export function UserDropdown({ small }: UserDropdownProps) {
               <UserIcon />
               My Profile
             </MenuItem>
-            <MenuItem render={<Link href="/settings/my-account/general" />}>
+            <MenuItem render={<Link href="/settings" />}>
               <SettingsIcon />
-              My Settings
+              Settings
             </MenuItem>
-            <MenuItem
-              render={<Link href="/settings/my-account/out-of-office" />}
-            >
-              <MoonIcon />
-              Out of Office
-            </MenuItem>
+            <div className="px-1 py-1">
+              <ThemeToggle />
+            </div>
             <MenuSeparator />
           </>
         )}
-
-        <MenuSeparator />
 
         <MenuItem
           variant="destructive"
