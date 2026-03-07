@@ -17,9 +17,14 @@ export const MORE_SEPARATOR_NAME = 'more';
 
 const getNavigationItems = (): NavigationItemType[] => [
   {
-    name: 'event_types_page_title',
+    name: 'Inbox',
     href: '/event-types',
     icon: 'link',
+  },
+  {
+    name: 'Documents',
+    href: 'docuemnts',
+    icon: 'arrow-down',
   },
 ];
 
