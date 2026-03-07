@@ -1,20 +1,26 @@
-import { Button } from '@/components/ui/button';
+import Shell from '@/components/shall';
 
-export default function Home() {
+export default function Page() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex border border-border p-8 rounded-xl bg-card">
-        <div className="flex flex-col gap-4 w-full">
-          <h1 className="text-4xl font-bold tracking-tight">Mind Stack</h1>
-          <p className="text-muted-foreground text-lg">
-            Your personal knowledge base.
-          </p>
-          <div className="flex gap-4 mt-4">
-            <Button>Get Started</Button>
-            <Button variant="outline">Learn More</Button>
-          </div>
-        </div>
+    <Shell
+      heading={<>Event Types Mock</>}
+      subtitle="Create and manage your event types"
+      CTA={
+        <button className="bg-brand text-brand-contrast px-4 py-2 rounded-md font-medium text-sm">
+          New Event Type
+        </button>
+      }
+    >
+      <div className="bg-default border-subtle border rounded-md p-6 mt-6">
+        <h2 className="text-emphasis font-semibold text-lg mb-2">
+          Example Content Area
+        </h2>
+        <p className="text-subtle text-sm">
+          This is a purely visual demonstration of the Cal.com shell layout. All
+          backend routing, authentication, and data-fetching has been stripped
+          away.
+        </p>
       </div>
-    </div>
+    </Shell>
   );
 }
