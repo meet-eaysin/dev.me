@@ -2122,7 +2122,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/mapped-types@npm:*, @nestjs/mapped-types@npm:2.1.0":
+"@nestjs/mapped-types@npm:2.1.0":
   version: 2.1.0
   resolution: "@nestjs/mapped-types@npm:2.1.0"
   peerDependencies:
@@ -3724,20 +3724,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@repo/api@npm:*, @repo/api@workspace:packages/api":
-  version: 0.0.0-use.local
-  resolution: "@repo/api@workspace:packages/api"
-  dependencies:
-    "@nestjs/mapped-types": "npm:*"
-    "@repo/eslint-config": "npm:*"
-    "@repo/typescript-config": "npm:*"
-    "@types/node": "npm:^22.10.7"
-    ts-loader: "npm:^9.4.3"
-    ts-node: "npm:^10.9.2"
-    typescript: "npm:5.5.4"
-  languageName: unknown
-  linkType: soft
-
 "@repo/crypto@npm:*, @repo/crypto@workspace:packages/crypto":
   version: 0.0.0-use.local
   resolution: "@repo/crypto@workspace:packages/crypto"
@@ -4303,7 +4289,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^22.10.7, @types/node@npm:^22.15.3, @types/node@npm:^22.19.3":
+"@types/node@npm:^22.15.3, @types/node@npm:^22.19.3":
   version: 22.19.15
   resolution: "@types/node@npm:22.19.15"
   dependencies:
@@ -5116,7 +5102,6 @@ __metadata:
     "@nestjs/swagger": "npm:^11.2.6"
     "@nestjs/testing": "npm:^11.1.11"
     "@repo/ai": "npm:*"
-    "@repo/api": "npm:*"
     "@repo/crypto": "npm:*"
     "@repo/db": "npm:*"
     "@repo/eslint-config": "npm:*"
@@ -11839,7 +11824,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-loader@npm:^9.4.3, ts-loader@npm:^9.5.4":
+"ts-loader@npm:^9.5.4":
   version: 9.5.4
   resolution: "ts-loader@npm:9.5.4"
   dependencies:
@@ -12503,7 +12488,6 @@ __metadata:
   dependencies:
     "@base-ui/react": "npm:^1.2.0"
     "@hookform/resolvers": "npm:^5.2.2"
-    "@repo/api": "npm:*"
     "@repo/eslint-config": "npm:*"
     "@repo/typescript-config": "npm:*"
     "@repo/ui": "npm:*"

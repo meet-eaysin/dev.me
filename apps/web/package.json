@@ -29,7 +29,6 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@repo/api": "*",
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
     "@tailwindcss/postcss": "^4.2.1",

@@ -22,7 +22,6 @@ This Turborepo includes the following packages & apps:
 │   ├── api                       # NestJS app (https://nestjs.com).
 │   └── web                       # Next.js app (https://nextjs.org).
 └── packages
-    ├── @repo/api                 # Shared `NestJS` resources.
     ├── @repo/eslint-config       # `eslint` configurations (includes `prettier`)
     ├── @repo/jest-config         # `jest` configurations
     ├── @repo/typescript-config   # `tsconfig.json`s used throughout the monorepo
