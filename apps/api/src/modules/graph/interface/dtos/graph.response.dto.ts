@@ -28,7 +28,10 @@ export class GraphEdgeViewDto {
   @ApiProperty({ example: 'node_2' })
   to!: string;
 
-  @ApiProperty({ enum: GraphRelationType, example: GraphRelationType.SEMANTIC_SIMILARITY })
+  @ApiProperty({
+    enum: GraphRelationType,
+    example: GraphRelationType.SEMANTIC_SIMILARITY,
+  })
   type!: GraphRelationType;
 
   @ApiProperty({ example: 0.95 })

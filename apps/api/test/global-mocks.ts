@@ -40,17 +40,19 @@ jest.mock('axios', () => mockedAxios);
 
 jest.mock('@repo/ai', () => ({
   QdrantWrapper: jest.fn().mockImplementation(() => ({
-    searchSimilar: jest.fn<() => Promise<MockQdrantResult[]>>().mockResolvedValue([
-      {
-        id: 'mock-id',
-        score: 0.9,
-        payload: {
-          documentId: '65f1a2b3c4d5e6f7a8b9c0d2',
-          userId: '65f1a2b3c4d5e6f7a8b9c0d1',
-          chunkIndex: 0,
+    searchSimilar: jest
+      .fn<() => Promise<MockQdrantResult[]>>()
+      .mockResolvedValue([
+        {
+          id: 'mock-id',
+          score: 0.9,
+          payload: {
+            documentId: '65f1a2b3c4d5e6f7a8b9c0d2',
+            userId: '65f1a2b3c4d5e6f7a8b9c0d1',
+            chunkIndex: 0,
+          },
         },
-      },
-    ]),
+      ]),
   })),
   ProviderFactory: {
     getLLMConfig: jest.fn<() => Promise<MockLLMConfig>>().mockResolvedValue({
@@ -63,11 +65,17 @@ jest.mock('@repo/ai', () => ({
     }),
   },
   embeddingAdapter: {
-    embedText: jest.fn<() => Promise<number[]>>().mockResolvedValue(Array.from({ length: 384 }, () => 0)),
-    embedBatch: jest.fn<() => Promise<number[][]>>().mockResolvedValue([Array.from({ length: 384 }, () => 0)]),
+    embedText: jest
+      .fn<() => Promise<number[]>>()
+      .mockResolvedValue(Array.from({ length: 384 }, () => 0)),
+    embedBatch: jest
+      .fn<() => Promise<number[][]>>()
+      .mockResolvedValue([Array.from({ length: 384 }, () => 0)]),
   },
   EmbeddingAdapter: jest.fn().mockImplementation(() => ({
-    embedText: jest.fn<() => Promise<number[]>>().mockResolvedValue(Array.from({ length: 384 }, () => 0)),
+    embedText: jest
+      .fn<() => Promise<number[]>>()
+      .mockResolvedValue(Array.from({ length: 384 }, () => 0)),
   })),
   YouTubeExtractor: jest.fn().mockImplementation(() => ({})),
   UrlExtractor: jest.fn().mockImplementation(() => ({})),
@@ -79,13 +87,17 @@ jest.mock('@repo/ai', () => ({
 
 jest.mock('@repo/queue', () => ({
   Queue: jest.fn().mockImplementation(() => ({
-    add: jest.fn<() => Promise<Record<string, unknown>>>().mockResolvedValue({}),
+    add: jest
+      .fn<() => Promise<Record<string, unknown>>>()
+      .mockResolvedValue({}),
     process: jest.fn(),
     on: jest.fn(),
   })),
   Worker: jest.fn().mockImplementation(() => ({
     on: jest.fn(),
-    close: jest.fn<() => Promise<Record<string, unknown>>>().mockResolvedValue({}),
+    close: jest
+      .fn<() => Promise<Record<string, unknown>>>()
+      .mockResolvedValue({}),
   })),
   createRedisConnection: jest.fn().mockReturnValue({}),
   initQueues: jest.fn(),

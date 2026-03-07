@@ -11,5 +11,7 @@ export interface DocumentTranscript {
 }
 
 export abstract class ITranscriptRepository {
-  abstract findByDocumentId(documentId: string): Promise<DocumentTranscript | null>;
+  abstract findByDocumentId(
+    documentId: string,
+  ): Promise<DocumentTranscript | null>;
 }

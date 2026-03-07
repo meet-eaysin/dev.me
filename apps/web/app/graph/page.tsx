@@ -6,7 +6,11 @@ export default function GraphPage() {
       title="Graph"
       subtitle="Knowledge graph"
       description="Visualize your document network and semantic relationships, then inspect document-focused subgraphs."
-      endpoints={['GET /graph', 'GET /graph/document/:docId', 'POST /graph/rebuild/:docId']}
+      endpoints={[
+        'GET /graph',
+        'GET /graph/document/:docId',
+        'POST /graph/rebuild/:docId',
+      ]}
     />
   );
 }

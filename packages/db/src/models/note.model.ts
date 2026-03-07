@@ -1,5 +1,5 @@
-import { model, models, Schema, Model } from "mongoose";
-import { INoteDocument } from "../types/note.type";
+import { model, models, Schema, Model } from 'mongoose';
+import { INoteDocument } from '../types/note.type';
 
 const noteSchema = new Schema<INoteDocument>(
   {
@@ -8,11 +8,11 @@ const noteSchema = new Schema<INoteDocument>(
       required: true,
       index: true,
     },
-    documentId: { type: Schema.Types.ObjectId, ref: "Document", index: true },
+    documentId: { type: Schema.Types.ObjectId, ref: 'Document', index: true },
     content: { type: String, required: true },
   },
   { timestamps: true },
 );
 
 export const NoteModel: Model<INoteDocument> =
-  models.Note || model<INoteDocument>("Note", noteSchema);
+  models.Note || model<INoteDocument>('Note', noteSchema);

@@ -1,18 +1,18 @@
-import mongoose, { Schema, Model } from "mongoose";
-import { IReviewDismissalDocument } from "../types/review-dismissal.type";
+import mongoose, { Schema, Model } from 'mongoose';
+import { IReviewDismissalDocument } from '../types/review-dismissal.type';
 
 const reviewDismissalSchema = new Schema<IReviewDismissalDocument>(
   {
     userId: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true,
       index: true,
     },
     targetId: { type: Schema.Types.ObjectId, required: true, index: true },
     targetType: {
       type: String,
-      enum: ["document", "note", "graph-node"],
+      enum: ['document', 'note', 'graph-node'],
       required: true,
       index: true,
     },
@@ -30,8 +30,8 @@ reviewDismissalSchema.index(
 reviewDismissalSchema.index({ createdAt: 1 }, { expireAfterSeconds: 172800 });
 
 export const ReviewDismissalModel: Model<IReviewDismissalDocument> =
-  mongoose.models["ReviewDismissal"] ||
+  mongoose.models['ReviewDismissal'] ||
   mongoose.model<IReviewDismissalDocument>(
-    "ReviewDismissal",
+    'ReviewDismissal',
     reviewDismissalSchema,
   );

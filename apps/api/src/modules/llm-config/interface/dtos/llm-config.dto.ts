@@ -24,17 +24,20 @@ export class SaveLLMConfigDto {
   @IsNotEmpty()
   embeddingModel!: string;
 
-  @ApiPropertyOptional({ description: 'API key for the provider (encrypted at rest)' })
+  @ApiPropertyOptional({
+    description: 'API key for the provider (encrypted at rest)',
+  })
   @IsString()
   @IsOptional()
   apiKey?: string;
 
-  @ApiPropertyOptional({ description: 'Custom base URL if using a proxy or Ollama', example: 'http://localhost:11434' })
+  @ApiPropertyOptional({
+    description: 'Custom base URL if using a proxy or Ollama',
+    example: 'http://localhost:11434',
+  })
   @IsOptional()
   @IsUrl()
   baseUrl?: string;
 }
 
-export class ValidateLLMConfigDto
-  extends SaveLLMConfigDto
-{}
+export class ValidateLLMConfigDto extends SaveLLMConfigDto {}

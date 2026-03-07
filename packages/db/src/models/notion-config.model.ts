@@ -1,12 +1,12 @@
-import mongoose, { Schema, Model } from "mongoose";
-import { INotionConfigDocument } from "../types/notion-config.type";
-import { NotionSyncDirectionType } from "@repo/types";
+import mongoose, { Schema, Model } from 'mongoose';
+import { INotionConfigDocument } from '../types/notion-config.type';
+import { NotionSyncDirectionType } from '@repo/types';
 
 const notionConfigSchema = new Schema<INotionConfigDocument>(
   {
     userId: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true,
       unique: true,
       index: true,
@@ -27,5 +27,5 @@ const notionConfigSchema = new Schema<INotionConfigDocument>(
 );
 
 export const NotionConfigModel: Model<INotionConfigDocument> =
-  (mongoose.models["NotionConfig"] as Model<INotionConfigDocument>) ||
-  mongoose.model<INotionConfigDocument>("NotionConfig", notionConfigSchema);
+  (mongoose.models['NotionConfig'] as Model<INotionConfigDocument>) ||
+  mongoose.model<INotionConfigDocument>('NotionConfig', notionConfigSchema);

@@ -5,7 +5,9 @@ import { NotionConfigEntity } from '../../domain/entities/notion-config.entity';
 
 @Injectable()
 export class UpdateNotionConfigUseCase {
-  constructor(private readonly notionConfigRepository: INotionConfigRepository) {}
+  constructor(
+    private readonly notionConfigRepository: INotionConfigRepository,
+  ) {}
 
   async execute(
     userId: string,

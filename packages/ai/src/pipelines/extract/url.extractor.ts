@@ -1,8 +1,9 @@
-import axios from "axios";
-import https from "https";
+import axios from 'axios';
+import https from 'https';
 
 // In development, handle self-signed or missing local issuer certificates
-if (process.env.NODE_ENV !== "production") process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+if (process.env.NODE_ENV !== 'production')
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 export interface UrlExtractResult {
   title: string;
@@ -16,19 +17,19 @@ export interface UrlExtractResult {
 export class UrlExtractor {
   async extractFromUrl(url: string, retryCount = 1): Promise<UrlExtractResult> {
     try {
-      const { extract } = await import("@extractus/article-extractor");
+      const { extract } = await import('@extractus/article-extractor');
       const article = await extract(url);
 
       if (article && article.content) {
         const markdown = article.content;
 
-        let language = "en";
-        if ("language" in article && typeof article.language === "string") {
+        let language = 'en';
+        if ('language' in article && typeof article.language === 'string') {
           language = article.language;
         }
 
         return {
-          title: article.title || "Untitled",
+          title: article.title || 'Untitled',
           author: article.author || undefined,
           publishedAt: article.published || undefined,
           markdown: markdown,
@@ -37,7 +38,7 @@ export class UrlExtractor {
         };
       }
 
-      throw new Error("Could not extract content from URL");
+      throw new Error('Could not extract content from URL');
     } catch {
       if (retryCount > 0) {
         await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -52,11 +53,11 @@ export class UrlExtractor {
       const html = response.data;
 
       return {
-        title: "Untitled",
+        title: 'Untitled',
         markdown: html.substring(0, 1000),
         author: undefined,
         publishedAt: undefined,
-        language: "en",
+        language: 'en',
         isPartial: true,
       };
     }

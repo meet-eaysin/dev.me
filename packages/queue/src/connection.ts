@@ -1,4 +1,4 @@
-import { Redis, RedisOptions } from "ioredis";
+import { Redis, RedisOptions } from 'ioredis';
 
 /**
  * Creates a shared Redis connection for BullMQ.

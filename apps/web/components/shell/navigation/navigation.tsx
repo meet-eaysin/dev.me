@@ -64,7 +64,8 @@ const getNavigationItems = (): NavigationItemType[] => [
         name: 'ask_ai',
         label: 'Ask AI',
         href: '/search/ask',
-        isCurrent: ({ pathname }) => pathname?.startsWith('/search/ask') ?? false,
+        isCurrent: ({ pathname }) =>
+          pathname?.startsWith('/search/ask') ?? false,
       },
     ],
   },
@@ -114,7 +115,8 @@ const getNavigationItems = (): NavigationItemType[] => [
         name: 'llm_config',
         label: 'LLM Config',
         href: '/settings/llm',
-        isCurrent: ({ pathname }) => pathname?.startsWith('/settings/llm') ?? false,
+        isCurrent: ({ pathname }) =>
+          pathname?.startsWith('/settings/llm') ?? false,
       },
     ],
   },
@@ -254,9 +256,7 @@ const MobileNavigation = ({
 
   return (
     <>
-      <nav
-        className="pwa:pb-[max(0.25rem,env(safe-area-inset-bottom))] pwa:-mx-2 bg-cal-muted/40 border-subtle fixed bottom-0 left-0 z-30 flex w-full border-t px-1 shadow backdrop-blur-md md:hidden"
-      >
+      <nav className="pwa:pb-[max(0.25rem,env(safe-area-inset-bottom))] pwa:-mx-2 bg-cal-muted/40 border-subtle fixed bottom-0 left-0 z-30 flex w-full border-t px-1 shadow backdrop-blur-md md:hidden">
         {mobileNavigationBottomItems.map((item) => (
           <MobileNavigationItem key={item.name} item={item} />
         ))}

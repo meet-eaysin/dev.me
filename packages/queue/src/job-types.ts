@@ -1,4 +1,4 @@
-import { NotionAction } from "@repo/types";
+import { NotionAction } from '@repo/types';
 
 export interface IngestionJobData {
   documentId: string;

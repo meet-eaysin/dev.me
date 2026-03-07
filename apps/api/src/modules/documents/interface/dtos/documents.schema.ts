@@ -15,22 +15,35 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { DocumentType, DocumentStatus } from '@repo/types';
 
 export class CreateDocumentDto {
-  @ApiProperty({ enum: DocumentType, description: 'The type of the document', example: DocumentType.PDF })
+  @ApiProperty({
+    enum: DocumentType,
+    description: 'The type of the document',
+    example: DocumentType.PDF,
+  })
   @IsEnum(DocumentType)
   @IsNotEmpty()
   type!: DocumentType;
 
-  @ApiProperty({ description: 'The source URL or storage path of the document', example: 'uploads/test.pdf' })
+  @ApiProperty({
+    description: 'The source URL or storage path of the document',
+    example: 'uploads/test.pdf',
+  })
   @IsString()
   @IsNotEmpty()
   source!: string;
 
-  @ApiPropertyOptional({ description: 'Optional title of the document', example: 'Annual Report' })
+  @ApiPropertyOptional({
+    description: 'Optional title of the document',
+    example: 'Annual Report',
+  })
   @IsString()
   @IsOptional()
   title?: string;
 
-  @ApiPropertyOptional({ enum: DocumentStatus, description: 'Initial status of the document' })
+  @ApiPropertyOptional({
+    enum: DocumentStatus,
+    description: 'Initial status of the document',
+  })
   @IsEnum(DocumentStatus)
   @IsOptional()
   status?: DocumentStatus;
@@ -59,24 +72,36 @@ export class CreateDocumentDto {
   @IsOptional()
   tagIds?: string[];
 
-  @ApiPropertyOptional({ description: 'Additional metadata for the document', example: { project: 'X' } })
+  @ApiPropertyOptional({
+    description: 'Additional metadata for the document',
+    example: { project: 'X' },
+  })
   @IsObject()
   @IsOptional()
   metadata?: Record<string, unknown>;
 }
 
 export class UpdateDocumentDto {
-  @ApiPropertyOptional({ enum: DocumentStatus, description: 'Update document processing status' })
+  @ApiPropertyOptional({
+    enum: DocumentStatus,
+    description: 'Update document processing status',
+  })
   @IsEnum(DocumentStatus)
   @IsOptional()
   status?: DocumentStatus;
 
-  @ApiPropertyOptional({ description: 'Update document title', example: 'Updated Report' })
+  @ApiPropertyOptional({
+    description: 'Update document title',
+    example: 'Updated Report',
+  })
   @IsString()
   @IsOptional()
   title?: string;
 
-  @ApiPropertyOptional({ description: 'Move document to a different folder ID', example: '65f1a2b3c4d5e6f7a8b9c0d1' })
+  @ApiPropertyOptional({
+    description: 'Move document to a different folder ID',
+    example: '65f1a2b3c4d5e6f7a8b9c0d1',
+  })
   @Matches(/^[0-9a-fA-F]{24}$/, { message: 'Invalid folder ID format' })
   @IsOptional()
   folderId?: string;
@@ -94,7 +119,10 @@ export class UpdateDocumentDto {
 }
 
 export class ListDocumentsDto {
-  @ApiPropertyOptional({ enum: DocumentStatus, description: 'Filter by status' })
+  @ApiPropertyOptional({
+    enum: DocumentStatus,
+    description: 'Filter by status',
+  })
   @IsEnum(DocumentStatus)
   @IsOptional()
   status?: DocumentStatus;
@@ -127,14 +155,22 @@ export class ListDocumentsDto {
   @IsOptional()
   q?: string;
 
-  @ApiPropertyOptional({ description: 'Page number for pagination', example: 1, default: 1 })
+  @ApiPropertyOptional({
+    description: 'Page number for pagination',
+    example: 1,
+    default: 1,
+  })
   @Type(() => Number)
   @IsInt()
   @Min(1)
   @IsOptional()
   page?: number = 1;
 
-  @ApiPropertyOptional({ description: 'Items per page', example: 20, default: 20 })
+  @ApiPropertyOptional({
+    description: 'Items per page',
+    example: 20,
+    default: 20,
+  })
   @Type(() => Number)
   @IsInt()
   @Min(1)
@@ -149,7 +185,10 @@ export class UploadDocumentDto {
   @IsOptional()
   title?: string;
 
-  @ApiPropertyOptional({ description: 'Folder IDs to place the file in', type: [String] })
+  @ApiPropertyOptional({
+    description: 'Folder IDs to place the file in',
+    type: [String],
+  })
   @IsOptional()
   @Transform(({ value }) => (typeof value === 'string' ? [value] : value))
   @IsArray()
@@ -160,7 +199,10 @@ export class UploadDocumentDto {
   })
   folderIds?: string[];
 
-  @ApiPropertyOptional({ description: 'Tag IDs to associate with the file', type: [String] })
+  @ApiPropertyOptional({
+    description: 'Tag IDs to associate with the file',
+    type: [String],
+  })
   @IsOptional()
   @Transform(({ value }) => (typeof value === 'string' ? [value] : value))
   @IsArray()

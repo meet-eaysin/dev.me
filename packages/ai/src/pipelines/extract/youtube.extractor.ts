@@ -1,6 +1,6 @@
-import { YoutubeTranscript } from "youtube-transcript";
-import axios from "axios";
-import { z } from "zod";
+import { YoutubeTranscript } from 'youtube-transcript';
+import axios from 'axios';
+import { z } from 'zod';
 
 const OEmbedSchema = z.object({
   title: z.string(),
@@ -39,7 +39,7 @@ interface VideoMetadata {
 export class YouTubeExtractor {
   async extractYouTube(url: string): Promise<YouTubeExtractResult> {
     const videoId = this.extractVideoId(url);
-    if (!videoId) throw new Error("Invalid YouTube URL");
+    if (!videoId) throw new Error('Invalid YouTube URL');
 
     let transcript: YTTranscriptResponse[] = [];
     try {
@@ -72,15 +72,15 @@ export class YouTubeExtractor {
       return {
         title: data.title,
         channelTitle: data.author_name,
-        description: "", // OEmbed doesn't provide description
+        description: '', // OEmbed doesn't provide description
         thumbnail: data.thumbnail_url,
       };
     } catch {
       return {
-        title: "Unknown Title",
-        channelTitle: "Unknown Channel",
-        description: "",
-        thumbnail: "",
+        title: 'Unknown Title',
+        channelTitle: 'Unknown Channel',
+        description: '',
+        thumbnail: '',
       };
     }
   }

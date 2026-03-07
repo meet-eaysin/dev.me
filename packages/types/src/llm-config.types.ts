@@ -1,6 +1,6 @@
 export interface LLMConfigPublicView {
   userId: string;
-  provider: "openai" | "anthropic" | "ollama";
+  provider: 'openai' | 'anthropic' | 'ollama';
   chatModel: string;
   embeddingModel: string;
   baseUrl: string | null;
@@ -12,7 +12,7 @@ export interface LLMConfigPublicView {
 }
 
 export interface SaveLLMConfigRequest {
-  provider: "openai" | "anthropic" | "ollama";
+  provider: 'openai' | 'anthropic' | 'ollama';
   chatModel: string;
   embeddingModel: string;
   apiKey?: string;

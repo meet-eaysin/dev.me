@@ -1,8 +1,8 @@
-import { Document, Types } from "mongoose";
+import { Document, Types } from 'mongoose';
 
 export interface ILLMConfig {
   userId: Types.ObjectId;
-  provider: "openai" | "anthropic" | "ollama";
+  provider: 'openai' | 'anthropic' | 'ollama';
   chatModel: string;
   embeddingModel: string;
   apiKey?: string;

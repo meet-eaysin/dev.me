@@ -1,5 +1,5 @@
-import { createWorker } from "tesseract.js";
-import sharp from "sharp";
+import { createWorker } from 'tesseract.js';
+import sharp from 'sharp';
 
 export class ImageExtractor {
   async extractImage(
@@ -8,10 +8,10 @@ export class ImageExtractor {
     // Sharp to auto-orient + resize (max 4000px) before OCR
     const processedBuffer = await sharp(buffer)
       .rotate()
-      .resize(4000, 4000, { fit: "inside", withoutEnlargement: true })
+      .resize(4000, 4000, { fit: 'inside', withoutEnlargement: true })
       .toBuffer();
 
-    const worker = await createWorker("eng");
+    const worker = await createWorker('eng');
     const { data } = await worker.recognize(processedBuffer);
     await worker.terminate();
 

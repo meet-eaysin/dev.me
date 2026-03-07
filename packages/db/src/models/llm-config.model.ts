@@ -1,18 +1,18 @@
-import mongoose, { Model, Schema } from "mongoose";
-import { ILLMConfigDocument } from "../types/llm-config.type";
+import mongoose, { Model, Schema } from 'mongoose';
+import { ILLMConfigDocument } from '../types/llm-config.type';
 
 const llmConfigSchema = new Schema<ILLMConfigDocument>(
   {
     userId: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true,
       unique: true,
       index: true,
     },
     provider: {
       type: String,
-      enum: ["openai", "anthropic", "ollama"],
+      enum: ['openai', 'anthropic', 'ollama'],
       required: true,
     },
     chatModel: { type: String, required: true },
@@ -29,5 +29,5 @@ const llmConfigSchema = new Schema<ILLMConfigDocument>(
 );
 
 export const LLMConfigModel: Model<ILLMConfigDocument> =
-  (mongoose.models["LLMConfig"] as Model<ILLMConfigDocument> | undefined) ??
-  mongoose.model<ILLMConfigDocument>("LLMConfig", llmConfigSchema);
+  (mongoose.models['LLMConfig'] as Model<ILLMConfigDocument> | undefined) ??
+  mongoose.model<ILLMConfigDocument>('LLMConfig', llmConfigSchema);

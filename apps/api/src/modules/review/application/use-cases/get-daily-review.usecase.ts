@@ -47,7 +47,8 @@ export class GetDailyReviewUseCase {
       .map((d: DocumentEntity) => d.id);
 
     // 5. Fetch docs with notes via repository
-    const recentNoteDocIds = await this.reviewRepository.findDocumentIdsWithNotes(userId);
+    const recentNoteDocIds =
+      await this.reviewRepository.findDocumentIdsWithNotes(userId);
 
     return this.reviewSelector.selectDailyReview({
       documents: allDocs,

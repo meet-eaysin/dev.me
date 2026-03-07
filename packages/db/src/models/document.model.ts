@@ -1,11 +1,11 @@
-import mongoose, { Schema, Model } from "mongoose";
+import mongoose, { Schema, Model } from 'mongoose';
 import {
   IDocumentDocument,
   DocumentType,
   DocumentStatus,
   SourceType,
   IngestionStatus,
-} from "../types/document.type";
+} from '../types/document.type';
 
 const documentSchema = new Schema<IDocumentDocument>(
   {
@@ -14,7 +14,7 @@ const documentSchema = new Schema<IDocumentDocument>(
       required: true,
       index: true,
     },
-    folderId: { type: Schema.Types.ObjectId, ref: "Folder", index: true },
+    folderId: { type: Schema.Types.ObjectId, ref: 'Folder', index: true },
     title: { type: String, required: true, index: true },
     content: { type: String },
     type: {
@@ -58,8 +58,8 @@ const documentSchema = new Schema<IDocumentDocument>(
 );
 
 documentSchema.index({ userId: 1, sourceUrl: 1 }, { unique: true });
-documentSchema.index({ title: "text", content: "text" });
+documentSchema.index({ title: 'text', content: 'text' });
 
 export const DocumentModel: Model<IDocumentDocument> =
-  mongoose.models["Document"] ||
-  mongoose.model<IDocumentDocument>("Document", documentSchema);
+  mongoose.models['Document'] ||
+  mongoose.model<IDocumentDocument>('Document', documentSchema);

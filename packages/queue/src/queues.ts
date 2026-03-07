@@ -1,13 +1,13 @@
-import { Queue, QueueOptions, JobsOptions, Job } from "bullmq";
-import { Redis } from "ioredis";
-import { NotionAction } from "@repo/types";
+import { Queue, QueueOptions, JobsOptions, Job } from 'bullmq';
+import { Redis } from 'ioredis';
+import { NotionAction } from '@repo/types';
 import {
   IngestionJobData,
   SummaryJobData,
   GraphJobData,
   NotionSyncJobData,
   TranscriptJobData,
-} from "./job-types";
+} from './job-types';
 
 export class BaseQueue<T extends object> {
   protected queue: Queue<T>;
@@ -19,11 +19,11 @@ export class BaseQueue<T extends object> {
   ) {
     this.queue = new Queue<T>(name, {
       connection,
-      prefix: "mindstack",
+      prefix: 'mindstack',
       defaultJobOptions: {
         attempts: 3,
         backoff: {
-          type: "exponential",
+          type: 'exponential',
           delay: 1000,
         },
         removeOnComplete: true,
@@ -44,59 +44,59 @@ export class BaseQueue<T extends object> {
 
 export class IngestionQueue extends BaseQueue<IngestionJobData> {
   constructor(connection: Redis) {
-    super("ingestion", connection);
+    super('ingestion', connection);
   }
 
   async addJob(
     documentId: string,
     userId: string,
   ): Promise<Job<IngestionJobData>> {
-    return this.queue.add("process", {
+    return this.queue.add('process', {
       documentId,
       userId,
-      type: "unknown",
-      source: "",
+      type: 'unknown',
+      source: '',
     });
   }
 }
 
 export class SummaryQueue extends BaseQueue<SummaryJobData> {
   constructor(connection: Redis) {
-    super("summary", connection);
+    super('summary', connection);
   }
 
   async addJob(documentId: string, userId: string) {
-    return this.queue.add("summary", { documentId, userId });
+    return this.queue.add('summary', { documentId, userId });
   }
 }
 
 export class TranscriptQueue extends BaseQueue<TranscriptJobData> {
   constructor(connection: Redis) {
-    super("transcript", connection);
+    super('transcript', connection);
   }
 
   async addJob(documentId: string, userId: string) {
-    return this.queue.add("transcript", { documentId, userId });
+    return this.queue.add('transcript', { documentId, userId });
   }
 }
 
 export class GraphQueue extends BaseQueue<GraphJobData> {
   constructor(connection: Redis) {
-    super("graph", connection);
+    super('graph', connection);
   }
 
   async addJob(documentId: string, userId: string) {
-    return this.queue.add("graph", { documentId, userId });
+    return this.queue.add('graph', { documentId, userId });
   }
 }
 
 export class NotionSyncQueue extends BaseQueue<NotionSyncJobData> {
   constructor(connection: Redis) {
-    super("notion-sync", connection);
+    super('notion-sync', connection);
   }
 
   async addJob(documentId: string, userId: string, action: NotionAction) {
-    return this.queue.add("sync", { documentId, userId, action });
+    return this.queue.add('sync', { documentId, userId, action });
   }
 }
 

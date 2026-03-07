@@ -4,7 +4,10 @@ import { PaginatedResponse } from '@repo/types';
 export class PaginatedResponseDto<T> implements PaginatedResponse<T> {
   items: T[];
 
-  @ApiProperty({ description: 'Total number of items across all pages', example: 100 })
+  @ApiProperty({
+    description: 'Total number of items across all pages',
+    example: 100,
+  })
   total: number;
 
   @ApiProperty({ description: 'Current page number', example: 1 })

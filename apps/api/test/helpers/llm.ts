@@ -18,16 +18,22 @@ export interface LLMConfigResponse {
 export function isLLMConfigResponse(body: unknown): body is LLMConfigResponse {
   if (typeof body !== 'object' || body === null) return false;
   if (!('success' in body) || body.success !== true) return false;
-  if (!('data' in body) || typeof body.data !== 'object' || body.data === null) return false;
+  if (!('data' in body) || typeof body.data !== 'object' || body.data === null)
+    return false;
   const data = body.data;
   return (
-    'provider' in data && typeof data.provider === 'string' && 
-    'chatModel' in data && typeof data.chatModel === 'string' &&
-    'embeddingModel' in data && typeof data.embeddingModel === 'string'
+    'provider' in data &&
+    typeof data.provider === 'string' &&
+    'chatModel' in data &&
+    typeof data.chatModel === 'string' &&
+    'embeddingModel' in data &&
+    typeof data.embeddingModel === 'string'
   );
 }
 
-export async function seedLLMConfig(userId: string = TEST_USER_ID): Promise<void> {
+export async function seedLLMConfig(
+  userId: string = TEST_USER_ID,
+): Promise<void> {
   const { LLMConfigModel } = await import('@repo/db');
   const config = new LLMConfigModel({
     userId,

@@ -1,6 +1,6 @@
-import axios from "axios";
-import { z } from "zod";
-import { ResolvedLLMConfig } from "./provider.factory";
+import axios from 'axios';
+import { z } from 'zod';
+import { ResolvedLLMConfig } from './provider.factory';
 
 const OllamaEmbeddingResponseSchema = z.object({
   embedding: z.array(z.number()),
@@ -16,7 +16,7 @@ const OpenAIEmbeddingResponseSchema = z.object({
 
 export class EmbeddingAdapter {
   async embedText(text: string, config: ResolvedLLMConfig): Promise<number[]> {
-    if (config.provider === "ollama") {
+    if (config.provider === 'ollama') {
       const response = await axios.post(
         `${config.baseUrl}/api/embeddings`,
         {
@@ -31,7 +31,7 @@ export class EmbeddingAdapter {
 
     // Default to OpenAI-compatible
     const response = await axios.post(
-      `${config.baseUrl || "https://api.openai.com/v1"}/embeddings`,
+      `${config.baseUrl || 'https://api.openai.com/v1'}/embeddings`,
       {
         model: config.embeddingModel,
         input: text,
@@ -46,7 +46,7 @@ export class EmbeddingAdapter {
     const parsed = OpenAIEmbeddingResponseSchema.parse(response.data);
     const firstItem = parsed.data[0];
     if (!firstItem) {
-      throw new Error("Empty embedding response from API");
+      throw new Error('Empty embedding response from API');
     }
     return firstItem.embedding;
   }
@@ -55,7 +55,7 @@ export class EmbeddingAdapter {
     texts: string[],
     config: ResolvedLLMConfig,
   ): Promise<number[][]> {
-    if (config.provider === "ollama") {
+    if (config.provider === 'ollama') {
       try {
         // Use the newer /api/embed API for batches
         const response = await axios.post(`${config.baseUrl}/api/embed`, {
@@ -80,7 +80,7 @@ export class EmbeddingAdapter {
 
     // Default to OpenAI-compatible
     const response = await axios.post(
-      `${config.baseUrl || "https://api.openai.com/v1"}/embeddings`,
+      `${config.baseUrl || 'https://api.openai.com/v1'}/embeddings`,
       {
         model: config.embeddingModel,
         input: texts,

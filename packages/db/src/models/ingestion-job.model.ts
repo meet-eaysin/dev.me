@@ -1,18 +1,18 @@
-import mongoose, { Schema, Model } from "mongoose";
-import { IngestionStatus } from "@repo/types";
-import { IIngestionJobDocument } from "../types/ingestion-job.type";
+import mongoose, { Schema, Model } from 'mongoose';
+import { IngestionStatus } from '@repo/types';
+import { IIngestionJobDocument } from '../types/ingestion-job.type';
 
 const ingestionJobSchema = new Schema<IIngestionJobDocument>(
   {
     userId: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true,
       index: true,
     },
     documentId: {
       type: Schema.Types.ObjectId,
-      ref: "Document",
+      ref: 'Document',
       required: true,
     },
     status: {
@@ -38,9 +38,9 @@ const ingestionJobSchema = new Schema<IIngestionJobDocument>(
 
 ingestionJobSchema.index({ documentId: 1 }, { unique: true });
 
-const ModelInstance = (mongoose.models["IngestionJob"] ||
+const ModelInstance = (mongoose.models['IngestionJob'] ||
   mongoose.model<IIngestionJobDocument>(
-    "IngestionJob",
+    'IngestionJob',
     ingestionJobSchema,
   )) as Model<IIngestionJobDocument>;
 

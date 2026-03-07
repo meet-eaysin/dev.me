@@ -1,11 +1,18 @@
-import { describe, it, beforeAll, afterAll, expect, afterEach } from '@jest/globals';
+import {
+  describe,
+  it,
+  beforeAll,
+  afterAll,
+  expect,
+  afterEach,
+} from '@jest/globals';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { setupApp, teardownApp, cleanupDatabase } from './setup';
-import { 
-  TEST_USER_ID, 
+import {
+  TEST_USER_ID,
   seedNotionConfig,
-  isNotionConfigResponse
+  isNotionConfigResponse,
 } from './helpers';
 import { Server } from 'http';
 
@@ -55,7 +62,7 @@ describe('Notion (e2e)', () => {
 
       const payload = {
         syncEnabled: false,
-        syncDirection: 'both'
+        syncDirection: 'both',
       };
 
       const response = await request(app.getHttpServer())

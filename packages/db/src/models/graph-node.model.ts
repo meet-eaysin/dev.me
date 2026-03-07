@@ -1,17 +1,17 @@
-import mongoose, { Schema } from "mongoose";
-import { IGraphNodeDocument } from "../types/graph-node.type";
+import mongoose, { Schema } from 'mongoose';
+import { IGraphNodeDocument } from '../types/graph-node.type';
 
 const graphNodeSchema = new Schema<IGraphNodeDocument>(
   {
     userId: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true,
       index: true,
     },
     documentId: {
       type: Schema.Types.ObjectId,
-      ref: "Document",
+      ref: 'Document',
       required: false,
       index: true,
     },
@@ -23,5 +23,5 @@ const graphNodeSchema = new Schema<IGraphNodeDocument>(
 );
 
 export const GraphNodeModel: mongoose.Model<IGraphNodeDocument> =
-  mongoose.models["GraphNode"] ||
-  mongoose.model<IGraphNodeDocument>("GraphNode", graphNodeSchema);
+  mongoose.models['GraphNode'] ||
+  mongoose.model<IGraphNodeDocument>('GraphNode', graphNodeSchema);

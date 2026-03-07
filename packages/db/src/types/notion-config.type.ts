@@ -1,5 +1,5 @@
-import { NotionSyncDirectionType } from "@repo/types";
-import { Document, Types } from "mongoose";
+import { NotionSyncDirectionType } from '@repo/types';
+import { Document, Types } from 'mongoose';
 
 export interface INotionConfig {
   userId: Types.ObjectId;

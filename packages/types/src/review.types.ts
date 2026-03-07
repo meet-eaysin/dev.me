@@ -1,4 +1,4 @@
-import { DocumentType, DocumentStatus } from "./document.types";
+import { DocumentType, DocumentStatus } from './document.types';
 
 export interface ReviewItem {
   documentId: string;

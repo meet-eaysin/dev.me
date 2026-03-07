@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  AnalyticsDocumentStatsAggregationResult,
-} from '@repo/types';
+import { AnalyticsDocumentStatsAggregationResult } from '@repo/types';
 import { IUserActivityRepository } from '../../domain/repositories/user-activity.repository';
 
 @Injectable()
@@ -37,9 +35,8 @@ export class GetStatsUseCase {
     const activeDates: string[] = activityHistory.map(
       (item: { _id: string }) => item._id,
     );
-    const { currentStreak, longestStreak } = this.calculateStreakDetails(
-      activeDates,
-    );
+    const { currentStreak, longestStreak } =
+      this.calculateStreakDetails(activeDates);
 
     return {
       totalDocuments,

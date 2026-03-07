@@ -81,11 +81,15 @@ export class NotionWorker {
         const title = doc.title;
         if (typeof title !== 'string') return;
 
-        const pageId = await this.notionClient.createPage(token, targetDatabaseId, {
-          title,
-          content: (doc.summary || doc.content) || undefined,
-          url: doc.sourceUrl || undefined,
-        });
+        const pageId = await this.notionClient.createPage(
+          token,
+          targetDatabaseId,
+          {
+            title,
+            content: doc.summary || doc.content || undefined,
+            url: doc.sourceUrl || undefined,
+          },
+        );
         doc.notionPageId = pageId;
         await doc.save();
       } else if (action === NotionAction.UPDATE) {
@@ -97,7 +101,7 @@ export class NotionWorker {
 
         await this.notionClient.updatePage(token, pageId, {
           title,
-          content: (doc.summary || doc.content) || undefined,
+          content: doc.summary || doc.content || undefined,
           url: doc.sourceUrl || undefined,
         });
       } else if (action === NotionAction.DELETE) {
@@ -106,7 +110,8 @@ export class NotionWorker {
           try {
             await this.notionClient.deletePage(token, pageId);
           } catch (error) {
-            const message = error instanceof Error ? error.message : String(error);
+            const message =
+              error instanceof Error ? error.message : String(error);
             this.logger.error(`Failed to delete Notion page: ${message}`);
           }
           doc.notionPageId = undefined;

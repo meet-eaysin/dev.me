@@ -58,7 +58,9 @@ export default async function DocumentsPage() {
     >
       <section className="bg-default border-subtle mt-4 rounded-md border">
         <header className="border-subtle flex items-center justify-between border-b px-5 py-3">
-          <h2 className="text-emphasis text-sm font-semibold">Recent Documents</h2>
+          <h2 className="text-emphasis text-sm font-semibold">
+            Recent Documents
+          </h2>
           <span className="text-subtle text-xs">
             {data ? `${data.total} total` : 'Waiting for backend'}
           </span>
@@ -75,21 +77,36 @@ export default async function DocumentsPage() {
         ) : data && data.items.length > 0 ? (
           <ul className="divide-subtle divide-y">
             {data.items.map((doc) => (
-              <li key={doc.id} className="grid grid-cols-12 gap-3 px-5 py-3 text-sm">
+              <li
+                key={doc.id}
+                className="grid grid-cols-12 gap-3 px-5 py-3 text-sm"
+              >
                 <div className="col-span-12 sm:col-span-5">
-                  <p className="text-emphasis truncate font-semibold">{doc.title}</p>
-                  <p className="text-subtle mt-0.5 truncate text-xs">{doc.source}</p>
+                  <p className="text-emphasis truncate font-semibold">
+                    {doc.title}
+                  </p>
+                  <p className="text-subtle mt-0.5 truncate text-xs">
+                    {doc.source}
+                  </p>
                 </div>
                 <div className="col-span-4 sm:col-span-2">
-                  <p className="text-muted text-xs uppercase tracking-wide">Type</p>
+                  <p className="text-muted text-xs uppercase tracking-wide">
+                    Type
+                  </p>
                   <p className="text-default font-medium">{doc.type}</p>
                 </div>
                 <div className="col-span-4 sm:col-span-2">
-                  <p className="text-muted text-xs uppercase tracking-wide">Status</p>
-                  <p className="text-default font-medium">{formatStatus(doc.status)}</p>
+                  <p className="text-muted text-xs uppercase tracking-wide">
+                    Status
+                  </p>
+                  <p className="text-default font-medium">
+                    {formatStatus(doc.status)}
+                  </p>
                 </div>
                 <div className="col-span-4 sm:col-span-3">
-                  <p className="text-muted text-xs uppercase tracking-wide">Updated</p>
+                  <p className="text-muted text-xs uppercase tracking-wide">
+                    Updated
+                  </p>
                   <p className="text-default font-medium">
                     {new Date(doc.updatedAt).toLocaleDateString()}
                   </p>
@@ -98,7 +115,9 @@ export default async function DocumentsPage() {
             ))}
           </ul>
         ) : (
-          <div className="px-5 py-4 text-sm text-subtle">No documents found.</div>
+          <div className="px-5 py-4 text-sm text-subtle">
+            No documents found.
+          </div>
         )}
       </section>
     </FeatureShellPage>

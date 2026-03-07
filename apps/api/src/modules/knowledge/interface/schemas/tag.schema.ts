@@ -8,20 +8,29 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateTagDto {
-  @ApiProperty({ description: 'Unique name of the tag', example: 'Neuroscience' })
+  @ApiProperty({
+    description: 'Unique name of the tag',
+    example: 'Neuroscience',
+  })
   @IsString()
   @IsNotEmpty()
   @MinLength(1)
   @MaxLength(50)
   name!: string;
 
-  @ApiPropertyOptional({ description: 'Tag color hex or name', example: '#4CAF50' })
+  @ApiPropertyOptional({
+    description: 'Tag color hex or name',
+    example: '#4CAF50',
+  })
   @IsString()
   @IsOptional()
   @MaxLength(20)
   color?: string;
 
-  @ApiPropertyOptional({ description: 'Origin or source of the tag', example: 'manual' })
+  @ApiPropertyOptional({
+    description: 'Origin or source of the tag',
+    example: 'manual',
+  })
   @IsString()
   @IsOptional()
   @MaxLength(50)

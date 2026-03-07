@@ -1,7 +1,10 @@
 import { Injectable, BadRequestException, Logger } from '@nestjs/common';
 import { RagService } from '../../domain/services/rag.service';
 import { ProviderFactory } from '@repo/ai';
-import { AskQueryDto, AskResultDto } from '../../interface/schemas/search.schema';
+import {
+  AskQueryDto,
+  AskResultDto,
+} from '../../interface/schemas/search.schema';
 import { IUserActivityRepository } from '../../../analytics/domain/repositories/user-activity.repository';
 
 @Injectable()

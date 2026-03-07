@@ -1,5 +1,5 @@
-import mongoose, { Schema, Model } from "mongoose";
-import { IUserActivityDocument } from "../types/user-activity.type";
+import mongoose, { Schema, Model } from 'mongoose';
+import { IUserActivityDocument } from '../types/user-activity.type';
 
 const userActivitySchema = new Schema<IUserActivityDocument>(
   {
@@ -17,5 +17,5 @@ const userActivitySchema = new Schema<IUserActivityDocument>(
 );
 
 export const UserActivityModel: Model<IUserActivityDocument> =
-  mongoose.models["UserActivity"] ||
-  mongoose.model<IUserActivityDocument>("UserActivity", userActivitySchema);
+  mongoose.models['UserActivity'] ||
+  mongoose.model<IUserActivityDocument>('UserActivity', userActivitySchema);

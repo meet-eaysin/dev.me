@@ -3,7 +3,9 @@ import { INotionConfigRepository } from '../../domain/repositories/notion-config
 
 @Injectable()
 export class DisconnectNotionUseCase {
-  constructor(private readonly notionConfigRepository: INotionConfigRepository) {}
+  constructor(
+    private readonly notionConfigRepository: INotionConfigRepository,
+  ) {}
 
   async execute(userId: string): Promise<void> {
     await this.notionConfigRepository.deleteByUserId(userId);

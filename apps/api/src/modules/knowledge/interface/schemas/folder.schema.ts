@@ -19,26 +19,38 @@ export class CreateFolderDto {
   @MaxLength(100)
   name!: string;
 
-  @ApiPropertyOptional({ description: 'Brief description of the folder contents', example: 'Shared notes about productivity.' })
+  @ApiPropertyOptional({
+    description: 'Brief description of the folder contents',
+    example: 'Shared notes about productivity.',
+  })
   @IsString()
   @IsOptional()
   @MaxLength(500)
   description?: string;
 
-  @ApiPropertyOptional({ description: 'Folder color hex or name', example: '#FF5733' })
+  @ApiPropertyOptional({
+    description: 'Folder color hex or name',
+    example: '#FF5733',
+  })
   @IsString()
   @IsOptional()
   @MaxLength(20)
   color?: string;
 
-  @ApiPropertyOptional({ description: 'ID of the parent folder for nesting', example: '65f1a2b3c4d5e6f7a8b9c0d1' })
+  @ApiPropertyOptional({
+    description: 'ID of the parent folder for nesting',
+    example: '65f1a2b3c4d5e6f7a8b9c0d1',
+  })
   @IsString()
   @IsOptional()
   parentId?: string;
 }
 
 export class UpdateFolderDto {
-  @ApiPropertyOptional({ description: 'New name for the folder', example: 'New Folder Name' })
+  @ApiPropertyOptional({
+    description: 'New name for the folder',
+    example: 'New Folder Name',
+  })
   @IsString()
   @IsOptional()
   @MinLength(1)
@@ -57,7 +69,10 @@ export class UpdateFolderDto {
   @MaxLength(20)
   color?: string;
 
-  @ApiPropertyOptional({ description: 'New parent folder ID or null to unnest', nullable: true })
+  @ApiPropertyOptional({
+    description: 'New parent folder ID or null to unnest',
+    nullable: true,
+  })
   @IsString()
   @IsOptional()
   parentId?: string | null;
@@ -71,7 +86,11 @@ export class FolderPaginationDto {
   @IsOptional()
   page?: number = 1;
 
-  @ApiPropertyOptional({ description: 'Items per page', example: 20, default: 20 })
+  @ApiPropertyOptional({
+    description: 'Items per page',
+    example: 20,
+    default: 20,
+  })
   @Type(() => Number)
   @IsInt()
   @Min(1)

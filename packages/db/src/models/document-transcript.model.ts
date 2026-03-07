@@ -1,5 +1,5 @@
-import mongoose, { Schema } from "mongoose";
-import { IDocumentTranscriptDocument } from "../types/document-transcript.type";
+import mongoose, { Schema } from 'mongoose';
+import { IDocumentTranscriptDocument } from '../types/document-transcript.type';
 
 const segmentSchema = new Schema(
   {
@@ -15,7 +15,7 @@ const documentTranscriptSchema = new Schema<IDocumentTranscriptDocument>(
   {
     documentId: {
       type: Schema.Types.ObjectId,
-      ref: "Document",
+      ref: 'Document',
       required: true,
       unique: true,
       index: true,
@@ -27,8 +27,8 @@ const documentTranscriptSchema = new Schema<IDocumentTranscriptDocument>(
 );
 
 export const DocumentTranscriptModel: mongoose.Model<IDocumentTranscriptDocument> =
-  mongoose.models["DocumentTranscript"] ||
+  mongoose.models['DocumentTranscript'] ||
   mongoose.model<IDocumentTranscriptDocument>(
-    "DocumentTranscript",
+    'DocumentTranscript',
     documentTranscriptSchema,
   );

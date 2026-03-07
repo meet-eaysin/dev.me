@@ -1,10 +1,10 @@
-import { Document, Types } from "mongoose";
+import { Document, Types } from 'mongoose';
 import {
   DocumentType,
   DocumentStatus,
   SourceType,
   IngestionStatus,
-} from "@repo/types";
+} from '@repo/types';
 
 export { DocumentType, DocumentStatus, SourceType, IngestionStatus };
 

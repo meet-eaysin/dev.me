@@ -12,10 +12,13 @@ export interface IngestionStatusResponse {
   data: IngestionStatus;
 }
 
-export function isIngestionStatusResponse(body: unknown): body is IngestionStatusResponse {
+export function isIngestionStatusResponse(
+  body: unknown,
+): body is IngestionStatusResponse {
   if (typeof body !== 'object' || body === null) return false;
   if (!('success' in body) || body.success !== true) return false;
-  if (!('data' in body) || typeof body.data !== 'object' || body.data === null) return false;
+  if (!('data' in body) || typeof body.data !== 'object' || body.data === null)
+    return false;
 
   const { data } = body;
   return 'embeddingsReady' in data && typeof data.embeddingsReady === 'boolean';
@@ -25,8 +28,10 @@ export function assertContainsFact(answer: string, fact: string): void {
   const normalizedAnswer = answer.toLowerCase();
   const normalizedFact = fact.toLowerCase();
 
-  const factWords = normalizedFact.split(/\s+/).filter(w => w.length > 3);
-  const matchCount = factWords.filter(word => normalizedAnswer.includes(word)).length;
+  const factWords = normalizedFact.split(/\s+/).filter((w) => w.length > 3);
+  const matchCount = factWords.filter((word) =>
+    normalizedAnswer.includes(word),
+  ).length;
 
   if (factWords.length === 0) return;
 
@@ -38,6 +43,8 @@ export function assertIngestionCompleted(body: unknown): void {
     expect(body.success).toBe(true);
     expect(body.data.embeddingsReady).toBe(true);
   } else {
-    throw new Error('Response body does not match IngestionStatusResponse shape');
+    throw new Error(
+      'Response body does not match IngestionStatusResponse shape',
+    );
   }
 }

@@ -1,4 +1,11 @@
-import { describe, it, beforeAll, afterAll, expect, afterEach } from '@jest/globals';
+import {
+  describe,
+  it,
+  beforeAll,
+  afterAll,
+  expect,
+  afterEach,
+} from '@jest/globals';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { setupApp, teardownApp, cleanupDatabase } from './setup';
@@ -68,7 +75,9 @@ describe('AI Ingestion (e2e)', () => {
       expect(statusResponse.body.success).toBe(true);
       expect(typeof statusResponse.body.data.embeddingsReady).toBe('boolean');
     } else {
-      throw new Error('Status response does not match IngestionStatusResponse shape');
+      throw new Error(
+        'Status response does not match IngestionStatusResponse shape',
+      );
     }
   });
 

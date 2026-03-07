@@ -71,7 +71,10 @@ describe('AI Resilience (e2e)', () => {
     await request(app.getHttpServer())
       .post('/api/v1/search/ask')
       .set('x-user-id', TEST_USER_ID)
-      .send({ question: 'What is this about?', documentIds: ['not-an-objectid'] })
+      .send({
+        question: 'What is this about?',
+        documentIds: ['not-an-objectid'],
+      })
       .expect(400);
   });
 });

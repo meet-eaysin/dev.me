@@ -1,5 +1,5 @@
-import { model, models, Schema, Model } from "mongoose";
-import { IFolderDocument } from "../types/folder.type";
+import { model, models, Schema, Model } from 'mongoose';
+import { IFolderDocument } from '../types/folder.type';
 
 const folderSchema = new Schema<IFolderDocument>(
   {
@@ -8,7 +8,7 @@ const folderSchema = new Schema<IFolderDocument>(
       required: true,
       index: true,
     },
-    parentId: { type: Schema.Types.ObjectId, ref: "Folder", index: true },
+    parentId: { type: Schema.Types.ObjectId, ref: 'Folder', index: true },
     name: { type: String, required: true, index: true },
     description: { type: String },
     color: { type: String },
@@ -19,4 +19,4 @@ const folderSchema = new Schema<IFolderDocument>(
 folderSchema.index({ userId: 1, name: 1, parentId: 1 }, { unique: true });
 
 export const FolderModel: Model<IFolderDocument> =
-  models.Folder || model<IFolderDocument>("Folder", folderSchema);
+  models.Folder || model<IFolderDocument>('Folder', folderSchema);

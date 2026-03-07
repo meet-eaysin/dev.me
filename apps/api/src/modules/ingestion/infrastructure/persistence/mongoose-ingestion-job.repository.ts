@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { IngestionJobModel , IIngestionJobDocument } from '@repo/db';
+import { IngestionJobModel, IIngestionJobDocument } from '@repo/db';
 import { Types } from 'mongoose';
 import {
   IIngestionJobRepository,

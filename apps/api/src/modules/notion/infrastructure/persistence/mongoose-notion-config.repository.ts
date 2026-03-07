@@ -7,7 +7,9 @@ import { Types } from 'mongoose';
 @Injectable()
 export class MongooseNotionConfigRepository extends INotionConfigRepository {
   async findByUserId(userId: string): Promise<NotionConfigEntity | null> {
-    const config = await NotionConfigModel.findOne({ userId: new Types.ObjectId(userId) });
+    const config = await NotionConfigModel.findOne({
+      userId: new Types.ObjectId(userId),
+    });
     if (!config) return null;
 
     return new NotionConfigEntity({

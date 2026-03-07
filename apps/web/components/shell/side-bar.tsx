@@ -10,7 +10,11 @@ export type SideBarProps = {
 
 const utilityLinks = [
   { name: 'Add Document', href: '/documents/new', icon: 'plus' as const },
-  { name: 'Notion Sync', href: '/integrations/notion', icon: 'webhook' as const },
+  {
+    name: 'Notion Sync',
+    href: '/integrations/notion',
+    icon: 'webhook' as const,
+  },
   { name: 'Daily Review', href: '/review', icon: 'calendar-check-2' as const },
 ];
 

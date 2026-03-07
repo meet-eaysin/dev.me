@@ -1,23 +1,23 @@
-import mongoose, { Schema } from "mongoose";
-import { IGraphEdgeDocument } from "../types/graph-edge.type";
+import mongoose, { Schema } from 'mongoose';
+import { IGraphEdgeDocument } from '../types/graph-edge.type';
 
 const graphEdgeSchema = new Schema<IGraphEdgeDocument>(
   {
     userId: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true,
       index: true,
     },
     fromNodeId: {
       type: Schema.Types.ObjectId,
-      ref: "GraphNode",
+      ref: 'GraphNode',
       required: true,
       index: true,
     },
     toNodeId: {
       type: Schema.Types.ObjectId,
-      ref: "GraphNode",
+      ref: 'GraphNode',
       required: true,
       index: true,
     },
@@ -26,10 +26,10 @@ const graphEdgeSchema = new Schema<IGraphEdgeDocument>(
     generationMethod: {
       type: String,
       enum: [
-        "semantic_similarity",
-        "topical",
-        "shared_tags",
-        "root_connection",
+        'semantic_similarity',
+        'topical',
+        'shared_tags',
+        'root_connection',
       ],
       required: true,
     },
@@ -44,5 +44,5 @@ graphEdgeSchema.index(
 );
 
 export const GraphEdgeModel: mongoose.Model<IGraphEdgeDocument> =
-  mongoose.models["GraphEdge"] ||
-  mongoose.model<IGraphEdgeDocument>("GraphEdge", graphEdgeSchema);
+  mongoose.models['GraphEdge'] ||
+  mongoose.model<IGraphEdgeDocument>('GraphEdge', graphEdgeSchema);

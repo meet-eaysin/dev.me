@@ -1,7 +1,7 @@
 export enum NotionSyncDirectionType {
-  TO_NOTION = "to_notion",
-  FROM_Notion = "from_notion",
-  BOTH = "both",
+  TO_NOTION = 'to_notion',
+  FROM_Notion = 'from_notion',
+  BOTH = 'both',
 }
 
 export interface NotionConfigPublicView {

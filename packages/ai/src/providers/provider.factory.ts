@@ -1,9 +1,9 @@
-import { LLMConfigModel, ILLMConfig } from "@repo/db";
-import { Types } from "mongoose";
-import { decrypt } from "@repo/crypto";
+import { LLMConfigModel, ILLMConfig } from '@repo/db';
+import { Types } from 'mongoose';
+import { decrypt } from '@repo/crypto';
 
 export interface ResolvedLLMConfig {
-  provider: "openai" | "anthropic" | "ollama";
+  provider: 'openai' | 'anthropic' | 'ollama';
   chatModel: string;
   embeddingModel: string;
   apiKey: string | null;
@@ -45,11 +45,11 @@ export class ProviderFactory {
 
   private static ollamaDefaults(): ResolvedLLMConfig {
     return {
-      provider: "ollama",
-      chatModel: "llama3.2",
-      embeddingModel: "nomic-embed-text",
+      provider: 'ollama',
+      chatModel: 'llama3.2',
+      embeddingModel: 'nomic-embed-text',
       apiKey: null,
-      baseUrl: process.env.OLLAMA_BASE_URL ?? "http://localhost:11434",
+      baseUrl: process.env.OLLAMA_BASE_URL ?? 'http://localhost:11434',
     };
   }
 }

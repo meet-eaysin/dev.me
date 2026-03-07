@@ -1,15 +1,22 @@
-import { describe, it, beforeAll, afterAll, expect, afterEach } from '@jest/globals';
+import {
+  describe,
+  it,
+  beforeAll,
+  afterAll,
+  expect,
+  afterEach,
+} from '@jest/globals';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { setupApp, teardownApp, cleanupDatabase } from './setup';
-import { 
-  TEST_USER_ID, 
+import {
+  TEST_USER_ID,
   seedDocument,
   seedGraphNode,
   seedGraphEdge,
   isFullGraphResponse,
   isDocumentSubgraphResponse,
-  isRebuildGraphResponse
+  isRebuildGraphResponse,
 } from './helpers';
 import { Server } from 'http';
 
@@ -33,10 +40,14 @@ describe('Graph (e2e)', () => {
     it('should return the full knowledge graph', async () => {
       // Seed root node (Concept)
       const rootId = await seedGraphNode('Artificial Intelligence', 'Concept');
-      
+
       // Seed document node
       const docId = await seedDocument({ title: 'AI Research Paper' });
-      const docNodeId = await seedGraphNode('AI Research Paper', 'Document', docId);
+      const docNodeId = await seedGraphNode(
+        'AI Research Paper',
+        'Document',
+        docId,
+      );
 
       // Link them
       await seedGraphEdge(docNodeId, rootId, 'mentions', 1.0);
@@ -50,7 +61,7 @@ describe('Graph (e2e)', () => {
         expect(response.body.success).toBe(true);
         expect(response.body.data.nodes.length).toBeGreaterThanOrEqual(2);
         expect(response.body.data.edges.length).toBeGreaterThanOrEqual(1);
-        
+
         // Root node ID check
         expect(typeof response.body.data.rootNodeId).toBe('string');
       } else {
@@ -77,7 +88,7 @@ describe('Graph (e2e)', () => {
     it('should return the subgraph for a specific document', async () => {
       const docId = await seedDocument({ title: 'Subgraph Doc' });
       const docNodeId = await seedGraphNode('Subgraph Doc', 'Document', docId);
-      
+
       const conceptId1 = await seedGraphNode('Machine Learning', 'Concept');
       const conceptId2 = await seedGraphNode('Deep Learning', 'Concept');
 
@@ -101,7 +112,7 @@ describe('Graph (e2e)', () => {
 
     it('should return 404 for nonexistent document subgraph', async () => {
       const fakeDocId = '507f1f77bcf86cd799439011';
-      
+
       await request(app.getHttpServer())
         .get(`/api/v1/graph/document/${fakeDocId}`)
         .set('x-user-id', TEST_USER_ID)
@@ -112,7 +123,7 @@ describe('Graph (e2e)', () => {
   describe('POST /graph/rebuild/:docId', () => {
     it('should trigger graph rebuild successfully', async () => {
       const docId = await seedDocument({ title: 'Rebuild Doc' });
-      
+
       const response = await request(app.getHttpServer())
         .post(`/api/v1/graph/rebuild/${docId}`)
         .set('x-user-id', TEST_USER_ID)

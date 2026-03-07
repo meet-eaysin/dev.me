@@ -1,11 +1,11 @@
-import pdf from "pdf-parse";
-import { createWorker } from "tesseract.js";
-import { createCanvas, SKRSContext2D } from "@napi-rs/canvas";
+import pdf from 'pdf-parse';
+import { createWorker } from 'tesseract.js';
+import { createCanvas, SKRSContext2D } from '@napi-rs/canvas';
 
 export interface PdfExtractResult {
   text: string;
   pageCount: number;
-  type: "text" | "image" | "mixed";
+  type: 'text' | 'image' | 'mixed';
   ocrConfidence: number;
 }
 
@@ -20,7 +20,7 @@ export class AppError extends Error {
 
 export class UnprocessableError extends AppError {
   constructor(message: string) {
-    super(message, "UNPROCESSABLE_ENTITY");
+    super(message, 'UNPROCESSABLE_ENTITY');
   }
 }
 
@@ -31,17 +31,15 @@ export class UnprocessableError extends AppError {
 function isCanvasContext(ctx: unknown): ctx is CanvasRenderingContext2D {
   return (
     ctx !== null &&
-    typeof ctx === "object" &&
-    "fillRect" in ctx &&
-    "drawImage" in ctx &&
-    "getImageData" in ctx
+    typeof ctx === 'object' &&
+    'fillRect' in ctx &&
+    'drawImage' in ctx &&
+    'getImageData' in ctx
   );
 }
 
 export class PdfExtractor {
-  async extractPdf(
-    buffer: Buffer,
-  ): Promise<PdfExtractResult> {
+  async extractPdf(buffer: Buffer): Promise<PdfExtractResult> {
     try {
       const data = await pdf(buffer);
       const text = data.text;
@@ -56,19 +54,19 @@ export class PdfExtractor {
       return {
         text,
         pageCount,
-        type: "text",
+        type: 'text',
         ocrConfidence: 100,
       };
     } catch (error) {
       if (error instanceof Error) {
-        if (error.message.includes("password")) {
-          throw new UnprocessableError("PDF is password protected");
+        if (error.message.includes('password')) {
+          throw new UnprocessableError('PDF is password protected');
         }
         if (
-          error.message.includes("corrupted") ||
-          error.message.includes("Invalid PDF structure")
+          error.message.includes('corrupted') ||
+          error.message.includes('Invalid PDF structure')
         ) {
-          throw new UnprocessableError("PDF file is corrupted");
+          throw new UnprocessableError('PDF file is corrupted');
         }
       }
       throw error;
@@ -79,8 +77,8 @@ export class PdfExtractor {
     buffer: Buffer,
     pageCount: number,
   ): Promise<PdfExtractResult> {
-    const pLimit = (await import("p-limit")).default;
-    const pdfjs = await import("pdfjs-dist");
+    const pLimit = (await import('p-limit')).default;
+    const pdfjs = await import('pdfjs-dist');
     const limit = pLimit(10);
 
     const loadingTask = pdfjs.getDocument({
@@ -96,7 +94,7 @@ export class PdfExtractor {
       const page = await pdfDocument.getPage(i);
       const viewport = page.getViewport({ scale: 2.0 }); // High resolution for OCR
       const canvas = createCanvas(viewport.width, viewport.height);
-      const context: SKRSContext2D = canvas.getContext("2d");
+      const context: SKRSContext2D = canvas.getContext('2d');
 
       // Verify context via type guard to satisfy pdfjs-dist requirements without 'any' or 'as'
       const unknownContext: unknown = context;
@@ -106,17 +104,17 @@ export class PdfExtractor {
           viewport,
         }).promise;
       } else {
-        throw new Error("Failed to initialize compatible canvas context");
+        throw new Error('Failed to initialize compatible canvas context');
       }
 
-      const pngBuffer: Buffer = canvas.toBuffer("image/png");
+      const pngBuffer: Buffer = canvas.toBuffer('image/png');
       pageImages.push(pngBuffer);
     }
 
     const results = await Promise.all(
       pageImages.map((imgBuffer, index) =>
         limit(async () => {
-          const worker = await createWorker("eng");
+          const worker = await createWorker('eng');
           // recognize supports Buffer
           const { data } = await worker.recognize(imgBuffer);
           await worker.terminate();
@@ -132,18 +130,15 @@ export class PdfExtractor {
     const fullText = results
       .sort((a, b) => a.index - b.index)
       .map((r) => r.text)
-      .join("\n");
+      .join('\n');
 
-    const totalConfidence = results.reduce(
-      (acc, r) => acc + r.confidence,
-      0,
-    );
+    const totalConfidence = results.reduce((acc, r) => acc + r.confidence, 0);
     const avgConfidence = totalConfidence / results.length;
 
     return {
       text: fullText,
       pageCount,
-      type: "image",
+      type: 'image',
       ocrConfidence: avgConfidence,
     };
   }

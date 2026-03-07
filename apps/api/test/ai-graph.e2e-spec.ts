@@ -1,4 +1,11 @@
-import { describe, it, beforeAll, afterAll, expect, afterEach } from '@jest/globals';
+import {
+  describe,
+  it,
+  beforeAll,
+  afterAll,
+  expect,
+  afterEach,
+} from '@jest/globals';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { setupApp, teardownApp, cleanupDatabase } from './setup';
@@ -55,7 +62,9 @@ describe('AI Knowledge Graph (e2e)', () => {
       .expect(200);
 
     if (isFullGraphResponse(response.body)) {
-      const hasEdge = response.body.data.edges.some(e => e.relationType === 'specializes');
+      const hasEdge = response.body.data.edges.some(
+        (e) => e.relationType === 'specializes',
+      );
       expect(hasEdge).toBe(true);
       expect(response.body.data.nodes.length).toBe(2);
     } else {

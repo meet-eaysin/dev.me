@@ -32,7 +32,11 @@ export class AnalyticsStreakDetailsDto {
   @ApiProperty({ example: 14, description: 'Longest consecutive days active' })
   longestStreak!: number;
 
-  @ApiPropertyOptional({ example: '2026-03-04', nullable: true, description: 'The day with the highest activity' })
+  @ApiPropertyOptional({
+    example: '2026-03-04',
+    nullable: true,
+    description: 'The day with the highest activity',
+  })
   mostActiveDay!: string | null;
 }
 

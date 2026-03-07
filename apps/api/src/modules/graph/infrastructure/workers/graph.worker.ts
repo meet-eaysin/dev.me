@@ -1,5 +1,5 @@
 import { Worker, Job } from 'bullmq';
-import { Injectable , Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { GraphJobData, createRedisConnection } from '@repo/queue';
 import { env } from '../../../../shared/utils/env';
 import { GraphBuilderService } from '../../domain/services/graph-builder.service';

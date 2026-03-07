@@ -1,5 +1,5 @@
-import { GraphGenerationMethod, GraphRelationType } from "@repo/types";
-import { Document, Types } from "mongoose";
+import { GraphGenerationMethod, GraphRelationType } from '@repo/types';
+import { Document, Types } from 'mongoose';
 
 export interface IGraphEdge {
   userId: Types.ObjectId;

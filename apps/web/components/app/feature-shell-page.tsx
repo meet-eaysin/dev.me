@@ -42,7 +42,9 @@ export function FeatureShellPage({
 
         {endpoints.length > 0 && (
           <div className="mt-5">
-            <h3 className="text-emphasis text-sm font-semibold">Backend endpoints</h3>
+            <h3 className="text-emphasis text-sm font-semibold">
+              Backend endpoints
+            </h3>
             <ul className="text-subtle mt-2 space-y-1 text-sm">
               {endpoints.map((endpoint) => (
                 <li key={endpoint} className="font-mono">

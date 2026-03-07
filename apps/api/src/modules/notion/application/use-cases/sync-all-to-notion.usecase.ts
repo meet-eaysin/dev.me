@@ -10,7 +10,10 @@ export class SyncAllToNotionUseCase {
   constructor(private readonly notionClient: NotionClient) {}
 
   async execute(userId: string): Promise<NotionSyncResult> {
-    const config = await NotionConfigModel.findOne({ userId, syncEnabled: true }).lean();
+    const config = await NotionConfigModel.findOne({
+      userId,
+      syncEnabled: true,
+    }).lean();
     if (!config || !config.accessToken) {
       throw new BadRequestException('Notion sync not configured or enabled');
     }
@@ -46,7 +49,7 @@ export class SyncAllToNotionUseCase {
             if (typeof pageId === 'string') {
               await this.notionClient.updatePage(token, pageId, {
                 title,
-                content: (doc.summary || doc.content) || undefined,
+                content: doc.summary || doc.content || undefined,
                 url: doc.sourceUrl || undefined,
               });
             } else if (typeof targetDatabaseId === 'string') {
@@ -55,7 +58,7 @@ export class SyncAllToNotionUseCase {
                 targetDatabaseId,
                 {
                   title,
-                  content: (doc.summary || doc.content) || undefined,
+                  content: doc.summary || doc.content || undefined,
                   url: doc.sourceUrl || undefined,
                 },
               );
@@ -64,11 +67,10 @@ export class SyncAllToNotionUseCase {
             }
             synced++;
           } catch (error) {
-            const message = error instanceof Error ? error.message : String(error);
+            const message =
+              error instanceof Error ? error.message : String(error);
             failed++;
-            errors.push(
-              `Failed to sync doc ${doc._id}: ${message}`,
-            );
+            errors.push(`Failed to sync doc ${doc._id}: ${message}`);
           }
         }),
       );

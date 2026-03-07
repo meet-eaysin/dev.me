@@ -34,7 +34,10 @@ export class DocumentPublicViewDto {
 }
 
 export class IngestionStatusViewDto {
-  @ApiPropertyOptional({ enum: IngestionStatus, example: IngestionStatus.COMPLETED })
+  @ApiPropertyOptional({
+    enum: IngestionStatus,
+    example: IngestionStatus.COMPLETED,
+  })
   ingestionStatus?: IngestionStatus;
 
   @ApiPropertyOptional({ example: 'Indexing content' })

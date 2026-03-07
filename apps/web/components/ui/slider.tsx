@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { Slider as SliderPrimitive } from "@base-ui/react/slider";
-import * as React from "react";
+import { Slider as SliderPrimitive } from '@base-ui/react/slider';
+import * as React from 'react';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 function Slider({
   className,
@@ -26,7 +26,7 @@ function Slider({
 
   return (
     <SliderPrimitive.Root
-      className={cn("data-[orientation=horizontal]:w-full", className)}
+      className={cn('data-[orientation=horizontal]:w-full', className)}
       defaultValue={defaultValue}
       max={max}
       min={min}
@@ -64,7 +64,7 @@ function Slider({
 function SliderValue({ className, ...props }: SliderPrimitive.Value.Props) {
   return (
     <SliderPrimitive.Value
-      className={cn("flex justify-end text-sm", className)}
+      className={cn('flex justify-end text-sm', className)}
       data-slot="slider-value"
       {...props}
     />

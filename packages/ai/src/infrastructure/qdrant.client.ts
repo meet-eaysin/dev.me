@@ -1,7 +1,7 @@
-import { QdrantClient } from "@qdrant/js-client-rest";
+import { QdrantClient } from '@qdrant/js-client-rest';
 
 type QdrantFilter = NonNullable<
-  Parameters<QdrantClient["search"]>[1]["filter"]
+  Parameters<QdrantClient['search']>[1]['filter']
 >;
 
 export interface QdrantPoint {
@@ -33,7 +33,7 @@ export class QdrantWrapper {
       await this.client.createCollection(name, {
         vectors: {
           size: vectorSize,
-          distance: "Cosine",
+          distance: 'Cosine',
         },
       });
     }
@@ -61,7 +61,7 @@ export class QdrantWrapper {
     filter?: QdrantFilter,
     topK = 5,
   ) {
-    const searchParams: Parameters<QdrantClient["search"]>[1] = {
+    const searchParams: Parameters<QdrantClient['search']>[1] = {
       vector,
       limit: topK,
       with_payload: true,

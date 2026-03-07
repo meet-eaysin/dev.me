@@ -19,27 +19,43 @@ export enum SearchMode {
 }
 
 export class SearchQueryDto {
-  @ApiProperty({ description: 'Search keywords or phrase', example: 'What is neuroplasticity?' })
+  @ApiProperty({
+    description: 'Search keywords or phrase',
+    example: 'What is neuroplasticity?',
+  })
   @IsString()
   @IsNotEmpty({ message: 'Query is required' })
   q!: string;
 
-  @ApiPropertyOptional({ enum: SearchMode, description: 'Search execution mode', default: SearchMode.NORMAL })
+  @ApiPropertyOptional({
+    enum: SearchMode,
+    description: 'Search execution mode',
+    default: SearchMode.NORMAL,
+  })
   @IsEnum(SearchMode)
   @IsOptional()
   mode?: SearchMode = SearchMode.NORMAL;
 
-  @ApiPropertyOptional({ enum: DocumentStatus, description: 'Filter by document status' })
+  @ApiPropertyOptional({
+    enum: DocumentStatus,
+    description: 'Filter by document status',
+  })
   @IsEnum(DocumentStatus)
   @IsOptional()
   status?: DocumentStatus;
 
-  @ApiPropertyOptional({ enum: DocumentType, description: 'Filter by document type' })
+  @ApiPropertyOptional({
+    enum: DocumentType,
+    description: 'Filter by document type',
+  })
   @IsEnum(DocumentType)
   @IsOptional()
   type?: DocumentType;
 
-  @ApiPropertyOptional({ description: 'Filter results by folder IDs', type: [String] })
+  @ApiPropertyOptional({
+    description: 'Filter results by folder IDs',
+    type: [String],
+  })
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
@@ -50,21 +66,32 @@ export class SearchQueryDto {
   @Transform(({ value }) => (typeof value === 'string' ? [value] : value))
   folderIds?: string[];
 
-  @ApiPropertyOptional({ description: 'Filter results by tag IDs', type: [String] })
+  @ApiPropertyOptional({
+    description: 'Filter results by tag IDs',
+    type: [String],
+  })
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
   @Transform(({ value }) => (typeof value === 'string' ? [value] : value))
   tagIds?: string[];
 
-  @ApiPropertyOptional({ description: 'Page number for pagination', example: 1, default: 1 })
+  @ApiPropertyOptional({
+    description: 'Page number for pagination',
+    example: 1,
+    default: 1,
+  })
   @Type(() => Number)
   @IsInt()
   @Min(1)
   @IsOptional()
   page?: number = 1;
 
-  @ApiPropertyOptional({ description: 'Items per page limit', example: 20, default: 20 })
+  @ApiPropertyOptional({
+    description: 'Items per page limit',
+    example: 20,
+    default: 20,
+  })
   @Type(() => Number)
   @IsInt()
   @Min(1)
@@ -74,12 +101,18 @@ export class SearchQueryDto {
 }
 
 export class AskQueryDto {
-  @ApiProperty({ description: 'Question to ask the AI', example: 'Explain the core concepts of this project.' })
+  @ApiProperty({
+    description: 'Question to ask the AI',
+    example: 'Explain the core concepts of this project.',
+  })
   @IsString()
   @IsNotEmpty({ message: 'Question is required' })
   question!: string;
 
-  @ApiPropertyOptional({ description: 'Optional subset of document IDs to context-limit the AI', type: [String] })
+  @ApiPropertyOptional({
+    description: 'Optional subset of document IDs to context-limit the AI',
+    type: [String],
+  })
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
@@ -137,7 +170,10 @@ export class AskResultDto {
   @ApiProperty({ description: 'The generated AI answer' })
   answer!: string;
 
-  @ApiProperty({ type: [SourceRefDto], description: 'List of documents cited in the answer' })
+  @ApiProperty({
+    type: [SourceRefDto],
+    description: 'List of documents cited in the answer',
+  })
   sources!: SourceRefDto[];
 
   @ApiProperty()

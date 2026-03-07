@@ -1,17 +1,17 @@
-import mongoose, { Schema, Model } from "mongoose";
-import { IDocumentChunkDocument } from "../types/document-chunk.type";
+import mongoose, { Schema, Model } from 'mongoose';
+import { IDocumentChunkDocument } from '../types/document-chunk.type';
 
 const documentChunkSchema = new Schema<IDocumentChunkDocument>(
   {
     documentId: {
       type: Schema.Types.ObjectId,
-      ref: "Document",
+      ref: 'Document',
       required: true,
       index: true,
     },
     userId: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true,
       index: true,
     },
@@ -29,13 +29,13 @@ const documentChunkSchema = new Schema<IDocumentChunkDocument>(
 );
 
 documentChunkSchema.index(
-  { documentId: 1, "metadata.chunkIndex": 1 },
+  { documentId: 1, 'metadata.chunkIndex': 1 },
   { unique: true },
 );
 
-const ModelInstance = (mongoose.models["DocumentChunk"] ||
+const ModelInstance = (mongoose.models['DocumentChunk'] ||
   mongoose.model<IDocumentChunkDocument>(
-    "DocumentChunk",
+    'DocumentChunk',
     documentChunkSchema,
   )) as Model<IDocumentChunkDocument>;
 

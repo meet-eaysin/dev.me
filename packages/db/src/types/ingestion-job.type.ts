@@ -1,5 +1,5 @@
-import { Document, Types } from "mongoose";
-import { IngestionStatus, IngestionStage } from "@repo/types";
+import { Document, Types } from 'mongoose';
+import { IngestionStatus, IngestionStage } from '@repo/types';
 
 export interface IIngestionJob {
   userId: Types.ObjectId;

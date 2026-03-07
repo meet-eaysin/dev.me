@@ -1,12 +1,19 @@
-import { describe, it, beforeAll, afterAll, expect, afterEach } from '@jest/globals';
+import {
+  describe,
+  it,
+  beforeAll,
+  afterAll,
+  expect,
+  afterEach,
+} from '@jest/globals';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { setupApp, teardownApp, cleanupDatabase } from './setup';
-import { 
-  TEST_USER_ID, 
-  seedFolder, 
+import {
+  TEST_USER_ID,
+  seedFolder,
   seedDocument,
-  isFolderResponse, 
+  isFolderResponse,
   isNoteResponse,
 } from './helpers';
 import { Server } from 'http';
@@ -45,8 +52,8 @@ describe('Knowledge (e2e)', () => {
           .get(`/api/v1/knowledge/folders/${folderId}`)
           .set('x-user-id', TEST_USER_ID)
           .expect(200);
-        
-        // Note: Looking at controller, getFolder returns { success: true, data: result } 
+
+        // Note: Looking at controller, getFolder returns { success: true, data: result }
         // where result is likely the folder object itself OR a wrapped object.
         // Let's verify shape if getFolder returns folder directly in data.
         expect(getResponse.body.success).toBe(true);
@@ -106,7 +113,9 @@ describe('Knowledge (e2e)', () => {
           .expect(200);
 
         if (isNoteResponse(updateResponse.body)) {
-          expect(updateResponse.body.data.note.content).toBe(updatePayload.content);
+          expect(updateResponse.body.data.note.content).toBe(
+            updatePayload.content,
+          );
         } else {
           throw new Error('Update note response mismatch');
         }

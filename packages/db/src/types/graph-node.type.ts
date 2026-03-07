@@ -1,5 +1,5 @@
-import { Document, Types } from "mongoose";
-import { GraphNodeType } from "@repo/types";
+import { Document, Types } from 'mongoose';
+import { GraphNodeType } from '@repo/types';
 
 export interface IGraphNode {
   userId: Types.ObjectId;

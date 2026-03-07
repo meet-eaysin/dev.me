@@ -133,7 +133,10 @@ export const NavigationItem: React.FC<{
           {item.icon && (
             <NavIcon
               name={item.isLoading ? 'rotate-cw' : item.icon}
-              className={cn('h-4 w-4 shrink-0', item.isLoading && 'animate-spin')}
+              className={cn(
+                'h-4 w-4 shrink-0',
+                item.isLoading && 'animate-spin',
+              )}
             />
           )}
           <span className={itemLabelClass} data-testid={`${item.name}-test`}>
@@ -172,7 +175,10 @@ export const NavigationItem: React.FC<{
           {item.icon && !isChild && (
             <NavIcon
               name={item.isLoading ? 'rotate-cw' : item.icon}
-              className={cn('h-4 w-4 shrink-0', item.isLoading && 'animate-spin')}
+              className={cn(
+                'h-4 w-4 shrink-0',
+                item.isLoading && 'animate-spin',
+              )}
             />
           )}
           <span className={itemLabelClass} data-testid={`${item.name}-test`}>

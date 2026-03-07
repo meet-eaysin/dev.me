@@ -1,4 +1,4 @@
-import { Injectable , Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { LLMConfigModel } from '@repo/db';
 import { LLMCapabilities, ValidateLLMConfigRequest } from '@repo/types';
 import { decrypt } from '@repo/crypto';

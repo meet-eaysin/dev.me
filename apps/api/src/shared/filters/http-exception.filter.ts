@@ -36,9 +36,11 @@ export class AllExceptionsFilter implements ExceptionFilter {
           error?: string;
           details?: Array<{ field: string; message: string }>;
         };
-        
+
         if (body.message !== undefined) {
-          message = Array.isArray(body.message) ? body.message.join(', ') : body.message;
+          message = Array.isArray(body.message)
+            ? body.message.join(', ')
+            : body.message;
         }
         if (body.error && /^[A-Z][A-Z_]+$/.test(body.error)) {
           error = body.error;

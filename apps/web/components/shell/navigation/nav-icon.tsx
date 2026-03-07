@@ -35,7 +35,9 @@ import {
   Zap,
 } from 'lucide-react';
 
-const navIconMap: Partial<Record<IconName, ComponentType<{ className?: string }>>> = {
+const navIconMap: Partial<
+  Record<IconName, ComponentType<{ className?: string }>>
+> = {
   'arrow-right': ArrowRight,
   atom: Atom,
   'book-open': BookOpen,
