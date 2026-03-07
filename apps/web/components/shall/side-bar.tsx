@@ -3,7 +3,7 @@ import { usePathname } from 'next/navigation';
 import { Navigation } from './navigation/navigation';
 import { cn } from '@/lib/utils';
 import { ArrowLeftIcon, ArrowRightIcon, LogOut } from 'lucide-react';
-import { Avatar } from '../ui/avatar';
+import { UserDropdown } from './user-dropdown/user-dropdown';
 
 export type SideBarProps = {
   bannersHeight?: number;
@@ -33,18 +33,7 @@ export function SideBar({ bannersHeight = 0 }: SideBarProps) {
       >
         <div className="flex h-full flex-col justify-between py-3 lg:pt-4">
           <header className="todesktop:-mt-3 todesktop:flex-col-reverse todesktop:[-webkit-app-region:drag] items-center justify-between md:hidden lg:flex">
-            <Link href="/" className="w-full px-1.5 cursor-pointer">
-              <div className="flex items-center gap-2 font-medium">
-                <Avatar
-                  alt={`Mock User`}
-                  imageSrc="https://cal.com/api/logo?type=favicon-32"
-                  size="xsm"
-                />
-                <p className="text line-clamp-1 text-sm">
-                  <span>Mock User</span>
-                </p>
-              </div>
-            </Link>
+            <UserDropdown />
 
             <div className="flex w-full justify-end rtl:space-x-reverse">
               <button
