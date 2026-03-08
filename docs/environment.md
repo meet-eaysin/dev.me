@@ -1,20 +1,31 @@
 # Environment Setup
 
-This project uses three env layers:
+This project uses app-level env files only:
 
-1. Root [`.env`](/home/eaysin/workspace/mind-stack/.env) for shared local development defaults across the monorepo.
-2. API [`.env`](/home/eaysin/workspace/mind-stack/apps/api/.env) for the NestJS backend.
-3. Web env file based on [`.env.example`](/home/eaysin/workspace/mind-stack/apps/web/.env.example) for the Next.js frontend.
+1. API example template: [`.env.example`](/home/eaysin/workspace/mind-stack/apps/api/.env.example)
+2. API local runtime: [`.env.local`](/home/eaysin/workspace/mind-stack/apps/api/.env.local)
+3. API production runtime: [`.env.production`](/home/eaysin/workspace/mind-stack/apps/api/.env.production)
+4. Web example template: [`.env.example`](/home/eaysin/workspace/mind-stack/apps/web/.env.example)
+5. Web local runtime: [`.env.local`](/home/eaysin/workspace/mind-stack/apps/web/.env.local)
+6. Web production runtime: [`.env.production`](/home/eaysin/workspace/mind-stack/apps/web/.env.production)
 
 For local setup:
 
 ```bash
-cp .env.example .env
-cp apps/api/.env.example apps/api/.env
+cp apps/api/.env.example apps/api/.env.local
 cp apps/web/.env.example apps/web/.env.local
 ```
 
-## Variables
+For production:
+
+```bash
+cp apps/api/.env.example apps/api/.env.production
+cp apps/web/.env.example apps/web/.env.production
+```
+
+In hosted production, prefer your platform's env/secrets UI instead of committed files.
+
+## API Variables
 
 ### Required for all environments
 
@@ -37,19 +48,23 @@ cp apps/web/.env.example apps/web/.env.local
 | `MAX_FILE_SIZE_MB` | API | Upload limit. |
 | `WEB_APP_URL` | API | Frontend redirect target after OAuth. |
 | `CORS_ORIGIN` | API | Allowed frontend origin. |
-| `NEXT_PUBLIC_API_BASE_URL` | Web | Browser-visible API base URL. |
-| `NEXT_PUBLIC_DEV_USER_ID` | Web | Local development fallback user id header. |
-| `NEXT_PUBLIC_WEBAPP_URL` | Web | Public frontend origin. |
-
-### Optional
+### Optional API Variables
 
 | Variable | Purpose |
 | --- | --- |
 | `QDRANT_API_KEY` | Required only when your Qdrant deployment is secured. |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` / `GOOGLE_CALLBACK_URL` | Required only if you enable Google OAuth login. |
 | `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` / `GITHUB_CALLBACK_URL` | Required only if you enable GitHub OAuth login. |
-| `NEXT_PUBLIC_CALCOM_VERSION` | Used for icon sprite versioning. |
-| `NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA` | Used for cache-busting assets in deployments. |
+
+## Web Variables
+
+| Variable | Used by | Purpose |
+| --- | --- | --- |
+| `NEXT_PUBLIC_API_BASE_URL` | Web | Browser-visible API base URL. |
+| `NEXT_PUBLIC_DEV_USER_ID` | Web | Local development fallback user id header. |
+| `NEXT_PUBLIC_WEBAPP_URL` | Web | Public frontend origin. |
+| `NEXT_PUBLIC_CALCOM_VERSION` | Web | Asset version marker. |
+| `NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA` | Web | Cache-busting build identifier. |
 
 ## Production Credentials
 

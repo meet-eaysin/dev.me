@@ -1,6 +1,22 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import dotenv from 'dotenv';
 
-dotenv.config();
+const nodeEnv = process.env.NODE_ENV ?? 'development';
+const envFileName = nodeEnv === 'production' ? '.env.production' : '.env.local';
+
+const envCandidates = [
+  path.resolve(process.cwd(), 'apps/api', envFileName),
+  path.resolve(process.cwd(), envFileName),
+  path.resolve(__dirname, '../../../', envFileName),
+];
+
+for (const envPath of envCandidates) {
+  if (fs.existsSync(envPath)) {
+    dotenv.config({ path: envPath });
+    break;
+  }
+}
 
 function getEnv(key: string, required = true, defaultValue?: string): string {
   const value = process.env[key] || defaultValue;
