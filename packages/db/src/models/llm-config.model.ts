@@ -1,5 +1,6 @@
-import mongoose, { Model, Schema } from 'mongoose';
-import { ILLMConfigDocument } from '../types/llm-config.type';
+import type { Model } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
+import type { ILLMConfigDocument } from '../types/llm-config.type';
 
 const llmConfigSchema = new Schema<ILLMConfigDocument>(
   {

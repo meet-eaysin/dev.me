@@ -1,6 +1,7 @@
-import mongoose, { Schema, Model } from 'mongoose';
+import type { Model } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import { IngestionStatus } from '@repo/types';
-import { IIngestionJobDocument } from '../types/ingestion-job.type';
+import type { IIngestionJobDocument } from '../types/ingestion-job.type';
 
 const ingestionJobSchema = new Schema<IIngestionJobDocument>(
   {

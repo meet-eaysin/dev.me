@@ -1,5 +1,6 @@
-import { model, models, Schema, Model } from 'mongoose';
-import { IFolderDocument } from '../types/folder.type';
+import type { Model } from 'mongoose';
+import { model, models, Schema } from 'mongoose';
+import type { IFolderDocument } from '../types/folder.type';
 
 const folderSchema = new Schema<IFolderDocument>(
   {

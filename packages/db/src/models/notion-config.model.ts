@@ -1,5 +1,6 @@
-import mongoose, { Schema, Model } from 'mongoose';
-import { INotionConfigDocument } from '../types/notion-config.type';
+import type { Model } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
+import type { INotionConfigDocument } from '../types/notion-config.type';
 import { NotionSyncDirectionType } from '@repo/types';
 
 const notionConfigSchema = new Schema<INotionConfigDocument>(

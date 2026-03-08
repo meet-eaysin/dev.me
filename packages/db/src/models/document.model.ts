@@ -1,6 +1,7 @@
-import mongoose, { Schema, Model } from 'mongoose';
+import type { Model } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
+import type { IDocumentDocument } from '../types/document.type';
 import {
-  IDocumentDocument,
   DocumentType,
   DocumentStatus,
   SourceType,

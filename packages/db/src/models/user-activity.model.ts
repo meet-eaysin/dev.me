@@ -1,5 +1,6 @@
-import mongoose, { Schema, Model } from 'mongoose';
-import { IUserActivityDocument } from '../types/user-activity.type';
+import type { Model } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
+import type { IUserActivityDocument } from '../types/user-activity.type';
 
 const userActivitySchema = new Schema<IUserActivityDocument>(
   {

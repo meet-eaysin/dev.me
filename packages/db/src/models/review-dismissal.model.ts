@@ -1,5 +1,6 @@
-import mongoose, { Schema, Model } from 'mongoose';
-import { IReviewDismissalDocument } from '../types/review-dismissal.type';
+import type { Model } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
+import type { IReviewDismissalDocument } from '../types/review-dismissal.type';
 
 const reviewDismissalSchema = new Schema<IReviewDismissalDocument>(
   {

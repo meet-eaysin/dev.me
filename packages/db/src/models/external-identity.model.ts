@@ -1,5 +1,6 @@
-import mongoose, { Model, Schema } from 'mongoose';
-import {
+import type { Model } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
+import type {
   IExternalIdentityDocument,
   ExternalAuthProvider,
 } from '../types/external-identity.type';

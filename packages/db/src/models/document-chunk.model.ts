@@ -1,5 +1,6 @@
-import mongoose, { Schema, Model } from 'mongoose';
-import { IDocumentChunkDocument } from '../types/document-chunk.type';
+import type { Model } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
+import type { IDocumentChunkDocument } from '../types/document-chunk.type';
 
 const documentChunkSchema = new Schema<IDocumentChunkDocument>(
   {

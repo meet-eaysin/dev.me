@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import { IDocumentTranscriptDocument } from '../types/document-transcript.type';
+import type { IDocumentTranscriptDocument } from '../types/document-transcript.type';
 
 const segmentSchema = new Schema(
   {

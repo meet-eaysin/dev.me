@@ -1,5 +1,6 @@
-import { model, models, Schema, Model } from 'mongoose';
-import { ITagDocument } from '../types/tag.type';
+import type { Model } from 'mongoose';
+import { model, models, Schema } from 'mongoose';
+import type { ITagDocument } from '../types/tag.type';
 
 const tagSchema = new Schema<ITagDocument>(
   {

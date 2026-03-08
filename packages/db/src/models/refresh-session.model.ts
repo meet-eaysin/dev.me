@@ -1,5 +1,6 @@
-import mongoose, { Model, Schema } from 'mongoose';
-import { IRefreshSessionDocument } from '../types/refresh-session.type';
+import type { Model } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
+import type { IRefreshSessionDocument } from '../types/refresh-session.type';
 
 const refreshSessionSchema = new Schema<IRefreshSessionDocument>(
   {

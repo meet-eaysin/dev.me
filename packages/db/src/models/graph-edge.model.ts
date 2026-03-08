@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import { IGraphEdgeDocument } from '../types/graph-edge.type';
+import type { IGraphEdgeDocument } from '../types/graph-edge.type';
 
 const graphEdgeSchema = new Schema<IGraphEdgeDocument>(
   {

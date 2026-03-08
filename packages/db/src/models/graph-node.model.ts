@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import { IGraphNodeDocument } from '../types/graph-node.type';
+import type { IGraphNodeDocument } from '../types/graph-node.type';
 
 const graphNodeSchema = new Schema<IGraphNodeDocument>(
   {
