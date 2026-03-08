@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AuthProvider } from '@repo/types';
+import type { AuthProvider } from '@repo/types';
 import { OAuthProviderService } from '../../infrastructure/oauth/oauth-provider.service';
 
 @Injectable()

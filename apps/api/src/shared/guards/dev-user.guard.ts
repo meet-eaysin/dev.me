@@ -4,7 +4,7 @@ import {
   ExecutionContext,
   UnauthorizedException,
 } from '@nestjs/common';
-import { AuthenticatedUser } from '@repo/types';
+import type { AuthenticatedUser } from '@repo/types';
 
 @Injectable()
 export class DevUserGuard implements CanActivate {

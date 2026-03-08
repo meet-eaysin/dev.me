@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AuthenticatedUser } from '@repo/types';
+import type { AuthenticatedUser } from '@repo/types';
 import { RefreshSessionService } from '../../domain/services/refresh-session.service';
 
 @Injectable()

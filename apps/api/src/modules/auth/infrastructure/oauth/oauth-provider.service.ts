@@ -3,7 +3,7 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { AuthProvider } from '@repo/types';
+import type { AuthProvider } from '@repo/types';
 import { Request } from 'express';
 import { env } from '../../../../shared/utils/env';
 import { OAuthProfile } from '../../domain/entities/oauth-profile.entity';

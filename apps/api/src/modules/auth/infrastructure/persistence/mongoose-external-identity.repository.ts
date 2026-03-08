@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ExternalIdentityModel, IExternalIdentityDocument } from '@repo/db';
-import { AuthProvider } from '@repo/types';
+import type { AuthProvider } from '@repo/types';
 import { Types } from 'mongoose';
 import {
   IExternalIdentityRepository,

@@ -1,5 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { AuthProvider } from '@repo/types';
+import type { AuthProvider } from '@repo/types';
 import { Response } from 'express';
 import { JWTPayload, SignJWT, jwtVerify } from 'jose';
 import { env } from '../../../../shared/utils/env';

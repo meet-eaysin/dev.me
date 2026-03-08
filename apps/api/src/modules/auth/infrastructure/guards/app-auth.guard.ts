@@ -4,7 +4,7 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { AuthenticatedUser } from '@repo/types';
+import type { AuthenticatedUser } from '@repo/types';
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 import { IS_PUBLIC_KEY } from '../../../../shared/decorators/public.decorator';

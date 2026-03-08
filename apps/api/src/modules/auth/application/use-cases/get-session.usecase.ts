@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AuthenticatedUser, AuthSessionView } from '@repo/types';
+import type { AuthenticatedUser, AuthSessionView } from '@repo/types';
 
 @Injectable()
 export class GetSessionUseCase {
