@@ -1,6 +1,6 @@
-import type { GraphNodeEntity } from '../entities/graph-node.entity';
-import type { GraphEdgeEntity } from '../entities/graph-edge.entity';
-import type { GraphRelationType, GraphGenerationMethod } from '@repo/types';
+import { GraphNodeEntity } from '../entities/graph-node.entity';
+import { GraphEdgeEntity } from '../entities/graph-edge.entity';
+import { GraphRelationType, GraphGenerationMethod } from '@repo/types';
 
 export interface UpsertEdgeData {
   userId: string;

@@ -1,9 +1,9 @@
 import { describe, it, beforeAll, afterAll } from '@jest/globals';
-import type { INestApplication } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { setupApp, teardownApp, cleanupDatabase } from './setup';
 import { createTestAuthContext, assertErrorShape, generateId } from './helpers';
-import type { Server } from 'http';
+import { Server } from 'http';
 
 describe('AI Resilience (e2e)', () => {
   let app: INestApplication<Server>;

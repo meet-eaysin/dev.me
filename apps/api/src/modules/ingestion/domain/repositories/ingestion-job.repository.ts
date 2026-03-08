@@ -1,4 +1,4 @@
-import type { IngestionStatus, IngestionStage } from '@repo/types';
+import { IngestionStatus, IngestionStage } from '@repo/types';
 import type { IngestionJobView } from '../types/ingestion.types';
 
 export type { IngestionJobView };

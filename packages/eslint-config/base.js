@@ -18,13 +18,6 @@ export const config = [
       turbo: turboPlugin,
     },
     rules: {
-      "@typescript-eslint/consistent-type-imports": [
-        "error",
-        {
-          prefer: "type-imports",
-          fixStyle: "separate-type-imports",
-        },
-      ],
       "turbo/no-undeclared-env-vars": "warn",
     },
   },

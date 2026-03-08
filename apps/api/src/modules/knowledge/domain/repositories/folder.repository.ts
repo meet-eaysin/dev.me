@@ -1,4 +1,4 @@
-import type { FolderEntity } from '../entities/folder.entity';
+import { FolderEntity } from '../entities/folder.entity';
 
 export abstract class IFolderRepository {
   abstract findAll(userId: string): Promise<FolderEntity[]>;

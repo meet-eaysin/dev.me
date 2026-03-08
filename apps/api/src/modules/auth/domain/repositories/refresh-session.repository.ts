@@ -1,4 +1,4 @@
-import type { RefreshSessionEntity } from '../entities/refresh-session.entity';
+import { RefreshSessionEntity } from '../entities/refresh-session.entity';
 
 export interface CreateRefreshSessionInput {
   sessionId: string;

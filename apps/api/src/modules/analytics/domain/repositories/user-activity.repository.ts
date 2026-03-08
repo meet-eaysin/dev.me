@@ -1,4 +1,4 @@
-import type {
+import {
   AnalyticsDocumentStatsAggregationResult,
   AnalyticsStatsAggregationResult,
 } from '@repo/types';

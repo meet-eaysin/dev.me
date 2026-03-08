@@ -1,4 +1,4 @@
-import type { LLMConfigPublicView } from '@repo/types';
+import { LLMConfigPublicView } from '@repo/types';
 
 export interface LLMConfigProps {
   id?: string;

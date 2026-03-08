@@ -1,4 +1,4 @@
-import type { NoteEntity } from '../entities/note.entity';
+import { NoteEntity } from '../entities/note.entity';
 
 export abstract class INoteRepository {
   abstract findAllByDocument(

@@ -1,7 +1,6 @@
 import pdf from 'pdf-parse';
 import { createWorker } from 'tesseract.js';
-import type { SKRSContext2D } from '@napi-rs/canvas';
-import { createCanvas } from '@napi-rs/canvas';
+import { createCanvas, SKRSContext2D } from '@napi-rs/canvas';
 
 export interface PdfExtractResult {
   text: string;

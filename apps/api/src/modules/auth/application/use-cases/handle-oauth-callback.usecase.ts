@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthProvider } from '@repo/types';
 import { Request } from 'express';
 import { IUserRepository } from '../../../users/domain/repositories/user.repository';
@@ -26,7 +26,7 @@ export class HandleOAuthCallbackUseCase {
   }) {
     const profile = await this.oAuthProviderService.handleCallback(input);
 
-    const user = await this.externalIdentityRepository.findByProviderIdentity(
+    let user = await this.externalIdentityRepository.findByProviderIdentity(
       profile.provider,
       profile.providerUserId,
     );

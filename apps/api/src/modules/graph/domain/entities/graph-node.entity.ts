@@ -1,4 +1,4 @@
-import type { GraphNodeType } from '@repo/types';
+import { GraphNodeType } from '@repo/types';
 
 export interface GraphNodeView {
   id: string;

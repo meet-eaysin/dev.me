@@ -6,7 +6,7 @@ import {
   expect,
   afterEach,
 } from '@jest/globals';
-import type { INestApplication } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { setupApp, teardownApp, cleanupDatabase } from './setup';
 import {
@@ -18,7 +18,7 @@ import {
   isDocumentSubgraphResponse,
   isRebuildGraphResponse,
 } from './helpers';
-import type { Server } from 'http';
+import { Server } from 'http';
 
 describe('Graph (e2e)', () => {
   let app: INestApplication<Server>;

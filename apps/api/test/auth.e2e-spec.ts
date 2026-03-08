@@ -6,9 +6,9 @@ import {
   expect,
   it,
 } from '@jest/globals';
-import type { INestApplication } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
-import type { Server } from 'http';
+import { Server } from 'http';
 import { cleanupDatabase, setupApp, teardownApp } from './setup';
 import { assertErrorShape, loginTestUser } from './helpers';
 

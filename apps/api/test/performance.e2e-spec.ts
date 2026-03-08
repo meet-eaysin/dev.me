@@ -6,7 +6,7 @@ import {
   expect,
   afterEach,
 } from '@jest/globals';
-import type { INestApplication } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { setupApp, teardownApp, cleanupDatabase } from './setup';
 import {
@@ -16,7 +16,7 @@ import {
   isListDocumentsResponse,
 } from './helpers';
 import { DocumentType } from '@repo/types';
-import type { Server } from 'http';
+import { Server } from 'http';
 
 describe('Performance and Edge Cases (e2e)', () => {
   let app: INestApplication<Server>;

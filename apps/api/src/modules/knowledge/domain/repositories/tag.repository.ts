@@ -1,4 +1,4 @@
-import type { TagEntity } from '../entities/tag.entity';
+import { TagEntity } from '../entities/tag.entity';
 
 export abstract class ITagRepository {
   abstract findAll(userId: string): Promise<TagEntity[]>;

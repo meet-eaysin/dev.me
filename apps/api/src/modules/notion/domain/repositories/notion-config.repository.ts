@@ -1,4 +1,4 @@
-import type { NotionConfigEntity } from '../entities/notion-config.entity';
+import { NotionConfigEntity } from '../entities/notion-config.entity';
 
 export abstract class INotionConfigRepository {
   abstract findByUserId(userId: string): Promise<NotionConfigEntity | null>;
