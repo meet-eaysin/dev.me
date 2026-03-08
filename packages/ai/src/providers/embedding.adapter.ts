@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { z } from 'zod';
-import { ResolvedLLMConfig } from './provider.factory';
+import type { ResolvedLLMConfig } from './provider.factory';
 
 const OllamaEmbeddingResponseSchema = z.object({
   embedding: z.array(z.number()),

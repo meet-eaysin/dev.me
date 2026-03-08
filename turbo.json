@@ -30,6 +30,9 @@
       "dependsOn": ["^build"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
+    "typecheck": {
+      "dependsOn": ["^build"]
+    },
     "lint": {},
     "test": {
       "env": ["JEST_WORKER_ID"]

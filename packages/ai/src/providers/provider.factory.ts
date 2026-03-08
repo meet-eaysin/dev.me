@@ -1,4 +1,5 @@
-import { LLMConfigModel, ILLMConfig } from '@repo/db';
+import type { ILLMConfig } from '@repo/db';
+import { LLMConfigModel } from '@repo/db';
 import { Types } from 'mongoose';
 import { decrypt } from '@repo/crypto';
 

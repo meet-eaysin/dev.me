@@ -1,10 +1,9 @@
-import {
+import type {
   DocumentType,
   DocumentStatus,
   SourceType,
   IngestionStatus,
 } from '@repo/types';
-import {} from '@repo/db';
 
 export interface DocumentPublicView {
   id: string;

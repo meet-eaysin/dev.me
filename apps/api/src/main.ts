@@ -1,11 +1,6 @@
 import { NestFactory } from '@nestjs/core';
-import {
-  ValidationPipe,
-  Logger,
-  BadRequestException,
-  ValidationError,
-  INestApplication,
-} from '@nestjs/common';
+import type { ValidationError, INestApplication } from '@nestjs/common';
+import { ValidationPipe, Logger, BadRequestException } from '@nestjs/common';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';

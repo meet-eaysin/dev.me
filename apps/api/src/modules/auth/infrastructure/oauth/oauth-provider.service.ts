@@ -3,16 +3,15 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { AuthProvider } from '@repo/types';
+import type { AuthProvider } from '@repo/types';
 import { Request } from 'express';
+import type * as OpenIdClientModule from 'openid-client';
 import { env } from '../../../../shared/utils/env';
 import { OAuthProfile } from '../../domain/entities/oauth-profile.entity';
 
-type OpenIdClientModule = typeof import('openid-client');
-
 @Injectable()
 export class OAuthProviderService {
-  private openIdClientPromise: Promise<OpenIdClientModule> | null = null;
+  private openIdClientPromise: Promise<typeof OpenIdClientModule> | null = null;
 
   async buildAuthorizationUrl(input: {
     provider: AuthProvider;
@@ -246,7 +245,7 @@ export class OAuthProviderService {
       : 'read:user user:email';
   }
 
-  private async getClientModule(): Promise<OpenIdClientModule> {
+  private async getClientModule(): Promise<typeof OpenIdClientModule> {
     if (!this.openIdClientPromise) {
       this.openIdClientPromise = import('openid-client');
     }
