@@ -12661,6 +12661,7 @@ __metadata:
     "@base-ui/react": "npm:^1.2.0"
     "@hookform/resolvers": "npm:^5.2.2"
     "@repo/eslint-config": "npm:*"
+    "@repo/types": "npm:*"
     "@repo/typescript-config": "npm:*"
     "@tailwindcss/postcss": "npm:^4.2.1"
     "@tailwindcss/typography": "npm:^0.5.19"
