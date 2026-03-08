@@ -10,7 +10,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { AuthenticatedUser, AuthProvider } from '@repo/types';
+import type { AuthenticatedUser, AuthProvider } from '@repo/types';
 import { GetSessionUseCase } from '../application/use-cases/get-session.usecase';
 import { ApiSuccessResponse } from '../../../shared/decorators/api-success-response.decorator';
 import { User } from '../../../shared/decorators/user.decorator';
