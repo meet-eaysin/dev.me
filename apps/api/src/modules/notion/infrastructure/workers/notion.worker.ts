@@ -1,41 +1,33 @@
-import { Worker, Job } from 'bullmq';
+import { Processor, WorkerHost, OnWorkerEvent } from '@nestjs/bullmq';
+import { Job } from 'bullmq';
 import { Injectable, Logger } from '@nestjs/common';
-import { NotionSyncJobData, createRedisConnection } from '@repo/queue';
+import {
+  NotionSyncJobData,
+  QUEUE_NOTION_SYNC,
+  NotionAction,
+} from '@repo/types';
 import { NotionConfigModel, DocumentModel } from '@repo/db';
-import { NotionAction } from '@repo/types';
 import { NotionClient } from '../notion-client';
 import { decrypt } from '@repo/crypto';
 import { env } from '../../../../shared/utils/env';
 
+@Processor(QUEUE_NOTION_SYNC)
 @Injectable()
-export class NotionWorker {
+export class NotionWorker extends WorkerHost {
   private readonly logger = new Logger(NotionWorker.name);
-  private _worker: Worker<NotionSyncJobData>;
-
-  get worker(): Worker<NotionSyncJobData> {
-    return this._worker;
-  }
 
   constructor(private readonly notionClient: NotionClient) {
-    const redis = createRedisConnection(env.REDIS_URL);
+    super();
+  }
 
-    this._worker = new Worker<NotionSyncJobData>(
-      'notion-sync',
-      async (job: Job<NotionSyncJobData>) => {
-        await this.processJob(job);
-      },
-      {
-        connection: redis,
-        concurrency: 1, // Rate limit enforced
-        prefix: 'mindstack',
-      },
-    );
+  async process(job: Job<NotionSyncJobData>): Promise<void> {
+    await this.processJob(job);
+  }
 
-    this._worker.on('failed', (job, err) => {
-      this.logger.error(`[NotionWorker] Job ${job?.id} failed: ${err.message}`);
-    });
-
-    this.logger.log('[NotionWorker] Worker started and listening to queue');
+  @OnWorkerEvent('failed')
+  async onFailed(job: Job<NotionSyncJobData> | undefined, err: Error) {
+    const jobId = job?.id ?? 'unknown';
+    this.logger.error(`[NotionWorker] Job ${jobId} failed: ${err.message}`);
   }
 
   private async processJob(job: Job<NotionSyncJobData>): Promise<void> {
@@ -109,7 +101,7 @@ export class NotionWorker {
         if (doc && typeof pageId === 'string') {
           try {
             await this.notionClient.deletePage(token, pageId);
-          } catch (error) {
+          } catch (error: unknown) {
             const message =
               error instanceof Error ? error.message : String(error);
             this.logger.error(`Failed to delete Notion page: ${message}`);
@@ -118,14 +110,10 @@ export class NotionWorker {
           await doc.save();
         }
       }
-    } catch (error) {
+    } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);
       this.logger.error(`Sync failed for doc ${documentId}: ${message}`);
       throw error; // Let BullMQ handle retries
     }
-  }
-
-  async close() {
-    await this._worker.close();
   }
 }

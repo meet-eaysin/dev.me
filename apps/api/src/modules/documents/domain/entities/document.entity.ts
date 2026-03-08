@@ -104,4 +104,13 @@ export class DocumentEntity {
   get sourceUrl(): string | undefined {
     return this.props.sourceUrl;
   }
+  get type(): DocumentType {
+    return this.props.type;
+  }
+  get status(): DocumentStatus {
+    return this.props.status;
+  }
+  get content(): string | undefined {
+    return this.props.content;
+  }
 }

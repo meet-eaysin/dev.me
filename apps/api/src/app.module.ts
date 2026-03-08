@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { connectMongoDB, disconnectMongoDB } from '@repo/db';
-import { createRedisConnection, initQueues } from '@repo/queue';
 import { env } from './shared/utils/env';
 import { AllExceptionsFilter } from './shared/filters/http-exception.filter';
 
@@ -65,16 +64,6 @@ export class AppModule implements OnModuleInit, OnApplicationShutdown {
 
   async onModuleInit() {
     await connectMongoDB(env.MONGODB_URI);
-    try {
-      if (env.REDIS_URL && env.REDIS_HOST !== 'localhost') {
-        initQueues(createRedisConnection(env.REDIS_URL));
-      } else {
-        this.logger.warn('Skipping Redis initialization: using local Redis host.');
-      }
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      this.logger.error(`Failed to initialize Redis: ${message}`);
-    }
   }
 
   async onApplicationShutdown() {

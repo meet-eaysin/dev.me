@@ -1,19 +1,30 @@
 import { Injectable, Logger, ConflictException } from '@nestjs/common';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 import { IDocumentRepository } from '../../domain/repositories/document.repository';
 import {
   DocumentEntity,
   DocumentPublicView,
 } from '../../domain/entities/document.entity';
 import { DocumentType as DomainDocumentType } from '../../domain/value-objects/document-type.vo';
-import { ingestionQueue } from '@repo/queue';
-import { DocumentType, SourceType, IngestionStatus } from '@repo/types';
+import {
+  DocumentType,
+  SourceType,
+  IngestionStatus,
+  IngestionJobData,
+  QUEUE_INGESTION,
+} from '@repo/types';
 import { CreateDocumentCommand } from '../command/create-document';
 
 @Injectable()
 export class CreateDocumentUseCase {
   private readonly logger = new Logger(CreateDocumentUseCase.name);
 
-  constructor(private readonly documentRepository: IDocumentRepository) {}
+  constructor(
+    private readonly documentRepository: IDocumentRepository,
+    @InjectQueue(QUEUE_INGESTION)
+    private readonly ingestionQueue: Queue<IngestionJobData>,
+  ) {}
 
   async execute(command: CreateDocumentCommand): Promise<DocumentPublicView> {
     const docType = DomainDocumentType.validate(command.type);
@@ -57,11 +68,18 @@ export class CreateDocumentUseCase {
     );
 
     // Push to ingestion queue - do NOT await
-    ingestionQueue.addJob(savedDoc.id, command.userId).catch((err: Error) => {
-      this.logger.error(
-        `Failed to push job for doc ${savedDoc.id}: ${err.message}`,
-      );
-    });
+    this.ingestionQueue
+      .add('process', {
+        documentId: savedDoc.id,
+        userId: command.userId,
+        type: docType.getValue(), // Use actual doc type
+        source: command.source,
+      })
+      .catch((err: Error) => {
+        this.logger.error(
+          `Failed to push job for doc ${savedDoc.id}: ${err.message}`,
+        );
+      });
 
     return savedDoc.toPublicView();
   }

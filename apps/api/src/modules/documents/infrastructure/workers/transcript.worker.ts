@@ -1,6 +1,6 @@
-import { Worker, Job } from 'bullmq';
+import { Processor, WorkerHost, OnWorkerEvent } from '@nestjs/bullmq';
+import { Job } from 'bullmq';
 import { Injectable, Logger } from '@nestjs/common';
-import { TranscriptJobData, createRedisConnection } from '@repo/queue';
 import {
   youtubeExtractor,
   chunkText,
@@ -8,42 +8,31 @@ import {
   QdrantWrapper,
   ProviderFactory,
 } from '@repo/ai';
+import { TranscriptJobData, QUEUE_TRANSCRIPT, DocumentType } from '@repo/types';
 import { IDocumentRepository } from '../../../documents/domain/repositories/document.repository';
 import { env } from '../../../../shared/utils/env';
 import { DocumentTranscriptModel, DocumentChunkModel } from '@repo/db';
 
+@Processor(QUEUE_TRANSCRIPT)
 @Injectable()
-export class TranscriptWorker {
+export class TranscriptWorker extends WorkerHost {
   private readonly logger = new Logger(TranscriptWorker.name);
-  private _worker: Worker<TranscriptJobData>;
   private qdrant: QdrantWrapper;
 
   constructor(private readonly documentRepository: IDocumentRepository) {
-    const redis = createRedisConnection(env.REDIS_URL);
+    super();
     this.qdrant = new QdrantWrapper(env.QDRANT_URL, env.QDRANT_API_KEY);
+  }
 
-    this._worker = new Worker<TranscriptJobData>(
-      'transcript',
-      async (job: Job<TranscriptJobData>) => {
-        await this.processJob(job);
-      },
-      {
-        connection: redis,
-        concurrency: 5,
-        prefix: 'mindstack',
-        lockDuration: 300000,
-        stalledInterval: 300000,
-        maxStalledCount: 0,
-      },
+  async process(job: Job<TranscriptJobData>): Promise<void> {
+    await this.processJob(job);
+  }
+
+  @OnWorkerEvent('failed')
+  async onFailed(job: Job<TranscriptJobData> | undefined, err: Error) {
+    this.logger.error(
+      `[TranscriptWorker] Job ${job?.id} failed: ${err.message}`,
     );
-
-    this._worker.on('failed', async (job, err) => {
-      this.logger.error(
-        `[TranscriptWorker] Job ${job?.id} failed: ${err.message}`,
-      );
-    });
-
-    this.logger.log('[TranscriptWorker] Worker started and listening to queue');
   }
 
   private async processJob(job: Job<TranscriptJobData>): Promise<void> {
@@ -52,7 +41,7 @@ export class TranscriptWorker {
     const doc = await this.documentRepository.findById(documentId, userId);
     if (!doc) throw new Error('Document not found');
 
-    if (doc.props.type !== 'youtube') {
+    if (doc.type !== DocumentType.YOUTUBE) {
       this.logger.log(
         `[TranscriptWorker] Skipping non-youtube document: ${documentId}`,
       );
@@ -70,11 +59,11 @@ export class TranscriptWorker {
       return;
     }
 
-    if (!doc.props.sourceUrl) {
+    if (!doc.sourceUrl) {
       throw new Error('No sourceUrl found for video transcript generation');
     }
 
-    const result = await youtubeExtractor.extractYouTube(doc.props.sourceUrl);
+    const result = await youtubeExtractor.extractYouTube(doc.sourceUrl);
     if (!result.transcript || result.transcript.length === 0) {
       throw new Error('Could not extract transcript from YouTube video');
     }
@@ -115,8 +104,8 @@ export class TranscriptWorker {
             userId,
             chunkIndex: i,
             text: chunkObj.content,
-            type: doc.props.type,
-            status: doc.props.status,
+            type: doc.type,
+            status: doc.status,
           },
         },
       ]);

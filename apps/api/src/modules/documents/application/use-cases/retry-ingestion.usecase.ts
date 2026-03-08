@@ -4,15 +4,24 @@ import {
   UnprocessableEntityException,
   Logger,
 } from '@nestjs/common';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 import { IDocumentRepository } from '../../domain/repositories/document.repository';
-import { ingestionQueue } from '@repo/queue';
-import { IngestionStatus } from '@repo/types';
+import {
+  IngestionStatus,
+  IngestionJobData,
+  QUEUE_INGESTION,
+} from '@repo/types';
 
 @Injectable()
 export class RetryIngestionUseCase {
   private readonly logger = new Logger(RetryIngestionUseCase.name);
 
-  constructor(private readonly documentRepository: IDocumentRepository) {}
+  constructor(
+    private readonly documentRepository: IDocumentRepository,
+    @InjectQueue(QUEUE_INGESTION)
+    private readonly ingestionQueue: Queue<IngestionJobData>,
+  ) {}
 
   async execute(id: string, userId: string): Promise<{ jobId: string }> {
     const doc = await this.documentRepository.findById(id, userId);
@@ -33,9 +42,16 @@ export class RetryIngestionUseCase {
     });
 
     // Re-push to ingestion queue
-    ingestionQueue.addJob(id, userId).catch((err: Error) => {
-      this.logger.error(`Failed to re-push job: ${err.message}`);
-    });
+    this.ingestionQueue
+      .add('process', {
+        documentId: id,
+        userId: userId,
+        type: doc.type,
+        source: doc.sourceUrl ?? '',
+      })
+      .catch((err: Error) => {
+        this.logger.error(`Failed to re-push job: ${err.message}`);
+      });
 
     return { jobId: `dummy-job-${id}` };
   }

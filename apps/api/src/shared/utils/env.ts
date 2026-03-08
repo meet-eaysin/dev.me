@@ -19,11 +19,11 @@ for (const envPath of envCandidates) {
 }
 
 function getEnv(key: string, required = true, defaultValue?: string): string {
-  const value = process.env[key] || defaultValue;
-  if (required && !value) {
+  const value = process.env[key] ?? defaultValue;
+  if (required && value === undefined) {
     throw new Error(`Missing required environment variable: ${key}`);
   }
-  return value as string;
+  return value ?? '';
 }
 
 function getRedisUrl(): string {

@@ -3,7 +3,9 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
-import { transcriptQueue } from '@repo/queue';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
+import { DocumentType, TranscriptJobData, QUEUE_TRANSCRIPT } from '@repo/types';
 import { IDocumentRepository } from '../../domain/repositories/document.repository';
 import { ITranscriptRepository } from '../../domain/repositories/transcript.repository';
 
@@ -12,13 +14,15 @@ export class TranscriptUseCase {
   constructor(
     private readonly documentRepository: IDocumentRepository,
     private readonly transcriptRepository: ITranscriptRepository,
+    @InjectQueue(QUEUE_TRANSCRIPT)
+    private readonly transcriptQueue: Queue<TranscriptJobData>,
   ) {}
 
   async getTranscript(documentId: string, userId: string) {
     const doc = await this.documentRepository.findById(documentId, userId);
     if (!doc) throw new NotFoundException('Document not found');
 
-    if (doc.props.type !== 'youtube') {
+    if (doc.type !== DocumentType.YOUTUBE) {
       throw new BadRequestException(
         'Transcripts are only available for YouTube documents',
       );
@@ -42,7 +46,7 @@ export class TranscriptUseCase {
     const doc = await this.documentRepository.findById(documentId, userId);
     if (!doc) throw new NotFoundException('Document not found');
 
-    if (doc.props.type !== 'youtube') {
+    if (doc.type !== DocumentType.YOUTUBE) {
       throw new BadRequestException(
         'Transcripts are only available for YouTube documents',
       );
@@ -61,7 +65,7 @@ export class TranscriptUseCase {
       };
     }
 
-    await transcriptQueue.addJob(documentId, userId);
+    await this.transcriptQueue.add('transcript', { documentId, userId });
     return { alreadyExists: false };
   }
 }

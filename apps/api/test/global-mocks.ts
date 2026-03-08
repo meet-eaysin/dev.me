@@ -85,25 +85,41 @@ jest.mock('@repo/ai', () => ({
   chunkPipeline: jest.fn(),
 }));
 
-jest.mock('@repo/queue', () => ({
+jest.mock('bullmq', () => ({
   Queue: jest.fn().mockImplementation(() => ({
-    add: jest
-      .fn<() => Promise<Record<string, unknown>>>()
-      .mockResolvedValue({}),
-    process: jest.fn(),
-    on: jest.fn(),
+    add: jest.fn<any>().mockResolvedValue({ id: 'mock-job-id' }),
+    on: jest.fn<any>(),
+    close: jest.fn<any>().mockResolvedValue(undefined),
+    disconnect: jest.fn<any>().mockResolvedValue(undefined),
   })),
   Worker: jest.fn().mockImplementation(() => ({
-    on: jest.fn(),
-    close: jest
-      .fn<() => Promise<Record<string, unknown>>>()
-      .mockResolvedValue({}),
+    on: jest.fn<any>(),
+    close: jest.fn<any>().mockResolvedValue(undefined),
+    disconnect: jest.fn<any>().mockResolvedValue(undefined),
   })),
-  createRedisConnection: jest.fn().mockReturnValue({}),
-  initQueues: jest.fn(),
-  ingestionQueue: { addJob: jest.fn(() => Promise.resolve({})) },
-  summaryQueue: { addJob: jest.fn(() => Promise.resolve({})) },
-  graphQueue: { addJob: jest.fn(() => Promise.resolve({})) },
-  notionQueue: { addJob: jest.fn(() => Promise.resolve({})) },
-  transcriptQueue: { addJob: jest.fn(() => Promise.resolve({})) },
+  QueueEvents: jest.fn().mockImplementation(() => ({
+    on: jest.fn<any>(),
+    close: jest.fn<any>().mockResolvedValue(undefined),
+    disconnect: jest.fn<any>().mockResolvedValue(undefined),
+  })),
 }));
+
+jest.mock('ioredis', () => {
+  const MockRedis = jest.fn().mockImplementation(() => ({
+    on: jest.fn<any>(),
+    off: jest.fn<any>(),
+    connect: jest.fn<any>().mockResolvedValue(undefined),
+    disconnect: jest.fn<any>().mockResolvedValue(undefined),
+    quit: jest.fn<any>().mockResolvedValue(undefined),
+    get: jest.fn<any>(),
+    set: jest.fn<any>(),
+    del: jest.fn<any>(),
+    duplicate: jest.fn<any>().mockReturnThis(),
+    info: jest.fn<any>().mockResolvedValue('redis_version:6.0.0'),
+    ping: jest.fn<any>().mockResolvedValue('PONG'),
+    defineCommand: jest.fn<any>(),
+    status: 'ready',
+    emit: jest.fn<any>(),
+  }));
+  return MockRedis;
+});

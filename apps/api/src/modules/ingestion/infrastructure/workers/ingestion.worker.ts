@@ -1,12 +1,6 @@
-import { Worker, Job } from 'bullmq';
+import { Processor, WorkerHost, OnWorkerEvent } from '@nestjs/bullmq';
+import { Job } from 'bullmq';
 import { Injectable, Logger } from '@nestjs/common';
-import {
-  IngestionJobData,
-  createRedisConnection,
-  initQueues,
-  graphQueue,
-  notionQueue,
-} from '@repo/queue';
 import {
   pdfExtractor,
   urlExtractor,
@@ -18,6 +12,19 @@ import {
   ProviderFactory,
   ResolvedLLMConfig,
 } from '@repo/ai';
+import {
+  IngestionJobData,
+  IngestionStatus,
+  IngestionStage,
+  NotionAction,
+  QUEUE_INGESTION,
+  QUEUE_GRAPH,
+  QUEUE_NOTION_SYNC,
+  NotionSyncJobData,
+  GraphJobData,
+} from '@repo/types';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 import { IDocumentRepository } from '../../../documents/domain/repositories/document.repository';
 import { IIngestionJobRepository } from '../../domain/repositories/ingestion-job.repository';
 import { env } from '../../../../shared/utils/env';
@@ -25,61 +32,42 @@ import { LocalStorage } from '../../../../shared/infrastructure/storage/local-st
 import { DocumentModel, TagModel, DocumentChunkModel } from '@repo/db';
 import { Types } from 'mongoose';
 import axios from 'axios';
-import { IngestionStatus, IngestionStage, NotionAction } from '@repo/types';
 
+@Processor(QUEUE_INGESTION)
 @Injectable()
-export class IngestionWorker {
+export class IngestionWorker extends WorkerHost {
   private readonly logger = new Logger(IngestionWorker.name);
-  private _worker: Worker<IngestionJobData>;
   private qdrant: QdrantWrapper;
-
-  get worker(): Worker<IngestionJobData> {
-    return this._worker;
-  }
 
   constructor(
     private readonly documentRepository: IDocumentRepository,
     private readonly ingestionJobRepository: IIngestionJobRepository,
     private readonly localStorage: LocalStorage,
+    @InjectQueue(QUEUE_GRAPH)
+    private readonly graphQueue: Queue<GraphJobData>,
+    @InjectQueue(QUEUE_NOTION_SYNC)
+    private readonly notionQueue: Queue<NotionSyncJobData>,
   ) {
-    const redis = createRedisConnection(env.REDIS_URL);
+    super();
     this.qdrant = new QdrantWrapper(env.QDRANT_URL, env.QDRANT_API_KEY);
+  }
 
-    initQueues(redis);
+  async process(job: Job<IngestionJobData>): Promise<void> {
+    await this.processJob(job);
+  }
 
-    this._worker = new Worker<IngestionJobData>(
-      'ingestion',
-      async (job: Job<IngestionJobData>) => {
-        await this.processJob(job);
-      },
-      {
-        connection: redis,
-        concurrency: 1,
-        prefix: 'mindstack',
-        lockDuration: 300000,
-        stalledInterval: 300000,
-        maxStalledCount: 0,
-      },
-    );
-
-    this._worker.on('failed', async (job, err) => {
-      this.logger.error(`Job ${job?.id} failed: ${err.message}`);
-      if (job) {
-        await this.ingestionJobRepository.markFailed(
-          job.data.documentId,
-          err.message,
-        );
-        await this.documentRepository.update(
-          job.data.documentId,
-          job.data.userId,
-          {
-            ingestionStatus: IngestionStatus.FAILED,
-            ingestionError: err.message,
-          },
-        );
-      }
-    });
-    this.logger.log('[IngestionWorker] Worker started and listening to queue');
+  @OnWorkerEvent('failed')
+  async onFailed(job: Job<IngestionJobData> | undefined, err: Error) {
+    const jobId = job?.id ?? 'unknown';
+    this.logger.error(`Job ${jobId} failed: ${err.message}`);
+    if (job) {
+      const { documentId, userId } = job.data;
+      await this.ingestionJobRepository.markFailed(documentId, err.message);
+      await this.documentRepository.update(documentId, userId, {
+        ingestionStatus: IngestionStatus.FAILED,
+        ingestionError: err.message,
+      });
+    }
   }
 
   private async processJob(job: Job<IngestionJobData>): Promise<void> {
@@ -88,8 +76,8 @@ export class IngestionWorker {
     const doc = await this.documentRepository.findById(documentId, userId);
     if (!doc) throw new Error('Document not found');
 
-    const type = doc.props.type;
-    const source = doc.props.sourceUrl || '';
+    const type = doc.type;
+    const source = doc.sourceUrl || '';
 
     await this.ingestionJobRepository.updateStage(
       documentId,
@@ -180,7 +168,7 @@ export class IngestionWorker {
             );
           }
         }
-      } catch (error) {
+      } catch (error: unknown) {
         const msg = error instanceof Error ? error.message : String(error);
         this.logger.warn(`Classification failed: ${msg}, skipping...`);
       }
@@ -251,7 +239,7 @@ export class IngestionWorker {
         IngestionStatus.PROCESSING,
         userId,
       );
-      await graphQueue.addJob(documentId, userId);
+      await this.graphQueue.add('graph', { documentId, userId });
 
       await this.documentRepository.update(documentId, userId, {
         ingestionStatus: IngestionStatus.COMPLETED,
@@ -266,12 +254,14 @@ export class IngestionWorker {
         userId,
       );
 
-      await notionQueue.addJob(documentId, userId, NotionAction.CREATE);
-    } catch (error) {
+      await this.notionQueue.add('sync', {
+        documentId,
+        userId,
+        action: NotionAction.CREATE,
+      });
+    } catch (error: unknown) {
       const errorMessage =
-        error instanceof Error
-          ? error.message
-          : 'Unknown error during ingestion';
+        error instanceof Error ? error.message : String(error);
       this.logger.error(`Ingestion failed: ${errorMessage}`);
       throw new Error(errorMessage);
     }
@@ -302,9 +292,5 @@ export class IngestionWorker {
       }
     }
     return [];
-  }
-
-  async close() {
-    await this._worker.close();
   }
 }
