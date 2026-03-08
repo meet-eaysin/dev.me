@@ -1,12 +1,6 @@
 import { NestFactory } from '@nestjs/core';
-import type {
-  ValidationError,
-  INestApplication} from '@nestjs/common';
-import {
-  ValidationPipe,
-  Logger,
-  BadRequestException
-} from '@nestjs/common';
+import type { ValidationError, INestApplication } from '@nestjs/common';
+import { ValidationPipe, Logger, BadRequestException } from '@nestjs/common';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
@@ -131,7 +125,9 @@ if (require.main === module) {
       );
     })
     .catch((err) => {
-      logger.error('💥 Failed to start application:', err);
+      const message =
+        err instanceof Error ? (err.stack ?? err.message) : String(err);
+      logger.error(`💥 Failed to start application: ${message}`);
       process.exit(1);
     });
 }

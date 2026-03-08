@@ -26,12 +26,24 @@ function getEnv(key: string, required = true, defaultValue?: string): string {
   return value as string;
 }
 
+function getRedisUrl(): string {
+  const host = getEnv('REDIS_HOST');
+  const port = getEnv('REDIS_PORT');
+  const password = getEnv('REDIS_PASSWORD', false);
+  const auth = password ? `:${encodeURIComponent(password)}@` : '';
+
+  return `redis://${auth}${host}:${port}`;
+}
+
 export const env = {
   PORT: getEnv('PORT', false, '3000'),
   HOST: getEnv('HOST', false, '0.0.0.0'),
   NODE_ENV: getEnv('NODE_ENV', false, 'development'),
   MONGODB_URI: getEnv('MONGODB_URI'),
-  REDIS_URL: getEnv('REDIS_URL'),
+  REDIS_HOST: getEnv('REDIS_HOST'),
+  REDIS_PORT: Number(getEnv('REDIS_PORT', false, '6379')),
+  REDIS_PASSWORD: getEnv('REDIS_PASSWORD', false),
+  REDIS_URL: getRedisUrl(),
   QDRANT_URL: getEnv('QDRANT_URL'),
   QDRANT_API_KEY: getEnv('QDRANT_API_KEY', false),
   OLLAMA_URL: getEnv('OLLAMA_URL'),

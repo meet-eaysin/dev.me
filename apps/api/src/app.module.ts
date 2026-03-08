@@ -23,6 +23,7 @@ import { NotionModule } from './modules/notion/notion.module';
 import { ReviewModule } from './modules/review/review.module';
 import { SearchModule } from './modules/search/search.module';
 import { SummaryModule } from './modules/summary/summary.module';
+import { QueueModule } from './modules/queue/queue.module';
 import { UsersModule } from './modules/users/users.module';
 import { HealthController } from './modules/health/health.controller';
 import { TransformInterceptor } from './shared/interceptors/transform.interceptor';
@@ -37,6 +38,7 @@ import { TransformInterceptor } from './shared/interceptors/transform.intercepto
     KnowledgeModule,
     LLMConfigModule,
     NotionModule,
+    QueueModule,
     ReviewModule,
     SearchModule,
     SummaryModule,
@@ -64,12 +66,10 @@ export class AppModule implements OnModuleInit, OnApplicationShutdown {
   async onModuleInit() {
     await connectMongoDB(env.MONGODB_URI);
     try {
-      if (env.REDIS_URL && !env.REDIS_URL.includes('localhost')) {
+      if (env.REDIS_URL && env.REDIS_HOST !== 'localhost') {
         initQueues(createRedisConnection(env.REDIS_URL));
       } else {
-        this.logger.warn(
-          'Skipping Redis initialization: REDIS_URL is localhost or missing.',
-        );
+        this.logger.warn('Skipping Redis initialization: using local Redis host.');
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
