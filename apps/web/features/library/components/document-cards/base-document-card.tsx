@@ -11,6 +11,11 @@ import {
   CardAction,
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import {
+  Popover,
+  PopoverPopup,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import type { DocumentRow } from '@/features/library/types';
 import {
   getDocumentIcon,
@@ -19,6 +24,7 @@ import {
   getTypeLabel,
 } from '../../utils/document-helpers';
 import { CardActions } from './card-actions';
+import { DocumentPreviewSurface } from '../document-preview-surface';
 
 interface BaseDocumentCardProps {
   document: DocumentRow;
@@ -57,6 +63,12 @@ export function BaseDocumentCard({
 
         <CardPanel className="flex-1 px-4 pb-2 pt-0">{children}</CardPanel>
 
+        <div className="px-4 pb-3">
+          <div className="h-40 overflow-hidden rounded-xl border bg-muted/30">
+            <DocumentPreviewSurface compact document={document} />
+          </div>
+        </div>
+
         <CardFooter className="flex items-center justify-between gap-2 px-4 pb-4 pt-2">
           <div className="flex gap-1.5 overflow-hidden">
             {document.tags.slice(0, 2).map((tag) => (
@@ -65,9 +77,39 @@ export function BaseDocumentCard({
               </Badge>
             ))}
             {document.tags.length > 2 && (
-              <Badge variant="outline" size="sm">
-                +{document.tags.length - 2}
-              </Badge>
+              <Popover>
+                <PopoverTrigger
+                  render={
+                    <Badge
+                      render={<button type="button" />}
+                      size="sm"
+                      variant="outline"
+                      onClick={(event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                      }}
+                    >
+                      +{document.tags.length - 2} More
+                    </Badge>
+                  }
+                />
+                <PopoverPopup
+                  align="start"
+                  className="max-w-64 p-3"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                  }}
+                >
+                  <div className="flex flex-wrap gap-1.5">
+                    {document.tags.map((tag) => (
+                      <Badge key={tag} size="sm" variant="secondary">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                </PopoverPopup>
+              </Popover>
             )}
           </div>
           <span className="shrink-0 text-xs text-muted-foreground">

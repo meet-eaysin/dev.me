@@ -49,6 +49,10 @@ import {
   useRetryIngestion,
   useUpdateDocument,
 } from '../hooks';
+import {
+  DocumentPreviewSurface,
+  DocumentPreviewUnavailable,
+} from './document-preview-surface';
 import { getStatusLabel, getTypeLabel } from '../utils/document-helpers';
 
 const STATUS_OPTIONS = Object.values(DocumentStatus);
@@ -226,6 +230,21 @@ export function DocumentDetailView({ id }: { id: string }) {
               Generate transcript
             </Button>
           </Field>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Preview</CardTitle>
+        </CardHeader>
+        <CardContent className="p-0">
+          <div className="min-h-[28rem] overflow-hidden rounded-b-2xl border-t bg-muted/20">
+            {document.sourceUrl || document.content ? (
+              <DocumentPreviewSurface document={document} />
+            ) : (
+              <DocumentPreviewUnavailable sourceUrl={document.sourceUrl} />
+            )}
+          </div>
         </CardContent>
       </Card>
 

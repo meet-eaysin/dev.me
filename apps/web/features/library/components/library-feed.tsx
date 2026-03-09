@@ -103,7 +103,7 @@ export function LibraryFeed() {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
@@ -249,7 +249,7 @@ export function LibraryFeed() {
         </Card>
       ) : (
         <div className="space-y-6">
-          <div className="grid grid-cols-1 gap-4 auto-rows-max sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 auto-rows-max sm:grid-cols-2 xl:grid-cols-4">
             {items.map((doc) => (
               <DocumentCard key={doc.id} document={doc} />
             ))}
