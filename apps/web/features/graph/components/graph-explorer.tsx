@@ -393,6 +393,7 @@ export function GraphExplorer() {
       defaultDrawNodeLabel: drawGraphNodeLabel,
       minCameraRatio: 0.35,
       maxCameraRatio: 3.4,
+      nodeHoverProgramClasses: {},
       renderEdgeLabels: false,
       zIndex: true,
     });
