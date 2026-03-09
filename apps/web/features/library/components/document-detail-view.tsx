@@ -9,6 +9,7 @@ import {
   ArrowUpRight,
   Brain,
   LoaderCircle,
+  MoreHorizontal,
   RefreshCcw,
   Sparkles,
   Trash2,
@@ -25,6 +26,13 @@ import {
 } from '@/components/ui/empty';
 import { Field, FieldLabel } from '@/components/ui/field';
 import {
+  Menu,
+  MenuItem,
+  MenuPopup,
+  MenuSeparator,
+  MenuTrigger,
+} from '@/components/ui/menu';
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -32,7 +40,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import {
   useCreateNote,
@@ -97,8 +104,8 @@ export function DocumentDetailView({ id }: { id: string }) {
   if (isLoading) {
     return (
       <div className="space-y-4">
-        <Skeleton className="h-28 w-full" />
-        <Skeleton className="h-96 w-full" />
+        <Skeleton className="h-24 w-full" />
+        <Skeleton className="h-128 w-full" />
       </div>
     );
   }
@@ -134,8 +141,11 @@ export function DocumentDetailView({ id }: { id: string }) {
             <CardTitle>{document.title}</CardTitle>
             <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
               <Badge variant="secondary">{getStatusLabel(document.status)}</Badge>
-              <Badge variant="outline">{getTypeLabel(document.type)}</Badge>
-              {folder ? <Badge variant="outline">{folder.name}</Badge> : null}
+              <span>
+                {[getTypeLabel(document.type), folder?.name]
+                  .filter(Boolean)
+                  .join(' · ')}
+              </span>
               <span>
                 Updated{' '}
                 {formatDistanceToNow(new Date(document.updatedAt), {
@@ -145,29 +155,34 @@ export function DocumentDetailView({ id }: { id: string }) {
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2">
-            {document.sourceUrl && (
-              <Button
-                render={
-                  <a
-                    href={document.sourceUrl}
-                    rel="noreferrer"
-                    target="_blank"
-                  />
-                }
-                variant="outline"
-              >
-                <ArrowUpRight className="size-4" />
-                Open source
-              </Button>
-            )}
-            <Button onClick={handleDeleteDocument} variant="destructive">
-              <Trash2 className="size-4" />
-              Delete
-            </Button>
-          </div>
+          <Menu>
+            <MenuTrigger
+              render={
+                <Button size="icon-sm" variant="outline">
+                  <MoreHorizontal className="size-4" />
+                </Button>
+              }
+            />
+            <MenuPopup align="end">
+              {document.sourceUrl && (
+                <MenuItem
+                  render={
+                    <a href={document.sourceUrl} rel="noreferrer" target="_blank" />
+                  }
+                >
+                  <ArrowUpRight className="size-4" />
+                  Open Source
+                </MenuItem>
+              )}
+              <MenuSeparator />
+              <MenuItem onClick={handleDeleteDocument} variant="destructive">
+                <Trash2 className="size-4" />
+                Delete
+              </MenuItem>
+            </MenuPopup>
+          </Menu>
         </CardHeader>
-        <CardContent className="grid gap-4 lg:grid-cols-4">
+        <CardContent className="max-w-sm">
           <Field>
             <FieldLabel>Status</FieldLabel>
             <Select
@@ -188,86 +203,52 @@ export function DocumentDetailView({ id }: { id: string }) {
               </SelectContent>
             </Select>
           </Field>
-
-          <Field>
-            <FieldLabel>Ingestion</FieldLabel>
-            <Button onClick={() => retryIngestion.mutate(id)} variant="outline">
-              {retryIngestion.isPending ? (
-                <LoaderCircle className="size-4 animate-spin" />
-              ) : (
-                <RefreshCcw className="size-4" />
-              )}
-              Retry ingestion
-            </Button>
-          </Field>
-
-          <Field>
-            <FieldLabel>Summary</FieldLabel>
-            <Button
-              onClick={() => generateSummary.mutate(id)}
-              variant="outline"
-            >
-              {generateSummary.isPending ? (
-                <LoaderCircle className="size-4 animate-spin" />
-              ) : (
-                <Sparkles className="size-4" />
-              )}
-              Generate summary
-            </Button>
-          </Field>
-
-          <Field>
-            <FieldLabel>Transcript</FieldLabel>
-            <Button
-              onClick={() => generateTranscript.mutate(id)}
-              variant="outline"
-            >
-              {generateTranscript.isPending ? (
-                <LoaderCircle className="size-4 animate-spin" />
-              ) : (
-                <Brain className="size-4" />
-              )}
-              Generate transcript
-            </Button>
-          </Field>
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Preview</CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="min-h-[28rem] overflow-hidden rounded-b-2xl border-t bg-muted/20">
-            {document.sourceUrl || document.content ? (
-              <DocumentPreviewSurface document={document} />
-            ) : (
-              <DocumentPreviewUnavailable sourceUrl={document.sourceUrl} />
-            )}
-          </div>
-        </CardContent>
-      </Card>
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Preview</CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="min-h-128 overflow-hidden rounded-b-2xl border-t bg-muted/20">
+                {document.sourceUrl || document.content ? (
+                  <DocumentPreviewSurface document={document} />
+                ) : (
+                  <DocumentPreviewUnavailable sourceUrl={document.sourceUrl} />
+                )}
+              </div>
+            </CardContent>
+          </Card>
 
-      <Tabs defaultValue="overview">
-        <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="notes">Notes</TabsTrigger>
-          <TabsTrigger value="transcript">Transcript</TabsTrigger>
-        </TabsList>
-
-        <TabsContent className="mt-4 space-y-4" value="overview">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between gap-3">
               <CardTitle>Summary</CardTitle>
-              {document.summary ? (
+              <div className="flex gap-2">
                 <Button
-                  onClick={() => deleteSummary.mutate(id)}
+                  onClick={() => generateSummary.mutate(id)}
                   size="sm"
-                  variant="ghost"
+                  variant="outline"
                 >
-                  Remove
+                  {generateSummary.isPending ? (
+                    <LoaderCircle className="size-4 animate-spin" />
+                  ) : (
+                    <Sparkles className="size-4" />
+                  )}
+                  Generate
                 </Button>
-              ) : null}
+                {document.summary ? (
+                  <Button
+                    onClick={() => deleteSummary.mutate(id)}
+                    size="sm"
+                    variant="ghost"
+                  >
+                    Remove
+                  </Button>
+                ) : null}
+              </div>
             </CardHeader>
             <CardContent className="whitespace-pre-wrap text-sm text-muted-foreground">
               {document.summary ?? 'No summary generated yet.'}
@@ -275,60 +256,11 @@ export function DocumentDetailView({ id }: { id: string }) {
           </Card>
 
           <Card>
-            <CardHeader>
-              <CardTitle>Content</CardTitle>
-            </CardHeader>
-            <CardContent className="whitespace-pre-wrap text-sm text-muted-foreground">
-              {document.content ?? 'No extracted content is available yet.'}
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Lifecycle</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3 text-sm">
-              <MetaRow label="Ingestion status" value={ingestion?.ingestionStatus ?? 'unknown'} />
-              <MetaRow
-                label="Embeddings"
-                value={ingestion?.embeddingsReady ? 'Ready' : 'Pending'}
-              />
-              <MetaRow label="Source type" value={document.sourceType} />
-              <MetaRow
-                label="Created"
-                value={new Date(document.createdAt).toLocaleString()}
-              />
-              <MetaRow
-                label="Updated"
-                value={new Date(document.updatedAt).toLocaleString()}
-              />
-              <MetaRow
-                label="Last opened"
-                value={
-                  document.lastOpenedAt
-                    ? new Date(document.lastOpenedAt).toLocaleString()
-                    : 'Not tracked'
-                }
-              />
-              {ingestion?.currentStage ? (
-                <p className="text-muted-foreground">{ingestion.currentStage}</p>
-              ) : null}
-              {ingestion?.ingestionError ? (
-                <p className="text-destructive">{ingestion.ingestionError}</p>
-              ) : null}
-              {Object.keys(document.metadata).length > 0 ? (
-                <pre className="overflow-x-auto rounded-md bg-muted p-3 text-xs">
-                  {JSON.stringify(document.metadata, null, 2)}
-                </pre>
-              ) : null}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent className="mt-4" value="notes">
-          <Card>
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between gap-3">
               <CardTitle>Notes</CardTitle>
+              <span className="text-sm text-muted-foreground">
+                {notes.length} notes
+              </span>
             </CardHeader>
             <CardContent className="space-y-4">
               <form className="space-y-3" onSubmit={handleCreateNote}>
@@ -375,12 +307,24 @@ export function DocumentDetailView({ id }: { id: string }) {
               )}
             </CardContent>
           </Card>
-        </TabsContent>
+        </div>
 
-        <TabsContent className="mt-4" value="transcript">
+        <div className="space-y-6">
           <Card>
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between gap-3">
               <CardTitle>Transcript</CardTitle>
+              <Button
+                onClick={() => generateTranscript.mutate(id)}
+                size="sm"
+                variant="outline"
+              >
+                {generateTranscript.isPending ? (
+                  <LoaderCircle className="size-4 animate-spin" />
+                ) : (
+                  <Brain className="size-4" />
+                )}
+                Generate
+              </Button>
             </CardHeader>
             <CardContent className="whitespace-pre-wrap text-sm text-muted-foreground">
               {transcriptResponse?.content ??
@@ -389,8 +333,67 @@ export function DocumentDetailView({ id }: { id: string }) {
                   : 'No transcript generated yet.')}
             </CardContent>
           </Card>
-        </TabsContent>
-      </Tabs>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between gap-3">
+              <CardTitle>Details</CardTitle>
+              <Button
+                onClick={() => retryIngestion.mutate(id)}
+                size="sm"
+                variant="outline"
+              >
+                {retryIngestion.isPending ? (
+                  <LoaderCircle className="size-4 animate-spin" />
+                ) : (
+                  <RefreshCcw className="size-4" />
+                )}
+                Retry
+              </Button>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm">
+              <MetaRow
+                label="Ingestion status"
+                value={ingestion?.ingestionStatus ?? 'unknown'}
+              />
+              <MetaRow
+                label="Embeddings"
+                value={ingestion?.embeddingsReady ? 'Ready' : 'Pending'}
+              />
+              <MetaRow label="Source type" value={document.sourceType} />
+              <MetaRow
+                label="Created"
+                value={new Date(document.createdAt).toLocaleString()}
+              />
+              <MetaRow
+                label="Updated"
+                value={new Date(document.updatedAt).toLocaleString()}
+              />
+              <MetaRow
+                label="Last opened"
+                value={
+                  document.lastOpenedAt
+                    ? new Date(document.lastOpenedAt).toLocaleString()
+                    : 'Not tracked'
+                }
+              />
+              {ingestion?.currentStage ? (
+                <p className="text-muted-foreground">{ingestion.currentStage}</p>
+              ) : null}
+              {ingestion?.ingestionError ? (
+                <p className="text-destructive">{ingestion.ingestionError}</p>
+              ) : null}
+              {Object.keys(document.metadata).length > 0 ? (
+                <div className="space-y-2 pt-2">
+                  <p className="text-muted-foreground">Metadata</p>
+                  <pre className="overflow-x-auto rounded-md bg-muted p-3 text-xs">
+                    {JSON.stringify(document.metadata, null, 2)}
+                  </pre>
+                </div>
+              ) : null}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }
