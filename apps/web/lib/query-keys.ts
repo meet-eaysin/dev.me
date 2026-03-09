@@ -36,6 +36,17 @@ export const QUERY_KEYS = {
     stats: () => ['analytics', 'stats'] as const,
     heatmap: (days: number) => ['analytics', 'heatmap', days] as const,
   },
+  USERS: {
+    ROOT: ['users'] as const,
+    me: () => ['users', 'me'] as const,
+    sessions: () => ['users', 'me', 'sessions'] as const,
+  },
+  SETTINGS: {
+    ROOT: ['settings'] as const,
+    llm: () => ['settings', 'llm'] as const,
+    notionConfig: () => ['settings', 'notion', 'config'] as const,
+    notionDatabases: () => ['settings', 'notion', 'databases'] as const,
+  },
   GRAPH: {
     ROOT: ['graph'] as const,
     full: () => ['graph', 'full'] as const,

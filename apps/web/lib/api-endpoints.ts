@@ -44,6 +44,24 @@ export const API_ENDPOINTS = {
     STATS: '/analytics/stats',
     HEATMAP: '/analytics/heatmap',
   },
+  AUTH: {
+    SESSION: '/auth/session',
+  },
+  USERS: {
+    ME: '/users/me',
+    SESSIONS: '/users/me/sessions',
+    session: (sessionId: string) => `/users/me/sessions/${sessionId}`,
+  },
+  LLM_CONFIG: {
+    ROOT: '/llm-config',
+    VALIDATE: '/llm-config/validate',
+  },
+  NOTION: {
+    CONFIG: '/notion/config',
+    CONNECT: '/notion/connect',
+    DATABASES: '/notion/databases',
+    SYNC: '/notion/sync',
+  },
   GRAPH: {
     FULL: '/graph',
     document: (id: string) => `/graph/document/${id}`,

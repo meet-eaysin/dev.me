@@ -135,6 +135,29 @@ export async function apiPatch<T>(
   return parseEnvelope<T>(response);
 }
 
+export async function apiPut<T>(
+  path: string,
+  options?: ApiMutationOptions,
+): Promise<T> {
+  const headers = new Headers(options?.headers);
+  headers.set('x-user-id', DEV_USER_ID);
+  if (options?.body instanceof FormData === false) {
+    headers.set('Content-Type', 'application/json');
+  }
+
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    ...options,
+    method: 'PUT',
+    body:
+      options?.body instanceof FormData
+        ? options.body
+        : JSON.stringify(options?.body),
+    headers,
+  });
+
+  return parseEnvelope<T>(response);
+}
+
 export async function apiDelete<T>(
   path: string,
   options?: RequestInit,

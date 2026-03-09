@@ -1,12 +1,5 @@
-import { FeatureShellPage } from '@/components/shell/feature-shell-page';
+import { AnalyticsPage } from '@/features/analytics/components/analytics-page';
 
-export default function AnalyticsPage() {
-  return (
-    <FeatureShellPage
-      title="Analytics"
-      subtitle="Activity and engagement"
-      description="Track learning consistency, heatmap activity, totals, and streaks."
-      endpoints={['GET /analytics/heatmap', 'GET /analytics/stats']}
-    />
-  );
+export default function AnalyticsRoutePage() {
+  return <AnalyticsPage />;
 }
