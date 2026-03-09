@@ -4,6 +4,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import Graph from 'graphology';
 import Sigma from 'sigma';
+import type { NodeDisplayData, PartialButFor } from 'sigma/types';
 import {
   BrainCircuit,
   GitBranch,
@@ -12,7 +13,6 @@ import {
   Plus,
   RefreshCcw,
   Search,
-  Sparkles,
 } from 'lucide-react';
 import { GraphNodeType, GraphRelationType } from '@repo/types';
 import Shell from '@/components/shell';
@@ -42,6 +42,11 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Slider } from '@/components/ui/slider';
+import {
+  Toolbar,
+  ToolbarGroup,
+} from '@/components/ui/toolbar';
 import { cn } from '@/lib/utils';
 import { useDocumentSubgraph, useFullGraph, useRebuildDocumentGraph } from '../hooks';
 import type { FullGraphData, GraphEdgeRow, GraphNodeRow } from '../types';
@@ -68,6 +73,25 @@ type PositionedNode = GraphNodeRow & {
   x: number;
   y: number;
 };
+
+function drawGraphNodeLabel(
+  context: CanvasRenderingContext2D,
+  data: PartialButFor<NodeDisplayData, 'x' | 'y' | 'size' | 'label' | 'color'>,
+) {
+  if (!data.label) return;
+
+  context.save();
+  context.font = "500 11px var(--font-sans, ui-sans-serif, system-ui, sans-serif)";
+  context.fillStyle = data.highlighted ? '#0f172a' : '#334155';
+  context.textAlign = 'center';
+  context.textBaseline = 'top';
+  context.fillText(data.label, data.x, data.y + data.size + 6);
+  context.restore();
+}
+
+function suppressGraphNodeHover() {
+  return;
+}
 
 function getRelationLabel(type: GraphRelationType) {
   switch (type) {
@@ -237,7 +261,7 @@ export function GraphExplorer() {
   const [focusedDocumentId, setFocusedDocumentId] = React.useState<string | null>(
     null,
   );
-  const [labelThreshold, setLabelThreshold] = React.useState(12);
+  const [labelThreshold, setLabelThreshold] = React.useState(14);
 
   const { data: fullGraph, error, isLoading } = useFullGraph();
   const {
@@ -294,13 +318,13 @@ export function GraphExplorer() {
 
     if (animated) {
       void camera.animate(
-        { angle: 0, ratio: 2.15, x: 0.5, y: 0.5 },
+        { angle: 0, ratio: 2.7, x: 0.5, y: 0.5 },
         { duration: 260 },
       );
       return;
     }
 
-    camera.setState({ angle: 0, ratio: 2.15, x: 0.5, y: 0.5 });
+    camera.setState({ angle: 0, ratio: 2.7, x: 0.5, y: 0.5 });
   }, []);
 
   React.useEffect(() => {
@@ -340,7 +364,7 @@ export function GraphExplorer() {
         isRoot,
         label: isRoot ? 'Knowledge Graph' : truncateLabel(node.label, 24),
         originalLabel: node.label,
-        size: isRoot ? 16 : node.documentId === focusedDocumentId ? 10 : 8,
+        size: isRoot ? 14 : node.documentId === focusedDocumentId ? 8.5 : 7.5,
         x: node.x,
         y: node.y,
       });
@@ -363,8 +387,10 @@ export function GraphExplorer() {
       labelDensity: 0.56,
       labelGridCellSize: 140,
       labelRenderedSizeThreshold: labelThreshold,
-      labelSize: 9,
+      defaultDrawNodeHover: suppressGraphNodeHover,
+      labelSize: 8,
       labelWeight: '400',
+      defaultDrawNodeLabel: drawGraphNodeLabel,
       minCameraRatio: 0.35,
       maxCameraRatio: 3.4,
       renderEdgeLabels: false,
@@ -382,6 +408,7 @@ export function GraphExplorer() {
       const isRelated = relatedNodes.has(node);
       const isDimmed =
         currentSelected != null && !isSelected && !isRelated && currentSelected !== node;
+      const isDocument = !data.isRoot;
 
       return {
         ...data,
@@ -392,11 +419,14 @@ export function GraphExplorer() {
             : isRelated
               ? '#60a5fa'
               : data.color,
-        forceLabel: isSelected || isHovered,
+        forceLabel: isDocument || isSelected || isHovered,
         highlighted: isSelected || isHovered,
-        label:
-          isDimmed && !data.isRoot
-            ? ''
+        label: isDimmed
+          ? ''
+          : data.isRoot
+            ? isSelected || isHovered
+              ? data.label
+              : ''
             : data.label,
         size: isSelected
           ? data.size + 1.5
@@ -512,10 +542,6 @@ export function GraphExplorer() {
           <CardHeader className="px-5 py-4">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div className="space-y-1">
-                <div className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                  <Sparkles className="size-3.5" />
-                  Sigma graph
-                </div>
                 <CardTitle>Document network</CardTitle>
                 <CardDescription>
                   Stable layout, zoom controls, and readable labels.
@@ -558,63 +584,54 @@ export function GraphExplorer() {
               ) : null}
             </div>
 
-            <div className="relative overflow-hidden rounded-xl border border-border/60 bg-[radial-gradient(circle_at_top,rgba(37,99,235,0.08),transparent_28%),linear-gradient(180deg,rgba(248,250,252,0.98),rgba(241,245,249,0.98))]">
+            <div className="relative overflow-hidden rounded-sm border border-border/60 bg-[radial-gradient(circle_at_top,rgba(37,99,235,0.08),transparent_28%),linear-gradient(180deg,rgba(248,250,252,0.98),rgba(241,245,249,0.98))]">
               <div className="absolute right-3 top-3 z-10">
-                <div className="flex items-center gap-2 rounded-xl border border-border/70 bg-background/86 px-2 py-2 shadow-sm backdrop-blur-md">
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    className="size-8 rounded-lg text-muted-foreground hover:bg-accent/35 hover:text-foreground"
-                    onClick={zoomOut}
-                  >
-                    <Minus className="size-4" />
-                  </Button>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    className="size-8 rounded-lg text-muted-foreground hover:bg-accent/35 hover:text-foreground"
-                    onClick={zoomIn}
-                  >
-                    <Plus className="size-4" />
-                  </Button>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    className="size-8 rounded-lg text-muted-foreground hover:bg-accent/35 hover:text-foreground"
-                    onClick={resetZoom}
-                  >
-                    <RefreshCcw className="size-4" />
-                  </Button>
-                  <div className="ml-1 hidden items-center gap-2 border-l border-border/60 pl-2 md:flex">
-                    <span className="text-[10px] font-medium text-muted-foreground">
+                <Toolbar className="items-center gap-2 border-border/70 shadow-sm backdrop-blur-md rounded-sm">
+                  <ToolbarGroup>
+                    <Button
+                      size="icon-sm"
+                      variant="ghost"
+                      className="rounded-md text-muted-foreground"
+                      onClick={zoomOut}
+                    >
+                      <Minus className="size-4" />
+                    </Button>
+                    <Button
+                      size="icon-sm"
+                      variant="ghost"
+                      className="rounded-md text-muted-foreground"
+                      onClick={zoomIn}
+                    >
+                      <Plus className="size-4" />
+                    </Button>
+                    <Button
+                      size="icon-sm"
+                      variant="ghost"
+                      className="rounded-md text-muted-foreground"
+                      onClick={resetZoom}
+                    >
+                      <RefreshCcw className="size-4" />
+                    </Button>
+                  </ToolbarGroup>
+                </Toolbar>
+                <Toolbar className="mt-2 w-32 border-border/70 bg-background/92 p-1.5 shadow-sm backdrop-blur-md md:hidden">
+                  <ToolbarGroup className="w-full gap-2">
+                    <span className="text-xs font-medium text-muted-foreground">
                       Labels
                     </span>
-                    <input
+                    <Slider
                       aria-label="Labels threshold"
-                      className="w-16 accent-foreground"
+                      className="min-w-0 flex-1"
                       max={20}
                       min={6}
                       step={0.5}
-                      type="range"
                       value={labelThreshold}
-                      onChange={(event) => setLabelThreshold(Number(event.target.value))}
+                      onValueChange={(value) =>
+                        setLabelThreshold(Array.isArray(value) ? value[0] ?? 12 : value)
+                      }
                     />
-                  </div>
-                </div>
-                <div className="mt-2 flex justify-end md:hidden">
-                  <div className="rounded-lg border border-border/70 bg-background/86 px-3 py-2 shadow-sm backdrop-blur-md">
-                    <input
-                      aria-label="Labels threshold"
-                      className="w-24 accent-foreground"
-                      max={20}
-                      min={6}
-                      step={0.5}
-                      type="range"
-                      value={labelThreshold}
-                      onChange={(event) => setLabelThreshold(Number(event.target.value))}
-                    />
-                  </div>
-                </div>
+                  </ToolbarGroup>
+                </Toolbar>
               </div>
 
               {isLoading ? (
