@@ -44,7 +44,7 @@ export function BaseDocumentCard({
           <div className="flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors group-hover:text-primary">
             <Icon className="size-4" />
           </div>
-          <span className="flex-1 truncate text-xs font-medium uppercase tracking-wider text-muted-foreground">
+          <span className="flex-1 truncate text-xs font-medium capitalize tracking-wider text-muted-foreground">
             {typeLabel}
           </span>
           <Badge variant={statusVariant} size="sm">
