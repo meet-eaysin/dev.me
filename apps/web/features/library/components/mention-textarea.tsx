@@ -30,7 +30,8 @@ export const MentionTextarea = React.forwardRef<
       .filter(
         (d) =>
           d.title.toLowerCase().includes(lowerSearch) ||
-          d.source.toLowerCase().includes(lowerSearch),
+          d.sourceType.toLowerCase().includes(lowerSearch) ||
+          d.sourceUrl?.toLowerCase().includes(lowerSearch),
       )
       .slice(0, 5);
   }, [mentionSearch, data?.items]);
