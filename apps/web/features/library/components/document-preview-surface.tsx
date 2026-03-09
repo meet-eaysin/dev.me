@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { ExternalLink, FileText, Globe, PlayCircle } from 'lucide-react';
 import type { DocumentDetail, DocumentRow } from '../types';
+import Image from 'next/image';
 
 type PreviewDocument = Pick<
   DocumentRow,
@@ -26,7 +27,7 @@ export function DocumentPreviewSurface({
   if (document.type === 'youtube' && youtubeId) {
     if (compact) {
       return (
-        <img
+        <Image
           alt={document.title}
           className="h-full w-full object-cover"
           loading="lazy"
@@ -70,7 +71,7 @@ export function DocumentPreviewSurface({
 
   if (directImage && sourceUrl) {
     return (
-      <img
+      <Image
         alt={document.title}
         className="h-full w-full object-cover"
         loading="lazy"
