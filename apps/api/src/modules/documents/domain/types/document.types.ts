@@ -1,4 +1,8 @@
-import type { DocumentType, DocumentStatus, IngestionStatus } from '@repo/types';
+import type {
+  DocumentType,
+  DocumentStatus,
+  IngestionStatus,
+} from '@repo/types';
 
 export interface DocFilters {
   status?: DocumentStatus | undefined;

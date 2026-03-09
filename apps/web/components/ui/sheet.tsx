@@ -49,7 +49,6 @@ function SheetViewport({
         side === 'left' && 'flex justify-start',
         side === 'right' && 'flex justify-end',
         variant === 'inset' && 'sm:p-4',
-        className,
       )}
       data-slot="sheet-viewport"
       {...props}
@@ -97,7 +96,7 @@ function SheetPopup({
           {showCloseButton && (
             <SheetPrimitive.Close
               aria-label="Close"
-              className="absolute inset-e-2 top-2"
+              className="absolute end-2 top-2"
               render={<Button size="icon" variant="ghost" />}
               {...closeProps}
             >

@@ -29,42 +29,43 @@ In hosted production, prefer your platform's env/secrets UI instead of committed
 
 ### Required for all environments
 
-| Variable | Used by | Purpose |
-| --- | --- | --- |
-| `NODE_ENV` | API | Runtime mode. Use `production` in production. |
-| `HOST` | API | API bind host. |
-| `PORT` | API | API port. |
-| `MONGODB_URI` | API | Main database connection string. |
-| `REDIS_URL` | API workers | Queue and background jobs. |
-| `QDRANT_URL` | API | Vector database endpoint. |
-| `OLLAMA_URL` | API | AI provider default endpoint. |
-| `OLLAMA_BASE_URL` | AI package | Default Ollama base URL fallback. |
-| `JWT_SECRET` | API | Access token signing secret. |
-| `JWT_EXPIRES_IN` | API | Access token TTL. |
-| `REFRESH_TOKEN_SECRET` | API | Refresh token signing secret. |
-| `REFRESH_TOKEN_EXPIRES_IN` | API | Refresh token TTL. |
-| `ENCRYPTION_KEY` | API | 32-byte AES key for stored tokens and API keys. |
-| `FILE_UPLOAD_DIR` | API | Local document storage path. |
-| `MAX_FILE_SIZE_MB` | API | Upload limit. |
-| `WEB_APP_URL` | API | Frontend redirect target after OAuth. |
-| `CORS_ORIGIN` | API | Allowed frontend origin. |
+| Variable                   | Used by     | Purpose                                         |
+| -------------------------- | ----------- | ----------------------------------------------- |
+| `NODE_ENV`                 | API         | Runtime mode. Use `production` in production.   |
+| `HOST`                     | API         | API bind host.                                  |
+| `PORT`                     | API         | API port.                                       |
+| `MONGODB_URI`              | API         | Main database connection string.                |
+| `REDIS_URL`                | API workers | Queue and background jobs.                      |
+| `QDRANT_URL`               | API         | Vector database endpoint.                       |
+| `OLLAMA_URL`               | API         | AI provider default endpoint.                   |
+| `OLLAMA_BASE_URL`          | AI package  | Default Ollama base URL fallback.               |
+| `JWT_SECRET`               | API         | Access token signing secret.                    |
+| `JWT_EXPIRES_IN`           | API         | Access token TTL.                               |
+| `REFRESH_TOKEN_SECRET`     | API         | Refresh token signing secret.                   |
+| `REFRESH_TOKEN_EXPIRES_IN` | API         | Refresh token TTL.                              |
+| `ENCRYPTION_KEY`           | API         | 32-byte AES key for stored tokens and API keys. |
+| `FILE_UPLOAD_DIR`          | API         | Local document storage path.                    |
+| `MAX_FILE_SIZE_MB`         | API         | Upload limit.                                   |
+| `WEB_APP_URL`              | API         | Frontend redirect target after OAuth.           |
+| `CORS_ORIGIN`              | API         | Allowed frontend origin.                        |
+
 ### Optional API Variables
 
-| Variable | Purpose |
-| --- | --- |
-| `QDRANT_API_KEY` | Required only when your Qdrant deployment is secured. |
-| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` / `GOOGLE_CALLBACK_URL` | Required only if you enable Google OAuth login. |
-| `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` / `GITHUB_CALLBACK_URL` | Required only if you enable GitHub OAuth login. |
+| Variable                                                            | Purpose                                               |
+| ------------------------------------------------------------------- | ----------------------------------------------------- |
+| `QDRANT_API_KEY`                                                    | Required only when your Qdrant deployment is secured. |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` / `GOOGLE_CALLBACK_URL` | Required only if you enable Google OAuth login.       |
+| `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` / `GITHUB_CALLBACK_URL` | Required only if you enable GitHub OAuth login.       |
 
 ## Web Variables
 
-| Variable | Used by | Purpose |
-| --- | --- | --- |
-| `NEXT_PUBLIC_API_BASE_URL` | Web | Browser-visible API base URL. |
-| `NEXT_PUBLIC_DEV_USER_ID` | Web | Local development fallback user id header. |
-| `NEXT_PUBLIC_WEBAPP_URL` | Web | Public frontend origin. |
-| `NEXT_PUBLIC_CALCOM_VERSION` | Web | Asset version marker. |
-| `NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA` | Web | Cache-busting build identifier. |
+| Variable                            | Used by | Purpose                                    |
+| ----------------------------------- | ------- | ------------------------------------------ |
+| `NEXT_PUBLIC_API_BASE_URL`          | Web     | Browser-visible API base URL.              |
+| `NEXT_PUBLIC_DEV_USER_ID`           | Web     | Local development fallback user id header. |
+| `NEXT_PUBLIC_WEBAPP_URL`            | Web     | Public frontend origin.                    |
+| `NEXT_PUBLIC_CALCOM_VERSION`        | Web     | Asset version marker.                      |
+| `NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA` | Web     | Cache-busting build identifier.            |
 
 ## Production Credentials
 
