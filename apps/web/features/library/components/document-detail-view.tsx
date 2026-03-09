@@ -28,6 +28,7 @@ import { PageBreadcrumbs } from '@/components/shell/page-breadcrumbs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
 import {
   Empty,
   EmptyContent,
@@ -83,6 +84,9 @@ const STATUS_OPTIONS = Object.values(DocumentStatus);
 export function DocumentDetailView({ id }: { id: string }) {
   const router = useRouter();
   const [noteDraft, setNoteDraft] = React.useState('');
+  const [deleteDocumentOpen, setDeleteDocumentOpen] = React.useState(false);
+  const [removeSummaryOpen, setRemoveSummaryOpen] = React.useState(false);
+  const [deletingNoteId, setDeletingNoteId] = React.useState<string | null>(null);
   const [editingNoteId, setEditingNoteId] = React.useState<string | null>(null);
   const [editingNoteDraft, setEditingNoteDraft] = React.useState('');
   const [readerExpanded, setReaderExpanded] = React.useState(false);
@@ -106,9 +110,18 @@ export function DocumentDetailView({ id }: { id: string }) {
 
   async function handleDeleteDocument() {
     if (!document) return;
-    if (!window.confirm(`Delete "${document.title}"?`)) return;
     await deleteDocument.mutateAsync(document.id);
     router.push('/library');
+  }
+
+  async function handleDeleteNote(noteId: string) {
+    await deleteNote.mutateAsync(noteId);
+    setDeletingNoteId(null);
+  }
+
+  async function handleRemoveSummary() {
+    await deleteSummary.mutateAsync(id);
+    setRemoveSummaryOpen(false);
   }
 
   async function handleCreateNote(event: React.FormEvent<HTMLFormElement>) {
@@ -252,7 +265,7 @@ export function DocumentDetailView({ id }: { id: string }) {
                 </MenuItem>
               )}
               <MenuSeparator />
-              <MenuItem onClick={handleDeleteDocument} variant="destructive">
+              <MenuItem onClick={() => setDeleteDocumentOpen(true)} variant="destructive">
                 <Trash2 className="size-4" />
                 Delete Document
               </MenuItem>
@@ -446,7 +459,7 @@ export function DocumentDetailView({ id }: { id: string }) {
                                 Edit
                               </Button>
                               <Button
-                                onClick={() => deleteNote.mutate(note.id)}
+                                onClick={() => setDeletingNoteId(note.id)}
                                 size="sm"
                                 variant="ghost"
                                 className="h-7 w-7 p-0 text-muted-foreground hover:text-destructive"
@@ -501,7 +514,7 @@ export function DocumentDetailView({ id }: { id: string }) {
               <div className="flex items-center gap-1.5">
                 {document.summary && (
                   <Button
-                    onClick={() => deleteSummary.mutate(id)}
+                    onClick={() => setRemoveSummaryOpen(true)}
                     size="sm"
                     variant="ghost"
                     className="h-7 text-xs text-muted-foreground"
@@ -675,6 +688,41 @@ export function DocumentDetailView({ id }: { id: string }) {
 
         </div>
       </div>
+
+      <ConfirmationDialog
+        open={deleteDocumentOpen}
+        onOpenChange={setDeleteDocumentOpen}
+        onConfirm={handleDeleteDocument}
+        isPending={deleteDocument.isPending}
+        title="Delete document?"
+        description={`This will permanently delete "${document.title}" and remove its notes, summary, and related data.`}
+        confirmLabel="Delete document"
+        tone="destructive"
+      />
+
+      <ConfirmationDialog
+        open={removeSummaryOpen}
+        onOpenChange={setRemoveSummaryOpen}
+        onConfirm={handleRemoveSummary}
+        isPending={deleteSummary.isPending}
+        title="Remove summary?"
+        description="This removes the generated summary from the document. You can generate it again later."
+        confirmLabel="Remove summary"
+        tone="destructive"
+      />
+
+      <ConfirmationDialog
+        open={deletingNoteId !== null}
+        onOpenChange={(open) => {
+          if (!open) setDeletingNoteId(null);
+        }}
+        onConfirm={() => handleDeleteNote(deletingNoteId!)}
+        isPending={deleteNote.isPending}
+        title="Delete note?"
+        description="This note will be removed permanently from the document."
+        confirmLabel="Delete note"
+        tone="destructive"
+      />
     </div>
   );
 }

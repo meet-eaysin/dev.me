@@ -11,6 +11,7 @@ import {
   MenuSeparator,
 } from '@/components/ui/menu';
 import { Button } from '@/components/ui/button';
+import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
 import type { DocumentRow } from '../../types';
 import { useDeleteDocument } from '../../hooks';
 
@@ -21,6 +22,7 @@ interface CardActionsProps {
 export function CardActions({ document }: CardActionsProps) {
   const router = useRouter();
   const deleteDocument = useDeleteDocument();
+  const [deleteOpen, setDeleteOpen] = React.useState(false);
 
   function handleCopyLink(event: React.MouseEvent) {
     event.preventDefault();
@@ -37,10 +39,7 @@ export function CardActions({ document }: CardActionsProps) {
     }
   }
 
-  async function handleDelete(event: React.MouseEvent) {
-    event.preventDefault();
-    event.stopPropagation();
-    if (!window.confirm(`Delete "${document.title}"?`)) return;
+  async function handleDelete() {
     await deleteDocument.mutateAsync(document.id);
     router.push('/library');
   }
@@ -74,11 +73,29 @@ export function CardActions({ document }: CardActionsProps) {
           Copy link
         </MenuItem>
         <MenuSeparator />
-        <MenuItem variant="destructive" onClick={(event) => void handleDelete(event)}>
+        <MenuItem
+          variant="destructive"
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            setDeleteOpen(true);
+          }}
+        >
           <Trash2 className="size-4" />
           Delete
         </MenuItem>
       </MenuPopup>
+
+      <ConfirmationDialog
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        onConfirm={handleDelete}
+        isPending={deleteDocument.isPending}
+        title="Delete document?"
+        description={`This will permanently delete "${document.title}" and remove its related data.`}
+        confirmLabel="Delete document"
+        tone="destructive"
+      />
     </Menu>
   );
 }
