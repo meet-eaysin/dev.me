@@ -35,6 +35,14 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from '@/components/ui/drawer';
 import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
 import {
   InputGroup,
@@ -44,15 +52,6 @@ import {
 } from '@/components/ui/input-group';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetPanel,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
 import { QUERY_KEYS } from '@/lib/query-keys';
@@ -271,6 +270,7 @@ export function AskAiPage() {
   const conversationId = searchParams.get('chat');
 
   const [question, setQuestion] = React.useState('');
+  const [historyOpen, setHistoryOpen] = React.useState(false);
   const [scopeOpen, setScopeOpen] = React.useState(false);
   const [selectedDocumentIds, setSelectedDocumentIds] = React.useState<
     string[]
@@ -310,6 +310,7 @@ export function AskAiPage() {
 
   const openConversation = React.useCallback(
     (id: string) => {
+      setHistoryOpen(false);
       const nextParams = new URLSearchParams(searchParams.toString());
       nextParams.set('chat', id);
       router.replace(`${pathname}?${nextParams.toString()}`);
@@ -318,6 +319,7 @@ export function AskAiPage() {
   );
 
   const startNewConversation = React.useCallback(() => {
+    setHistoryOpen(false);
     setQuestion('');
     setStreaming({
       answer: '',
@@ -494,54 +496,12 @@ export function AskAiPage() {
         </Button>
       }
     >
-      <div className="mt-4 grid gap-4 lg:grid-cols-[18rem_minmax(0,1fr)]">
-        <aside className="space-y-4">
-          <Card className="hidden lg:block">
-            <CardHeader>
-              <CardTitle>Previous conversations</CardTitle>
-              <CardDescription>
-                Reopen any past thread and continue from there.
-              </CardDescription>
-            </CardHeader>
-            <CardPanel>
-              <ConversationList
-                activeConversationId={conversationId}
-                conversations={conversations}
-                isLoading={conversationsLoading}
-                onNewChat={startNewConversation}
-                onSelect={openConversation}
-              />
-            </CardPanel>
-          </Card>
-
-          <div className="lg:hidden">
-            <Sheet>
-              <SheetTrigger render={<Button variant="outline" className="w-full" />}>
-                <History className="size-4" />
-                Conversation History
-              </SheetTrigger>
-              <SheetContent side="left">
-                <SheetHeader>
-                  <SheetTitle>Previous conversations</SheetTitle>
-                  <SheetDescription>
-                    Reopen a saved thread and continue asking.
-                  </SheetDescription>
-                </SheetHeader>
-                <SheetPanel>
-                  <ConversationList
-                    activeConversationId={conversationId}
-                    conversations={conversations}
-                    isLoading={conversationsLoading}
-                    onNewChat={startNewConversation}
-                    onSelect={openConversation}
-                  />
-                </SheetPanel>
-              </SheetContent>
-            </Sheet>
-          </div>
-        </aside>
-
-        <div className="space-y-4">
+      <div className="mt-4 space-y-4">
+        <Drawer
+          direction="right"
+          open={historyOpen}
+          onOpenChange={setHistoryOpen}
+        >
           <Card>
             <CardHeader>
               <div className="flex flex-wrap items-start justify-between gap-3">
@@ -553,15 +513,23 @@ export function AskAiPage() {
                     Ask a question and MindStack AI will answer with sources from your library.
                   </CardDescription>
                 </div>
-                {conversationId ? (
-                  <Button
-                    variant="outline"
-                    onClick={startNewConversation}
-                  >
-                    <Plus className="size-4" />
-                    New chat
-                  </Button>
-                ) : null}
+                <div className="flex flex-wrap items-center gap-2">
+                  <DrawerTrigger asChild>
+                    <Button variant="outline">
+                      <History className="size-4" />
+                      Previous conversations
+                    </Button>
+                  </DrawerTrigger>
+                  {conversationId ? (
+                    <Button
+                      variant="outline"
+                      onClick={startNewConversation}
+                    >
+                      <Plus className="size-4" />
+                      New chat
+                    </Button>
+                  ) : null}
+                </div>
               </div>
             </CardHeader>
             <CardPanel className="space-y-5">
@@ -739,7 +707,24 @@ export function AskAiPage() {
               </ScrollArea>
             </CardPanel>
           </Card>
-        </div>
+          <DrawerContent className="sm:max-w-md">
+            <DrawerHeader>
+              <DrawerTitle>Previous conversations</DrawerTitle>
+              <DrawerDescription>
+                Reopen a saved thread and continue asking.
+              </DrawerDescription>
+            </DrawerHeader>
+            <div className="px-4 pb-4">
+              <ConversationList
+                activeConversationId={conversationId}
+                conversations={conversations}
+                isLoading={conversationsLoading}
+                onNewChat={startNewConversation}
+                onSelect={openConversation}
+              />
+            </div>
+          </DrawerContent>
+        </Drawer>
       </div>
     </Shell>
   );
