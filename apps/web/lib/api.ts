@@ -2,13 +2,20 @@ import type { ApiResponse, PaginatedResponse } from '@repo/types';
 
 export type { ApiResponse as ApiEnvelope, PaginatedResponse };
 
+export interface ApiFieldErrorDetail {
+  field: string;
+  messages: string[];
+}
+
 export class ApiError extends Error {
   status: number;
+  details?: ApiFieldErrorDetail[];
 
-  constructor(message: string, status: number) {
+  constructor(message: string, status: number, details?: ApiFieldErrorDetail[]) {
     super(message);
     this.name = 'ApiError';
     this.status = status;
+    this.details = details;
   }
 }
 
@@ -30,15 +37,22 @@ const DEV_USER_ID =
 async function parseEnvelope<T>(response: Response): Promise<T> {
   if (!response.ok) {
     let message = `Request failed with status ${response.status}`;
+    let details: ApiFieldErrorDetail[] | undefined;
     try {
-      const errorBody = (await response.json()) as { message?: string };
+      const errorBody = (await response.json()) as {
+        message?: string;
+        details?: ApiFieldErrorDetail[];
+      };
       if (typeof errorBody?.message === 'string') {
         message = errorBody.message;
+      }
+      if (Array.isArray(errorBody?.details)) {
+        details = errorBody.details;
       }
     } catch {
       // Keep fallback message when response is not JSON.
     }
-    throw new ApiError(message, response.status);
+    throw new ApiError(message, response.status, details);
   }
 
   const payload = (await response.json()) as ApiResponse<T>;

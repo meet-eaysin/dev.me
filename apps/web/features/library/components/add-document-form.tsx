@@ -5,7 +5,7 @@ import { useForm, type Resolver } from 'react-hook-form';
 import * as z from 'zod';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiPost } from '@/lib/api';
+import { ApiError, apiPost } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { Field, FieldError, FieldLabel } from '@/components/ui/field';
@@ -14,6 +14,13 @@ import { MentionTextarea } from '@/features/library/components/mention-textarea'
 import { Controller } from 'react-hook-form';
 import { DocumentType } from '@repo/types';
 import { cn } from '@/lib/utils';
+import {
+  FileImageIcon,
+  FileTextIcon,
+  LinkIcon,
+  NotebookPenIcon,
+  PlayCircleIcon,
+} from 'lucide-react';
 
 const addDocumentSchema = z.object({
   source: z
@@ -56,26 +63,31 @@ const documentTypeItems = [
     label: 'Article',
     value: DocumentType.URL,
     description: 'Web page or blog post',
+    icon: LinkIcon,
   },
   {
     label: 'YouTube',
     value: DocumentType.YOUTUBE,
     description: 'Video link',
+    icon: PlayCircleIcon,
   },
   {
     label: 'PDF',
     value: DocumentType.PDF,
     description: 'Hosted PDF URL',
+    icon: FileTextIcon,
   },
   {
     label: 'Image',
     value: DocumentType.IMAGE,
     description: 'Image link',
+    icon: FileImageIcon,
   },
   {
     label: 'Note',
     value: DocumentType.TEXT,
     description: 'Open the text editor',
+    icon: NotebookPenIcon,
   },
 ] as const;
 
@@ -96,11 +108,37 @@ export function AddDocumentForm({ onSuccess, onCancel }: AddDocumentFormProps) {
   });
 
   const mutation = useMutation({
-    mutationFn: (values: AddDocumentFormValues) =>
-      apiPost('/documents', { body: values }),
+    mutationFn: (values: AddDocumentFormValues) => {
+      const payload = {
+        ...values,
+        notes: values.notes?.trim() ? values.notes.trim() : undefined,
+      };
+
+      return apiPost('/documents', { body: payload });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['documents'] });
       if (onSuccess) onSuccess();
+    },
+    onError: (error) => {
+      if (!(error instanceof ApiError) || !error.details?.length) {
+        return;
+      }
+
+      error.details.forEach((detail) => {
+        const fieldName = detail.field as keyof AddDocumentFormValues;
+        if (!['source', 'title', 'type', 'notes'].includes(fieldName)) {
+          return;
+        }
+
+        const message = detail.messages[0];
+        if (message) {
+          form.setError(fieldName, {
+            type: 'server',
+            message,
+          });
+        }
+      });
     },
   });
 
@@ -162,30 +200,44 @@ export function AddDocumentForm({ onSuccess, onCancel }: AddDocumentFormProps) {
               name="type"
               control={form.control}
               render={({ field }) => (
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <div className="grid grid-cols-2 gap-2">
                   {documentTypeItems.map((item) => {
                     const isSelected = field.value === item.value;
+                    const Icon = item.icon;
 
                     return (
-                      <Button
+                      <button
                         key={item.value}
                         type="button"
-                        variant={isSelected ? 'default' : 'outline'}
                         className={cn(
-                          'h-auto items-start justify-start px-3 py-3 text-left',
-                          !isSelected && 'text-foreground',
+                          'relative flex w-full flex-col items-start justify-start rounded-lg border px-3 py-2.5 text-left transition-colors',
+                          isSelected
+                            ? 'border-primary/50 bg-primary/10 text-foreground ring-1 ring-primary/25'
+                            : 'border-border/70 bg-background hover:border-primary/30 hover:bg-accent/30',
+                          item.value === DocumentType.TEXT && 'col-span-2 h-16',
                         )}
                         onClick={() =>
                           handleTypeChange(item.value, field.onChange)
                         }
                       >
-                        <span className="flex flex-col items-start gap-1">
+                        <span
+                          className={cn(
+                            'absolute top-3 right-3 size-2 rounded-full border transition-colors',
+                            isSelected
+                              ? 'border-primary bg-primary'
+                              : 'border-border bg-transparent',
+                          )}
+                        />
+                        <span className="flex items-center gap-2 pr-5 text-sm font-medium leading-none">
+                          <Icon className="size-4 shrink-0 opacity-80" />
                           <span>{item.label}</span>
-                          <span className="text-xs opacity-72">
-                            {item.description}
-                          </span>
                         </span>
-                      </Button>
+                        <span className="mt-1.5 line-clamp-2 text-[11px] leading-3.5 text-muted-foreground">
+                          {item.value === DocumentType.TEXT
+                            ? 'Create a note inside the app'
+                            : item.description}
+                        </span>
+                      </button>
                     );
                   })}
                 </div>
@@ -281,11 +333,12 @@ export function AddDocumentForm({ onSuccess, onCancel }: AddDocumentFormProps) {
           )}
         </div>
 
-        {mutation.error && (
+        {mutation.error &&
+          !(mutation.error instanceof ApiError && mutation.error.details?.length) && (
           <p className="text-destructive-foreground text-xs">
             {mutation.error.message}
           </p>
-        )}
+          )}
       </div>
 
       <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
