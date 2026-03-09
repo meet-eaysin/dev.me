@@ -12,5 +12,6 @@
   "moduleNameMapper": {
     "^src/(.*)$": "<rootDir>/src/$1"
   },
+  "setupFiles": ["<rootDir>/test/set-test-env.ts"],
   "setupFilesAfterEnv": ["<rootDir>/test/global-mocks.ts"]
 }

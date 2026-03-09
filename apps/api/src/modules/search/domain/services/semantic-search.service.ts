@@ -43,6 +43,7 @@ export class SemanticSearchService {
   ): Promise<SemanticSearchResultDto[]> {
     const internalUserId = this.transformUserId(userId);
     const queryVector = await embeddingAdapter.embedText(query.q, llmConfig);
+    await this.qdrant.ensurePayloadIndexes('mindstack');
 
     const qdrantResults = await this.qdrant.searchSimilar(
       'mindstack',

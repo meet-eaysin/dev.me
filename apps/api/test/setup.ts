@@ -3,8 +3,6 @@ import { Test } from '@nestjs/testing';
 import type { INestApplication, ValidationError } from '@nestjs/common';
 import { ValidationPipe, BadRequestException } from '@nestjs/common';
 import { AppModule } from '../src/app.module';
-import { connectMongoDB, disconnectMongoDB } from '@repo/db';
-import { env } from '../src/shared/utils/env';
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
 
@@ -28,7 +26,6 @@ function formatValidationErrors(
 }
 
 export async function setupApp(): Promise<INestApplication> {
-  await connectMongoDB(env.MONGODB_URI);
   const moduleFixture: TestingModule = await Test.createTestingModule({
     imports: [AppModule],
   }).compile();
@@ -53,10 +50,8 @@ export async function setupApp(): Promise<INestApplication> {
       },
     }),
   );
-  // Global filters and interceptors are handled via AppModule
   app.setGlobalPrefix('api/v1');
 
-  // app.init() triggers AppModule.onModuleInit() which calls connectMongoDB
   await app.init();
   return app;
 }
@@ -65,15 +60,9 @@ export async function teardownApp(app: INestApplication): Promise<void> {
   if (app) {
     await app.close();
   }
-  await disconnectMongoDB();
 }
 
-/**
- * Cleanup ALL collections in the current database.
- * Useful for ensuring a clean state between E2E test runs.
- */
 export async function cleanupDatabase(): Promise<void> {
-  // Ensure all models are registered
   await import('@repo/db');
 
   const collections = mongoose.connection.collections;

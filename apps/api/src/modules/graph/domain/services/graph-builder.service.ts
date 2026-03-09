@@ -84,6 +84,8 @@ export class GraphBuilderService {
             config,
           );
 
+          await this.qdrant.ensurePayloadIndexes('mindstack');
+
           const results = await this.qdrant.searchSimilar(
             'mindstack',
             queryVector,

@@ -3,7 +3,19 @@ import path from 'node:path';
 import dotenv from 'dotenv';
 
 const nodeEnv = process.env.NODE_ENV ?? 'development';
-const envFileName = nodeEnv === 'production' ? '.env.production' : '.env.local';
+
+function resolveEnvFileName(currentEnv: string): string {
+  switch (currentEnv) {
+    case 'production':
+      return '.env.production';
+    case 'test':
+      return '.env.test';
+    default:
+      return '.env.local';
+  }
+}
+
+const envFileName = resolveEnvFileName(nodeEnv);
 
 const envCandidates = [
   path.resolve(process.cwd(), 'apps/api', envFileName),

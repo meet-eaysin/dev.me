@@ -40,6 +40,9 @@ jest.mock('axios', () => mockedAxios);
 
 jest.mock('@repo/ai', () => ({
   QdrantWrapper: jest.fn().mockImplementation(() => ({
+    ensureCollection: jest.fn<() => Promise<void>>().mockResolvedValue(),
+    ensurePayloadIndexes: jest.fn<() => Promise<void>>().mockResolvedValue(),
+    upsertPoints: jest.fn<() => Promise<void>>().mockResolvedValue(),
     searchSimilar: jest
       .fn<() => Promise<MockQdrantResult[]>>()
       .mockResolvedValue([

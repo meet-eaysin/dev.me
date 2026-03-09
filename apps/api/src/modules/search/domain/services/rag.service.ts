@@ -70,6 +70,7 @@ export class RagService {
     }
 
     const queryVector = await embeddingAdapter.embedText(question, llmConfig);
+    await this.qdrant.ensurePayloadIndexes('mindstack');
 
     const filterMust: Record<string, unknown>[] = [
       { key: 'userId', match: { value: internalUserId } },

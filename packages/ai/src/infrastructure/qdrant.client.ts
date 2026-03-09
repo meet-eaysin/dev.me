@@ -37,6 +37,30 @@ export class QdrantWrapper {
         },
       });
     }
+
+    await this.ensurePayloadIndexes(name);
+  }
+
+  async ensurePayloadIndexes(collection: string): Promise<void> {
+    const existingSchema =
+      (await this.client.getCollection(collection)).payload_schema ?? {};
+
+    const requiredIndexes = [
+      { field_name: 'userId', field_schema: 'keyword' as const },
+      { field_name: 'documentId', field_schema: 'keyword' as const },
+    ];
+
+    for (const index of requiredIndexes) {
+      if (existingSchema[index.field_name]) {
+        continue;
+      }
+
+      await this.client.createPayloadIndex(collection, {
+        field_name: index.field_name,
+        field_schema: index.field_schema,
+        wait: true,
+      });
+    }
   }
 
   async upsertPoints(collection: string, points: QdrantPoint[]): Promise<void> {
