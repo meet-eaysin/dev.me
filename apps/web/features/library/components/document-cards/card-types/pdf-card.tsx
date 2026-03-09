@@ -1,4 +1,4 @@
-import type { DocumentRow } from '@/lib/api/documents';
+import type { DocumentRow } from '@/features/library/types';
 import { BaseDocumentCard } from '../base-document-card';
 
 interface PdfCardProps {

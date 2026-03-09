@@ -1,6 +1,5 @@
 'use client';
 
-import { useDocuments } from '@/lib/api/documents';
 import { Skeleton } from '@/components/ui/skeleton';
 import { BookOpen } from 'lucide-react';
 
@@ -14,6 +13,7 @@ import {
 } from '@/components/ui/empty';
 import { AddDocumentDialog } from './add-document-dialog';
 import { DocumentCard } from './document-cards/document-card';
+import { useDocuments } from '../hooks';
 
 export function LibraryFeed() {
   const { data, isLoading, error } = useDocuments(1, 40);

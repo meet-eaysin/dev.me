@@ -3,7 +3,7 @@ import localFont from 'next/font/local';
 import '../styles/index.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { AnchoredToastProvider, ToastProvider } from '@/components/ui/toast';
-import { QueryProvider } from '@/components/providers/query-provider';
+import { QueryProvider } from '@/providers/query-provider';
 import { cn } from '@/lib/utils';
 
 const geistSans = localFont({

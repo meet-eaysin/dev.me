@@ -1,8 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import { useDocuments } from '@/lib/api/documents';
 import { cn } from '@/lib/utils';
+import { useDocuments } from '../hooks';
 
 type TextareaProps = React.ComponentProps<'textarea'>;
 

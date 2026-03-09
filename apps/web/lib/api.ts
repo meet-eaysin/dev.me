@@ -11,7 +11,11 @@ export class ApiError extends Error {
   status: number;
   details?: ApiFieldErrorDetail[];
 
-  constructor(message: string, status: number, details?: ApiFieldErrorDetail[]) {
+  constructor(
+    message: string,
+    status: number,
+    details?: ApiFieldErrorDetail[],
+  ) {
     super(message);
     this.name = 'ApiError';
     this.status = status;
@@ -38,20 +42,14 @@ async function parseEnvelope<T>(response: Response): Promise<T> {
   if (!response.ok) {
     let message = `Request failed with status ${response.status}`;
     let details: ApiFieldErrorDetail[] | undefined;
-    try {
-      const errorBody = (await response.json()) as {
-        message?: string;
-        details?: ApiFieldErrorDetail[];
-      };
-      if (typeof errorBody?.message === 'string') {
-        message = errorBody.message;
-      }
-      if (Array.isArray(errorBody?.details)) {
-        details = errorBody.details;
-      }
-    } catch {
-      // Keep fallback message when response is not JSON.
-    }
+
+    const errorBody = (await response.json()) as {
+      message?: string;
+      details?: ApiFieldErrorDetail[];
+    };
+    if (typeof errorBody?.message === 'string') message = errorBody.message;
+    if (Array.isArray(errorBody?.details)) details = errorBody.details;
+
     throw new ApiError(message, response.status, details);
   }
 

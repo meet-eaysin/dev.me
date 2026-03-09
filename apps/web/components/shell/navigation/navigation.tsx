@@ -20,9 +20,9 @@ const getNavigationItems = (): NavigationItemType[] => [
   {
     name: 'library',
     label: 'Library',
-    href: '/documents',
+    href: '/library',
     icon: 'library',
-    isCurrent: ({ pathname }) => pathname?.startsWith('/documents') ?? false,
+    isCurrent: ({ pathname }) => pathname?.startsWith('/library') ?? false,
   },
   {
     name: 'search',

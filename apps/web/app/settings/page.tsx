@@ -1,4 +1,4 @@
-import { FeatureShellPage } from '@/components/app/feature-shell-page';
+import { FeatureShellPage } from '@/components/shell/feature-shell-page';
 
 export default function SettingsPage() {
   return (

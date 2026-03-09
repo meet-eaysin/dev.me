@@ -11,13 +11,13 @@ import {
   CardAction,
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import type { DocumentRow } from '@/lib/api/documents';
+import type { DocumentRow } from '@/features/library/types';
 import {
   getDocumentIcon,
   getStatusBadgeVariant,
   getStatusLabel,
   getTypeLabel,
-} from './document-helpers';
+} from '../../utils/document-helpers';
 import { CardActions } from './card-actions';
 
 interface BaseDocumentCardProps {

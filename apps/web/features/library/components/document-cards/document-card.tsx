@@ -1,5 +1,5 @@
 import { DocumentType } from '@repo/types';
-import type { DocumentRow } from '@/lib/api/documents';
+import type { DocumentRow } from '@/features/library/types';
 import { UrlCard } from './card-types/url-card';
 import { YoutubeCard } from './card-types/youtube-card';
 import { PdfCard } from './card-types/pdf-card';
