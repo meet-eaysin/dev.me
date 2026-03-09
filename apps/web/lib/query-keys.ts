@@ -26,6 +26,16 @@ export const QUERY_KEYS = {
     chats: () => ['search', 'chats'] as const,
     chat: (id: string) => ['search', 'chats', id] as const,
   },
+  REVIEW: {
+    ROOT: ['review'] as const,
+    daily: () => ['review', 'daily'] as const,
+    recommendations: () => ['review', 'recommendations'] as const,
+  },
+  ANALYTICS: {
+    ROOT: ['analytics'] as const,
+    stats: () => ['analytics', 'stats'] as const,
+    heatmap: (days: number) => ['analytics', 'heatmap', days] as const,
+  },
   GRAPH: {
     ROOT: ['graph'] as const,
     full: () => ['graph', 'full'] as const,

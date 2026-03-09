@@ -35,6 +35,15 @@ export const API_ENDPOINTS = {
     CHATS: '/search/chats',
     chat: (id: string) => `/search/chats/${id}`,
   },
+  REVIEW: {
+    DAILY: '/review/daily',
+    RECOMMENDATIONS: '/review/recommendations',
+    dismiss: (id: string) => `/review/dismiss/${id}`,
+  },
+  ANALYTICS: {
+    STATS: '/analytics/stats',
+    HEATMAP: '/analytics/heatmap',
+  },
   GRAPH: {
     FULL: '/graph',
     document: (id: string) => `/graph/document/${id}`,
