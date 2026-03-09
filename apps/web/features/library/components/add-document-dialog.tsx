@@ -22,7 +22,7 @@ export function AddDocumentDialog() {
       <DialogTrigger
         render={
           <Button>
-            <PlusIcon className="w-4 h-4 mr-2" />
+            <PlusIcon aria-hidden="true" />
             Add Document
           </Button>
         }
