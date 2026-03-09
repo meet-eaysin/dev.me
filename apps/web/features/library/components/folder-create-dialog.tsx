@@ -11,12 +11,21 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Field, FieldError, FieldLabel } from '@/components/ui/field';
+import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { useCreateFolder } from '../hooks';
 
+const FOLDER_COLORS = [
+  { label: 'Blue', value: '#2563eb' },
+  { label: 'Green', value: '#16a34a' },
+  { label: 'Amber', value: '#d97706' },
+  { label: 'Rose', value: '#e11d48' },
+  { label: 'Violet', value: '#7c3aed' },
+  { label: 'Slate', value: '#475569' },
+] as const;
+
 export function FolderCreateDialog() {
-  const [color, setColor] = React.useState('');
+  const [color, setColor] = React.useState<string>(FOLDER_COLORS[0].value);
   const [name, setName] = React.useState('');
   const [open, setOpen] = React.useState(false);
   const mutation = useCreateFolder();
@@ -33,7 +42,7 @@ export function FolderCreateDialog() {
     });
 
     setName('');
-    setColor('');
+    setColor(FOLDER_COLORS[0].value);
     setOpen(false);
   }
 
@@ -61,13 +70,31 @@ export function FolderCreateDialog() {
             </Field>
 
             <Field>
-              <FieldLabel htmlFor="folder-color">Color</FieldLabel>
-              <Input
-                id="folder-color"
-                onChange={(event) => setColor(event.target.value)}
-                placeholder="#2563eb"
-                value={color}
-              />
+              <FieldLabel>Color</FieldLabel>
+              <div className="flex flex-wrap gap-2">
+                {FOLDER_COLORS.map((option) => {
+                  const isActive = color === option.value;
+
+                  return (
+                    <Button
+                      aria-pressed={isActive}
+                      className="gap-2"
+                      key={option.value}
+                      onClick={() => setColor(option.value)}
+                      type="button"
+                      variant={isActive ? 'default' : 'outline'}
+                    >
+                      <span
+                        aria-hidden="true"
+                        className="size-3 rounded-full"
+                        style={{ backgroundColor: option.value }}
+                      />
+                      {option.label}
+                    </Button>
+                  );
+                })}
+              </div>
+              <FieldDescription>Select a folder color.</FieldDescription>
             </Field>
 
             {mutation.error && <FieldError>{mutation.error.message}</FieldError>}

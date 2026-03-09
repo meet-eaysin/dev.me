@@ -27,7 +27,7 @@ export function AddDocumentDialog() {
           </Button>
         }
       />
-      <DialogPopup>
+      <DialogPopup className="max-w-3xl">
         <DialogHeader>
           <DialogTitle>Add to Library</DialogTitle>
           <DialogDescription>

@@ -43,6 +43,7 @@ function buildQueryString(
 
 export const libraryApi = {
   createDocument: (payload: {
+    folderIds?: string[];
     source: string;
     title?: string;
     type: DocumentType;

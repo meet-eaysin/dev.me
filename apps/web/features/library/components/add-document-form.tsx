@@ -11,11 +11,19 @@ import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { MentionTextarea } from '@/features/library/components/mention-textarea';
 import { Controller } from 'react-hook-form';
 import { DocumentType } from '@repo/types';
 import { cn } from '@/lib/utils';
 import { libraryApi } from '../api';
+import { useFolders } from '../hooks';
 import {
   FileImageIcon,
   FileTextIcon,
@@ -25,6 +33,7 @@ import {
 } from 'lucide-react';
 
 const addDocumentSchema = z.object({
+  folderId: z.string().optional(),
   source: z
     .string()
     .trim()
@@ -106,12 +115,15 @@ export function AddDocumentForm({ onSuccess, onCancel }: AddDocumentFormProps) {
       title: '',
       type: DocumentType.URL,
       notes: '',
+      folderId: undefined,
     },
   });
+  const { data: folders = [] } = useFolders();
 
   const mutation = useMutation({
     mutationFn: async (values: AddDocumentFormValues) => {
       const documentResponse = await libraryApi.createDocument({
+        folderIds: values.folderId ? [values.folderId] : undefined,
         source: values.source,
         title: values.title,
         type: values.type,
@@ -138,7 +150,7 @@ export function AddDocumentForm({ onSuccess, onCancel }: AddDocumentFormProps) {
 
       error.details.forEach((detail) => {
         const fieldName = detail.field as keyof AddDocumentFormValues;
-        if (!['source', 'title', 'type', 'notes'].includes(fieldName)) {
+        if (!['source', 'title', 'type', 'notes', 'folderId'].includes(fieldName)) {
           return;
         }
 
@@ -172,6 +184,10 @@ export function AddDocumentForm({ onSuccess, onCancel }: AddDocumentFormProps) {
   const shouldShowError = (name: keyof AddDocumentFormValues) =>
     form.formState.submitCount > 0 || form.getFieldState(name).isTouched;
 
+  const selectedFolderId = form.watch('folderId');
+  const selectedFolderName =
+    folders.find((folder) => folder.id === selectedFolderId)?.name ??
+    'No Folder';
   const selectedType = form.watch('type');
   const sourceError = shouldShowError('source')
     ? form.formState.errors.source
@@ -309,6 +325,37 @@ export function AddDocumentForm({ onSuccess, onCancel }: AddDocumentFormProps) {
             Use a short title that will be easy to scan later.
           </p>
           {titleError && <FieldError>{titleError.message}</FieldError>}
+        </Field>
+
+        <Field className="space-y-2">
+          <FieldLabel>Folder</FieldLabel>
+          <Controller
+            name="folderId"
+            control={form.control}
+            render={({ field }) => (
+              <Select
+                onValueChange={(value) =>
+                  field.onChange(value === 'none' ? undefined : value)
+                }
+                value={field.value ?? 'none'}
+              >
+                <SelectTrigger>
+                  <SelectValue>{selectedFolderName}</SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">No Folder</SelectItem>
+                  {folders.map((folder) => (
+                    <SelectItem key={folder.id} value={folder.id}>
+                      {folder.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
+          <p className="text-muted-foreground text-xs">
+            Optionally place this document into a specific folder now.
+          </p>
         </Field>
 
         <div className="space-y-2">
