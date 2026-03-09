@@ -18,7 +18,7 @@ import {
 } from './helpers';
 import type { Server } from 'http';
 import * as path from 'path';
-import { IngestionStatus } from '@repo/types';
+import { DocumentType, IngestionStatus } from '@repo/types';
 
 describe('AI Ingestion (e2e)', () => {
   let app: INestApplication<Server>;
@@ -138,5 +138,25 @@ describe('AI Ingestion (e2e)', () => {
       .expect(422);
 
     assertErrorShape(response.body, 422, 'UNPROCESSABLE_ENTITY');
+  });
+
+  it('should reject transcript generation for non-YouTube documents', async () => {
+    const auth = await createTestAuthContext(app, {
+      authId: 'dev:ai-ingestion-transcript-non-youtube',
+      email: 'ai-ingestion-transcript-non-youtube@test.local',
+    });
+
+    const docId = await seedDocument({
+      userId: auth.userId,
+      title: 'Regular PDF Doc',
+      type: DocumentType.PDF,
+    });
+
+    const response = await request(app.getHttpServer())
+      .post(`/api/v1/documents/${docId}/transcript`)
+      .set('Cookie', auth.cookies)
+      .expect(400);
+
+    assertErrorShape(response.body, 400, 'BAD_REQUEST');
   });
 });

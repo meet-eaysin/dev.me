@@ -53,6 +53,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
+import { toastManager } from '@/components/ui/toast';
 import {
   useCreateNote,
   useDeleteDocument,
@@ -93,7 +94,11 @@ export function DocumentDetailView({ id }: { id: string }) {
 
   const { data: document, error, isLoading } = useDocument(id);
   const { data: ingestion } = useDocumentIngestion(id);
-  const { data: transcriptResponse, error: transcriptError } = useDocumentTranscript(id);
+  const isYoutubeDocument = document?.type === 'youtube';
+  const { data: transcriptResponse, error: transcriptError } = useDocumentTranscript(
+    id,
+    isYoutubeDocument,
+  );
   const { data: notes = [] } = useNotes(id);
   const { data: folders = [] } = useFolders();
   const updateDocument = useUpdateDocument(id);
@@ -109,6 +114,22 @@ export function DocumentDetailView({ id }: { id: string }) {
   const folder = folders.find((item) => item.id === document?.folderId);
   const canRetryIngestion =
     ingestion?.ingestionStatus === IngestionStatus.FAILED && !ingestion.embeddingsReady;
+
+  function showTranscriptUnavailableToast() {
+    toastManager.add({
+      title: 'Transcript unavailable',
+      description: 'This is available only for YouTube documents.',
+      type: 'info',
+    });
+  }
+
+  function handleGenerateTranscript() {
+    if (!isYoutubeDocument) {
+      showTranscriptUnavailableToast();
+      return;
+    }
+    generateTranscript.mutate(id);
+  }
 
   async function handleDeleteDocument() {
     if (!document) return;
@@ -565,48 +586,50 @@ export function DocumentDetailView({ id }: { id: string }) {
         <div className="space-y-4">
 
           {/* ── Transcript ── */}
-          <Card className="overflow-hidden">
-            <CardHeader className="flex flex-row items-center justify-between gap-3 px-5 py-4">
-              <div>
-                <CardTitle className="text-sm font-semibold">Transcript</CardTitle>
-                <p className="mt-0.5 text-xs text-muted-foreground">Extracted text content</p>
-              </div>
-              <Button
-                onClick={() => generateTranscript.mutate(id)}
-                size="sm"
-                variant="outline"
-                className="h-7 gap-1.5 text-xs"
-              >
-                {generateTranscript.isPending ? (
-                  <LoaderCircle className="size-3 animate-spin" />
-                ) : (
-                  <Brain className="size-3" />
-                )}
-                Generate
-              </Button>
-            </CardHeader>
-            <Separator />
-            <CardContent className="px-5 py-4">
-              {transcriptResponse?.content ? (
-                <div className="max-h-64 overflow-y-auto rounded-lg bg-muted/40 px-3 py-3">
-                  <p className="text-xs leading-relaxed text-muted-foreground whitespace-pre-wrap">
-                    {transcriptResponse.content}
-                  </p>
+          {isYoutubeDocument && (
+            <Card className="overflow-hidden">
+              <CardHeader className="flex flex-row items-center justify-between gap-3 px-5 py-4">
+                <div>
+                  <CardTitle className="text-sm font-semibold">Transcript</CardTitle>
+                  <p className="mt-0.5 text-xs text-muted-foreground">Extracted text content</p>
                 </div>
-              ) : (
-                <div className="flex flex-col items-center gap-2.5 py-6 text-center">
-                  <div className="rounded-full bg-muted p-2.5">
-                    <Brain className="size-4 text-muted-foreground/50" />
+                <Button
+                  onClick={handleGenerateTranscript}
+                  size="sm"
+                  variant="outline"
+                  className="h-7 gap-1.5 text-xs"
+                >
+                  {generateTranscript.isPending ? (
+                    <LoaderCircle className="size-3 animate-spin" />
+                  ) : (
+                    <Brain className="size-3" />
+                  )}
+                  Generate
+                </Button>
+              </CardHeader>
+              <Separator />
+              <CardContent className="px-5 py-4">
+                {transcriptResponse?.content ? (
+                  <div className="max-h-64 overflow-y-auto rounded-lg bg-muted/40 px-3 py-3">
+                    <p className="text-xs leading-relaxed text-muted-foreground whitespace-pre-wrap">
+                      {transcriptResponse.content}
+                    </p>
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    {transcriptError
-                      ? 'Transcript unavailable for this document.'
-                      : 'No transcript generated yet.'}
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                ) : (
+                  <div className="flex flex-col items-center gap-2.5 py-6 text-center">
+                    <div className="rounded-full bg-muted p-2.5">
+                      <Brain className="size-4 text-muted-foreground/50" />
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {transcriptError
+                        ? 'Transcript unavailable for this document.'
+                        : 'No transcript generated yet.'}
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
 
           {/* ── Details ── */}
           <Card className="overflow-hidden">

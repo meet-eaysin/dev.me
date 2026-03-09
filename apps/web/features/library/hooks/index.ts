@@ -34,9 +34,9 @@ export function useDocumentIngestion(id: string) {
   });
 }
 
-export function useDocumentTranscript(id: string) {
+export function useDocumentTranscript(id: string, enabled = true) {
   return useQuery({
-    enabled: Boolean(id),
+    enabled: Boolean(id) && enabled,
     queryKey: QUERY_KEYS.LIBRARY.documentTranscript(id),
     queryFn: () => libraryApi.getTranscript(id),
     retry: false,
