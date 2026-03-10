@@ -5,10 +5,13 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import type { AuthenticatedUser } from '@repo/types';
+import { EnsureDevUserUseCase } from '../../modules/users/application/use-cases/ensure-dev-user.usecase';
 
 @Injectable()
 export class DevUserGuard implements CanActivate {
-  canActivate(context: ExecutionContext): boolean {
+  constructor(private readonly ensureDevUserUseCase: EnsureDevUserUseCase) {}
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     if (request.user) {
       return true;
@@ -24,9 +27,17 @@ export class DevUserGuard implements CanActivate {
       userId = hex.padEnd(24, '0').slice(0, 24);
     }
 
+    const authId = `dev:${userId}`;
+    await this.ensureDevUserUseCase.execute({
+      id: userId,
+      authId,
+      email: `dev-${userId}@local.dev`,
+      name: 'Development User',
+    });
+
     request.user = {
       userId,
-      authId: `dev:${userId}`,
+      authId,
       provider: 'dev',
       sessionId: 'dev-session',
     } satisfies AuthenticatedUser;

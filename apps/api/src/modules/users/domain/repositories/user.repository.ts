@@ -7,11 +7,16 @@ export interface UpsertIdentityUserInput {
   avatarUrl?: string;
 }
 
+export interface UpsertUserByIdInput extends UpsertIdentityUserInput {
+  id: string;
+}
+
 export abstract class IUserRepository {
   abstract findById(id: string): Promise<UserEntity | null>;
   abstract findByAuthId(authId: string): Promise<UserEntity | null>;
   abstract findByEmail(email: string): Promise<UserEntity | null>;
   abstract create(input: UpsertIdentityUserInput): Promise<UserEntity>;
+  abstract upsertById(input: UpsertUserByIdInput): Promise<UserEntity>;
   abstract upsertFromIdentity(
     input: UpsertIdentityUserInput,
   ): Promise<UserEntity>;

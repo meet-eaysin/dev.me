@@ -4,6 +4,7 @@ import { IUserDocument } from '@repo/db';
 import {
   IUserRepository,
   UpsertIdentityUserInput,
+  UpsertUserByIdInput,
 } from '../../domain/repositories/user.repository';
 import { UserEntity } from '../../domain/entities/user.entity';
 
@@ -42,6 +43,27 @@ export class MongooseUserRepository implements IUserRepository {
       { authId: input.authId },
       {
         $set: {
+          email: input.email,
+          name: input.name,
+          avatarUrl: input.avatarUrl,
+        },
+      },
+      {
+        new: true,
+        upsert: true,
+        setDefaultsOnInsert: true,
+      },
+    ).exec();
+
+    return this.toEntity(doc);
+  }
+
+  async upsertById(input: UpsertUserByIdInput): Promise<UserEntity> {
+    const doc = await UserModel.findOneAndUpdate(
+      { _id: input.id },
+      {
+        $setOnInsert: {
+          authId: input.authId,
           email: input.email,
           name: input.name,
           avatarUrl: input.avatarUrl,

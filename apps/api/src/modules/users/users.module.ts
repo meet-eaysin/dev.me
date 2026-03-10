@@ -2,6 +2,7 @@ import { forwardRef, Module } from '@nestjs/common';
 import { UsersController } from './interface/users.controller';
 import { GetMeUseCase } from './application/use-cases/get-me.usecase';
 import { UpsertUserFromIdentityUseCase } from './application/use-cases/upsert-user-from-identity.usecase';
+import { EnsureDevUserUseCase } from './application/use-cases/ensure-dev-user.usecase';
 import { IUserRepository } from './domain/repositories/user.repository';
 import { MongooseUserRepository } from './infrastructure/persistence/mongoose-user.repository';
 import { ListUserSessionsUseCase } from './application/use-cases/list-user-sessions.usecase';
@@ -13,6 +14,7 @@ import { AuthModule } from '../auth/auth.module';
   controllers: [UsersController],
   providers: [
     GetMeUseCase,
+    EnsureDevUserUseCase,
     UpsertUserFromIdentityUseCase,
     ListUserSessionsUseCase,
     RevokeUserSessionUseCase,
@@ -23,6 +25,7 @@ import { AuthModule } from '../auth/auth.module';
   ],
   exports: [
     GetMeUseCase,
+    EnsureDevUserUseCase,
     UpsertUserFromIdentityUseCase,
     IUserRepository,
     ListUserSessionsUseCase,
