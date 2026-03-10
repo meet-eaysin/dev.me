@@ -145,8 +145,13 @@ export function UserDropdown({ small }: UserDropdownProps) {
         <MenuItem
           variant="destructive"
           onClick={async () => {
-            await logout.mutateAsync();
-            router.push('/auth/login');
+            try {
+              await logout.mutateAsync();
+            } catch {
+              // Ignore logout errors and still redirect.
+            } finally {
+              router.push('/auth/login');
+            }
           }}
         >
           <LogOutIcon />

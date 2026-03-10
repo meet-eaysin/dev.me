@@ -8,12 +8,15 @@ import type { AuthenticatedUser } from '@repo/types';
 import { EnsureDevUserUseCase } from '../../modules/users/application/use-cases/ensure-dev-user.usecase';
 import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
+import { RequestAuthService } from '../../modules/auth/infrastructure/guards/request-auth.service';
+import type { Request } from 'express';
 
 @Injectable()
 export class DevUserGuard implements CanActivate {
   constructor(
     private readonly ensureDevUserUseCase: EnsureDevUserUseCase,
     private readonly reflector: Reflector,
+    private readonly requestAuthService: RequestAuthService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -22,8 +25,22 @@ export class DevUserGuard implements CanActivate {
       context.getClass(),
     ]);
 
-    const request = context.switchToHttp().getRequest();
+    const request = context
+      .switchToHttp()
+      .getRequest<Request & { user?: AuthenticatedUser }>();
     if (request.user) {
+      return true;
+    }
+
+    let existingUser: AuthenticatedUser | null = null;
+    try {
+      existingUser = await this.requestAuthService.authenticate(request);
+    } catch (error) {
+      if (isPublic) return true;
+      throw error;
+    }
+    if (existingUser) {
+      request.user = existingUser;
       return true;
     }
     let userId = request.headers['x-user-id'];

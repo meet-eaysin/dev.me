@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import { Navigation } from './navigation/navigation';
 import { cn } from '@/lib/utils';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { NavIcon } from './navigation/nav-icon';
+import { UserDropdown } from './user-dropdown/user-dropdown';
 
 export type SideBarProps = {
   bannersHeight?: number;
@@ -37,20 +37,9 @@ export function SideBar({ bannersHeight = 0 }: SideBarProps) {
       >
         <div className="flex h-full flex-col">
           <div className="flex h-14 shrink-0 items-center justify-between border-b border-subtle px-3">
-            <button
-              type="button"
-              className="hover:bg-subtle hidden items-center gap-2 rounded-md px-1.5 py-1 transition lg:flex"
-            >
-              <Avatar className="h-5 w-5">
-                <AvatarFallback className="bg-primary/15 text-primary text-[10px] font-semibold">
-                  E
-                </AvatarFallback>
-              </Avatar>
-              <span className="text-default truncate text-sm font-semibold">
-                Eaysin Mia
-              </span>
-              <NavIcon name="chevron-down" className="text-muted h-3.5 w-3.5" />
-            </button>
+            <div className="hidden lg:flex w-full">
+              <UserDropdown />
+            </div>
             <Link
               href="/"
               className="hover:bg-subtle flex items-center rounded-md p-2 transition lg:hidden"
@@ -58,13 +47,6 @@ export function SideBar({ bannersHeight = 0 }: SideBarProps) {
             >
               <NavIcon name="blocks" className="h-4 w-4" />
             </Link>
-            <button
-              type="button"
-              className="text-default hover:bg-subtle hidden rounded-md p-2 transition lg:inline-flex"
-              aria-label="Search"
-            >
-              <NavIcon name="search" className="h-4 w-4" />
-            </button>
           </div>
 
           <div className="flex-1 overflow-y-auto overflow-x-hidden py-4 md:px-2 lg:px-3">

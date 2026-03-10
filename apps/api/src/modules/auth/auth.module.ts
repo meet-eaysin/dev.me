@@ -11,6 +11,7 @@ import { RefreshSessionService } from './domain/services/refresh-session.service
 import { AuthCookieService } from './infrastructure/cookies/auth-cookie.service';
 import { OAuthTransactionCookieService } from './infrastructure/cookies/oauth-transaction-cookie.service';
 import { AppAuthGuard } from './infrastructure/guards/app-auth.guard';
+import { RequestAuthService } from './infrastructure/guards/request-auth.service';
 import { OAuthProviderService } from './infrastructure/oauth/oauth-provider.service';
 import { InitiateOAuthLoginUseCase } from './application/use-cases/initiate-oauth-login.usecase';
 import { HandleOAuthCallbackUseCase } from './application/use-cases/handle-oauth-callback.usecase';
@@ -36,6 +37,7 @@ import { MongooseRefreshSessionRepository } from './infrastructure/persistence/m
     OAuthTransactionCookieService,
     OAuthProviderService,
     AppAuthGuard,
+    RequestAuthService,
     {
       provide: IExternalIdentityRepository,
       useClass: MongooseExternalIdentityRepository,
@@ -51,6 +53,7 @@ import { MongooseRefreshSessionRepository } from './infrastructure/persistence/m
     RefreshSessionService,
     AuthCookieService,
     AppAuthGuard,
+    RequestAuthService,
     IExternalIdentityRepository,
     IRefreshSessionRepository,
   ],

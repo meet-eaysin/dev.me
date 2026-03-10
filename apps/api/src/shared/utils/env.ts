@@ -51,6 +51,8 @@ export const env = {
   PORT: getEnv('PORT', false, '3000'),
   HOST: getEnv('HOST', false, '0.0.0.0'),
   NODE_ENV: getEnv('NODE_ENV', false, 'development'),
+  DEV_AUTH_ENABLED:
+    getEnv('DEV_AUTH_ENABLED', false, 'true').toLowerCase() === 'true',
   MONGODB_URI: getEnv('MONGODB_URI'),
   REDIS_HOST: getEnv('REDIS_HOST'),
   REDIS_PORT: Number(getEnv('REDIS_PORT', false, '6379')),

@@ -37,6 +37,57 @@ export const API_BASE_URL = rawBaseUrl.endsWith('/api/v1')
   ? rawBaseUrl
   : `${rawBaseUrl}/api/v1`;
 
+let refreshPromise: Promise<boolean> | null = null;
+
+async function refreshSession(headers: Headers): Promise<boolean> {
+  if (!refreshPromise) {
+    refreshPromise = (async () => {
+      const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
+        method: 'POST',
+        credentials: 'include',
+        headers,
+      });
+      return response.ok;
+    })().finally(() => {
+      refreshPromise = null;
+    });
+  }
+  return refreshPromise;
+}
+
+async function requestWithAuth(
+  path: string,
+  init: RequestInit,
+  retryOnAuth = true,
+): Promise<Response> {
+  const headers = new Headers(init.headers);
+  const devUserId = getDevUserId();
+  if (devUserId) {
+    headers.set('x-user-id', devUserId);
+  }
+
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    ...init,
+    credentials: 'include',
+    headers,
+  });
+
+  if (response.status !== 401 || !retryOnAuth) {
+    return response;
+  }
+
+  const refreshed = await refreshSession(headers);
+  if (!refreshed) {
+    return response;
+  }
+
+  return fetch(`${API_BASE_URL}${path}`, {
+    ...init,
+    credentials: 'include',
+    headers,
+  });
+}
+
 async function parseEnvelope<T>(response: Response): Promise<T> {
   if (!response.ok) {
     let message = `Request failed with status ${response.status}`;
@@ -73,16 +124,9 @@ export async function apiGet<T>(
   path: string,
   options?: ApiGetOptions,
 ): Promise<T> {
-  const headers = new Headers(options?.headers);
-  const devUserId = getDevUserId();
-  if (devUserId) {
-    headers.set('x-user-id', devUserId);
-  }
-
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const response = await requestWithAuth(path, {
     ...options,
-    credentials: 'include',
-    headers,
+    headers: new Headers(options?.headers),
   });
 
   return parseEnvelope<T>(response);
@@ -97,17 +141,12 @@ export async function apiPost<T>(
   options?: ApiMutationOptions,
 ): Promise<T> {
   const headers = new Headers(options?.headers);
-  const devUserId = getDevUserId();
-  if (devUserId) {
-    headers.set('x-user-id', devUserId);
-  }
   if (options?.body instanceof FormData === false) {
     headers.set('Content-Type', 'application/json');
   }
 
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const response = await requestWithAuth(path, {
     ...options,
-    credentials: 'include',
     method: 'POST',
     body:
       options?.body instanceof FormData
@@ -124,17 +163,12 @@ export async function apiPatch<T>(
   options?: ApiMutationOptions,
 ): Promise<T> {
   const headers = new Headers(options?.headers);
-  const devUserId = getDevUserId();
-  if (devUserId) {
-    headers.set('x-user-id', devUserId);
-  }
   if (options?.body instanceof FormData === false) {
     headers.set('Content-Type', 'application/json');
   }
 
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const response = await requestWithAuth(path, {
     ...options,
-    credentials: 'include',
     method: 'PATCH',
     body:
       options?.body instanceof FormData
@@ -151,17 +185,12 @@ export async function apiPut<T>(
   options?: ApiMutationOptions,
 ): Promise<T> {
   const headers = new Headers(options?.headers);
-  const devUserId = getDevUserId();
-  if (devUserId) {
-    headers.set('x-user-id', devUserId);
-  }
   if (options?.body instanceof FormData === false) {
     headers.set('Content-Type', 'application/json');
   }
 
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const response = await requestWithAuth(path, {
     ...options,
-    credentials: 'include',
     method: 'PUT',
     body:
       options?.body instanceof FormData
@@ -177,17 +206,10 @@ export async function apiDelete<T>(
   path: string,
   options?: RequestInit,
 ): Promise<T> {
-  const headers = new Headers(options?.headers);
-  const devUserId = getDevUserId();
-  if (devUserId) {
-    headers.set('x-user-id', devUserId);
-  }
-
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const response = await requestWithAuth(path, {
     ...options,
-    credentials: 'include',
     method: 'DELETE',
-    headers,
+    headers: new Headers(options?.headers),
   });
 
   return parseEnvelope<T>(response);

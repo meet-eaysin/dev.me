@@ -52,7 +52,10 @@ import { TransformInterceptor } from './shared/interceptors/transform.intercepto
     },
     {
       provide: APP_GUARD,
-      useClass: env.NODE_ENV === 'development' ? DevUserGuard : AppAuthGuard,
+      useClass:
+        env.NODE_ENV === 'development' && env.DEV_AUTH_ENABLED
+          ? DevUserGuard
+          : AppAuthGuard,
     },
     {
       provide: APP_FILTER,
