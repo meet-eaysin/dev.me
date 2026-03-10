@@ -11,7 +11,7 @@ import {
   Search,
   ShieldCheck,
   Sparkles,
-  Timer,
+  UserRound,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -63,18 +63,18 @@ const features = [
 
 const workflow = [
   {
-    title: 'Ingest',
-    description: 'Drop in articles, PDFs, meeting notes, or docs.',
+    title: 'Connect your sources',
+    description: 'Bring docs, links, and notes into one space.',
     icon: FileText,
   },
   {
-    title: 'Enrich',
-    description: 'Summaries, transcripts, and tags powered by AI.',
+    title: 'Set your knowledge rules',
+    description: 'Control what gets summarized, tagged, or surfaced.',
     icon: Sparkles,
   },
   {
-    title: 'Retrieve',
-    description: 'Ask questions and jump straight into the source.',
+    title: 'Ask and share',
+    description: 'Answer questions with sources and share the result.',
     icon: Search,
   },
 ];
@@ -85,7 +85,7 @@ export function LandingPage() {
       <section className="relative overflow-hidden border-b border-subtle">
         <div className="absolute inset-0 -z-10">
           <div className="absolute -left-32 top-0 h-96 w-96 rounded-full bg-[radial-gradient(circle,rgba(52,83,92,0.35),transparent_70%)]" />
-          <div className="absolute right-0 top-24 h-[28rem] w-[28rem] rounded-full bg-[radial-gradient(circle,rgba(120,86,45,0.32),transparent_70%)]" />
+          <div className="absolute right-0 top-24 h-112 w-md rounded-full bg-[radial-gradient(circle,rgba(120,86,45,0.32),transparent_70%)]" />
           <div className="absolute inset-x-0 bottom-0 h-40 bg-[linear-gradient(to_top,rgba(10,11,12,0.12),transparent)]" />
         </div>
 
@@ -93,36 +93,28 @@ export function LandingPage() {
           <div className="flex flex-col gap-12 lg:flex-row lg:items-center">
             <div className="max-w-xl space-y-6">
               <Badge variant="outline" className="w-fit">
-                Premium knowledge workflow
+                Knowledge infrastructure for modern teams
               </Badge>
               <h1 className="text-4xl font-semibold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-                Build a living knowledge stack your team can trust.
+                Your knowledge, organized and explainable.
               </h1>
               <p className="text-subtle text-base leading-relaxed sm:text-lg">
-                Mind Stack turns scattered research into a coherent graph. Capture
-                context, ask AI questions, and keep every answer linked back to the
+                Mind Stack turns scattered links, notes, and files into a living
+                knowledge graph—so you can find answers fast and trust every
                 source.
               </p>
               <div className="flex flex-wrap gap-3">
                 <Button render={<Link href="/auth/login" />}>
-                  Start free
+                  Get started
                   <ArrowRight className="size-4" />
                 </Button>
-                <Button variant="outline" render={<Link href="/app/search" />}>
-                  Explore search
+                <Button variant="outline" render={<Link href="/app" />}>
+                  View workspace
                 </Button>
               </div>
-              <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
-                <span className="rounded-full border border-border/60 px-3 py-1.5">
-                  Research-first UX
-                </span>
-                <span className="rounded-full border border-border/60 px-3 py-1.5">
-                  Private by design
-                </span>
-                <span className="rounded-full border border-border/60 px-3 py-1.5">
-                  Built for speed
-                </span>
-              </div>
+              <p className="text-xs text-muted-foreground">
+                No credit card required
+              </p>
             </div>
 
             <Card className="w-full max-w-lg">
@@ -130,44 +122,47 @@ export function LandingPage() {
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
                   <div className="flex items-center gap-2 font-medium">
                     <Sparkles className="size-3.5" />
-                    Intelligence feed
+                    Live preview
                   </div>
                   <Badge variant="outline">Live</Badge>
                 </div>
-                <CardTitle>Today’s focus</CardTitle>
+                <CardTitle>Today’s Knowledge Pulse</CardTitle>
                 <CardDescription>
-                  Priority work surfaced from your knowledge graph.
+                  Surface what matters, with context and citations.
                 </CardDescription>
               </CardHeader>
               <CardPanel className="space-y-3">
                 <div className="rounded-lg border border-border/60 p-3">
-                  <p className="text-xs text-muted-foreground">Due for review</p>
-                  <p className="mt-2 text-2xl font-semibold text-foreground">
-                    6 documents
-                  </p>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    Recency + relevance scoring.
-                  </p>
-                </div>
-                <div className="rounded-lg border border-border/60 p-3">
-                  <p className="text-xs text-muted-foreground">Active threads</p>
-                  <p className="mt-2 text-2xl font-semibold text-foreground">
-                    4 AI chats
-                  </p>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    Continue conversations instantly.
-                  </p>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <UserRound className="size-3.5" />
+                    Research workspace • GMT+6
+                  </div>
+                  <div className="mt-3 grid grid-cols-7 gap-1 text-[10px] text-muted-foreground">
+                    {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d) => (
+                      <span key={d} className="text-center">
+                        {d}
+                      </span>
+                    ))}
+                    {Array.from({ length: 28 }).map((_, i) => (
+                      <span
+                        key={i}
+                        className="flex h-6 items-center justify-center rounded-md border border-border/40"
+                      >
+                        {i + 1}
+                      </span>
+                    ))}
+                  </div>
                 </div>
                 <div className="flex items-center justify-between rounded-lg border border-border/60 p-3">
                   <div>
                     <p className="text-xs text-muted-foreground">
-                      Avg. answer time
+                      Due for review
                     </p>
                     <p className="mt-1 text-lg font-semibold text-foreground">
-                      1.6s
+                      7 documents
                     </p>
                   </div>
-                  <Timer className="size-5 text-muted-foreground" />
+                  <Badge variant="outline">Today</Badge>
                 </div>
                 <Button
                   className="w-full"
@@ -189,11 +184,11 @@ export function LandingPage() {
               Workflow
             </p>
             <h2 className="text-2xl font-semibold text-foreground sm:text-3xl">
-              Turn raw inputs into trusted answers.
+              With us, knowledge scheduling is easy.
             </h2>
             <p className="text-subtle text-base">
-              Mind Stack keeps a clean pipeline from capture to insight so teams
-              spend time acting, not searching.
+              Effortless scheduling for individuals and teams, powerful solutions
+              for modern knowledge-driven companies.
             </p>
             <div className="flex flex-col gap-3">
               {workflow.map((step) => (
@@ -214,22 +209,86 @@ export function LandingPage() {
                   </div>
                 </div>
               ))}
+              <div className="flex flex-wrap gap-3">
+                <Button render={<Link href="/auth/login" />}>Get started</Button>
+                <Button variant="outline" render={<Link href="/app" />}>
+                  Book a demo
+                </Button>
+              </div>
             </div>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            {features.map((feature) => (
-              <Card key={feature.title} className="h-full">
-                <CardHeader>
-                  <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                    <feature.icon className="size-4 text-foreground" />
-                    {feature.title}
-                  </div>
-                  <CardDescription>{feature.description}</CardDescription>
-                </CardHeader>
-              </Card>
-            ))}
+          <Card className="h-full">
+            <CardHeader>
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                Preview
+              </p>
+              <CardTitle>Knowledge availability</CardTitle>
+              <CardDescription>
+                Set buffers, limit sessions, and define how work flows in.
+              </CardDescription>
+            </CardHeader>
+            <CardPanel className="space-y-3">
+              <div className="grid gap-2 rounded-lg border border-border/60 p-3 text-xs text-muted-foreground">
+                <div className="flex items-center justify-between">
+                  <span>Minimum notice</span>
+                  <Badge variant="outline">24 hours</Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Buffer before</span>
+                  <Badge variant="outline">30 mins</Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Buffer after</span>
+                  <Badge variant="outline">30 mins</Badge>
+                </div>
+              </div>
+              <div className="rounded-lg border border-border/60 p-3">
+                <p className="text-xs text-muted-foreground">
+                  Personal link
+                </p>
+                <p className="mt-2 text-sm font-semibold text-foreground">
+                  mindstack.io/you
+                </p>
+              </div>
+            </CardPanel>
+          </Card>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-6 pb-16">
+        <div className="flex items-center justify-between gap-6">
+          <div>
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              Benefits
+            </p>
+            <h3 className="text-2xl font-semibold text-foreground">
+              Your all-purpose knowledge platform.
+            </h3>
+            <p className="text-subtle max-w-2xl text-base">
+              Discover advanced features that keep research flowing without the
+              overload.
+            </p>
           </div>
+          <div className="hidden items-center gap-3 lg:flex">
+            <Button render={<Link href="/auth/login" />}>Get started</Button>
+            <Button variant="outline" render={<Link href="/app" />}>
+              Book a demo
+            </Button>
+          </div>
+        </div>
+        <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {features.map((feature) => (
+            <Card key={feature.title} className="h-full">
+              <CardHeader>
+                <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                  <feature.icon className="size-4 text-foreground" />
+                  {feature.title}
+                </div>
+                <CardDescription>{feature.description}</CardDescription>
+              </CardHeader>
+            </Card>
+          ))}
         </div>
       </section>
 
