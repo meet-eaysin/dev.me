@@ -24,7 +24,7 @@ export function LoginForm({
     const form = new FormData(event.currentTarget);
     const email = String(form.get('email') ?? '').trim();
     await devLogin.mutateAsync({ email: email || undefined });
-    window.location.href = '/';
+    window.location.href = '/app';
   };
 
   return (

@@ -71,7 +71,7 @@ function ReviewRow({
             <Icon className="size-4 text-muted-foreground" />
           </div>
           <Link
-            href={`/library/${item.documentId}`}
+            href={`/app/library/${item.documentId}`}
             className="truncate text-sm font-medium text-foreground hover:underline"
           >
             {item.title}
@@ -89,7 +89,7 @@ function ReviewRow({
         <Button
           size="sm"
           variant="outline"
-          render={<Link href={`/library/${item.documentId}`} />}
+          render={<Link href={`/app/library/${item.documentId}`} />}
         >
           Review
         </Button>
@@ -143,7 +143,7 @@ export function HomePage() {
       heading="Home"
       subtitle="Start with what needs attention today, then continue the work already in motion."
       CTA={
-        <Button render={<Link href="/library/new" />}>
+        <Button render={<Link href="/app/library/new" />}>
           <Plus className="size-4" />
           Add document
         </Button>
@@ -163,7 +163,7 @@ export function HomePage() {
                   Review what is due, pick up a recommended document, or jump back into an active conversation.
                 </CardDescription>
               </div>
-              <Button variant="outline" render={<Link href="/search" />}>
+              <Button variant="outline" render={<Link href="/app/search" />}>
                 <Search className="size-4" />
                 Ask AI
               </Button>
@@ -271,7 +271,7 @@ export function HomePage() {
                       Resume the documents you already touched recently.
                     </CardDescription>
                   </div>
-                  <Button variant="outline" size="sm" render={<Link href="/library" />}>
+                  <Button variant="outline" size="sm" render={<Link href="/app/library" />}>
                     Library
                   </Button>
                 </div>
@@ -298,7 +298,7 @@ export function HomePage() {
                   return (
                     <Link
                       key={document.id}
-                      href={`/library/${document.id}`}
+                      href={`/app/library/${document.id}`}
                       className="flex items-center justify-between gap-3 rounded-lg border border-border/60 p-3 transition hover:bg-accent/20"
                     >
                       <div className="flex min-w-0 items-center gap-3">
@@ -336,7 +336,7 @@ export function HomePage() {
                       Good next reads based on the topics already forming in your library.
                     </CardDescription>
                   </div>
-                  <Button size="sm" variant="outline" render={<Link href="/search" />}>
+                  <Button size="sm" variant="outline" render={<Link href="/app/search" />}>
                     <Search className="size-4" />
                     Explore
                   </Button>
@@ -387,7 +387,7 @@ export function HomePage() {
                     return (
                       <Link
                         key={document.id}
-                        href={`/library/${document.id}`}
+                        href={`/app/library/${document.id}`}
                         className="flex items-center justify-between gap-3 rounded-lg border border-border/60 p-3 transition hover:bg-accent/20"
                       >
                         <div className="flex min-w-0 items-center gap-3">
@@ -424,7 +424,7 @@ export function HomePage() {
                       Reopen the AI conversations you are actively building on.
                     </CardDescription>
                   </div>
-                  <Button size="sm" variant="outline" render={<Link href="/search" />}>
+                  <Button size="sm" variant="outline" render={<Link href="/app/search" />}>
                     <Bot className="size-4" />
                     Open search
                   </Button>
@@ -449,7 +449,7 @@ export function HomePage() {
                 {recentChats.map((chat) => (
                   <Link
                     key={chat.id}
-                    href={`/search?chat=${chat.id}`}
+                    href={`/app/search?chat=${chat.id}`}
                     className="block rounded-lg border border-border/60 p-3 transition hover:bg-accent/20"
                   >
                     <p className="line-clamp-1 text-sm font-medium text-foreground">

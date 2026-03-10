@@ -33,7 +33,7 @@ export function UserDropdown({ small }: UserDropdownProps) {
   const logout = useLogout();
   const router = useRouter();
   const pathname = usePathname();
-  const isPlatformPages = pathname?.startsWith('/settings/platform');
+  const isPlatformPages = pathname?.startsWith('/app/settings/platform');
 
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -135,11 +135,11 @@ export function UserDropdown({ small }: UserDropdownProps) {
 
         {!isPlatformPages && (
           <>
-            <MenuItem render={<Link href="/settings/my-account/profile" />}>
+            <MenuItem render={<Link href="/app/settings" />}>
               <UserIcon />
               Profile
             </MenuItem>
-            <MenuItem render={<Link href="/settings" />}>
+            <MenuItem render={<Link href="/app/settings" />}>
               <SettingsIcon />
               Settings
             </MenuItem>

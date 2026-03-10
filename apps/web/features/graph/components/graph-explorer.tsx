@@ -852,7 +852,7 @@ export function GraphExplorer() {
               {selectedNode?.documentId ? (
                 <Button
                   className="w-full"
-                  render={<Link href={`/library/${selectedNode.documentId}`} />}
+                  render={<Link href={`/app/library/${selectedNode.documentId}`} />}
                 >
                   Open document
                 </Button>

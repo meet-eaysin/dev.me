@@ -52,8 +52,8 @@ function SearchResultRow({
   const semantic = mode === 'ai' && isSemanticResult(item);
   const documentItem = semantic ? undefined : (item as IDocumentView);
   const href = semantic
-    ? `/library/${item.documentId}`
-    : `/library/${documentItem!.id}`;
+    ? `/app/library/${item.documentId}`
+    : `/app/library/${documentItem!.id}`;
   const preview = semantic
     ? item.preview
     : documentItem!.summary ||
@@ -134,7 +134,7 @@ export function SearchPage() {
       heading="Search"
       subtitle="Find documents in your library or move to Ask AI for a grounded answer"
       CTA={
-        <Button render={<Link href="/search/ask" />}>
+        <Button render={<Link href="/app/search/ask" />}>
           <Bot className="size-4" />
           Ask AI
         </Button>
@@ -288,7 +288,7 @@ export function SearchPage() {
                     </EmptyDescription>
                   </EmptyHeader>
                   <EmptyContent>
-                    <Button render={<Link href="/search/ask" />} variant="outline">
+                    <Button render={<Link href="/app/search/ask" />} variant="outline">
                       <Bot className="size-4" />
                       Open Ask AI
                     </Button>

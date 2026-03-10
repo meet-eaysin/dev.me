@@ -182,7 +182,7 @@ export function AddDocumentForm({
   ) => {
     if (nextType === DocumentType.TEXT) {
       if (onCancel) onCancel();
-      router.push('/library/new?type=text');
+      router.push('/app/library/new?type=text');
     } else {
       onChange(nextType);
     }

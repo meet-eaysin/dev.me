@@ -1,5 +1,5 @@
 import { AnalyticsPage } from '@/features/analytics/components/analytics-page';
 
-export default function AnalyticsRoutePage() {
+export default function AppAnalyticsPage() {
   return <AnalyticsPage />;
 }

@@ -41,7 +41,7 @@ export function CardActions({ document }: CardActionsProps) {
 
   async function handleDelete() {
     await deleteDocument.mutateAsync(document.id);
-    router.push('/library');
+    router.push('/app/library');
   }
 
   return (

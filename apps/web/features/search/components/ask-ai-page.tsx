@@ -490,7 +490,7 @@ export function AskAiPage() {
       heading="Ask AI"
       subtitle="Ask grounded questions about your library and continue the conversation when needed"
       CTA={
-        <Button render={<Link href="/search" />} variant="outline">
+        <Button render={<Link href="/app/search" />} variant="outline">
           <FileSearch className="size-4" />
           Back to Search
         </Button>
@@ -673,7 +673,7 @@ export function AskAiPage() {
                               {message.sources.map((source) => (
                                 <Link
                                   key={`${message.id}-${source.documentId}`}
-                                  href={`/library/${source.documentId}`}
+                                  href={`/app/library/${source.documentId}`}
                                   className="flex items-center justify-between rounded-lg border p-3 transition hover:bg-accent/30"
                                 >
                                   <div className="min-w-0">

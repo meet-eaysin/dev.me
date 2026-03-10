@@ -178,7 +178,7 @@ export function SettingsPage() {
               </CardDescription>
             </CardHeader>
             <CardPanel className="pt-0">
-              <Button render={<Link href="/settings/security" />} variant="outline">
+              <Button render={<Link href="/app/settings/security" />} variant="outline">
                 Review sessions
               </Button>
             </CardPanel>
@@ -193,7 +193,7 @@ export function SettingsPage() {
               </CardDescription>
             </CardHeader>
             <CardPanel className="pt-0">
-              <Button render={<Link href="/settings/llm" />} variant="outline">
+              <Button render={<Link href="/app/settings/llm" />} variant="outline">
                 Open LLM settings
               </Button>
             </CardPanel>
@@ -208,7 +208,7 @@ export function SettingsPage() {
               </CardDescription>
             </CardHeader>
             <CardPanel className="pt-0">
-              <Button render={<Link href="/settings/notion" />} variant="outline">
+              <Button render={<Link href="/app/settings/notion" />} variant="outline">
                 Open Notion settings
               </Button>
             </CardPanel>

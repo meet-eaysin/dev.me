@@ -41,7 +41,7 @@ export function BaseDocumentCard({
 
   return (
     <Link
-      href={`/library/${document.id}`}
+      href={`/app/library/${document.id}`}
       className="group block rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
     >
       <Card className="flex h-full flex-col overflow-hidden border-border/70 bg-card shadow-xs/5 transition-colors duration-150 group-hover:border-border group-hover:shadow-sm">

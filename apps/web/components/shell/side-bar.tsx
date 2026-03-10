@@ -9,10 +9,10 @@ export type SideBarProps = {
 };
 
 const utilityLinks = [
-  { name: 'Add Document', href: '/library/new', icon: 'plus' as const },
+  { name: 'Add Document', href: '/app/library/new', icon: 'plus' as const },
   {
     name: 'Notion Sync',
-    href: '/settings/notion',
+    href: '/app/settings/notion',
     icon: 'webhook' as const,
   },
 ];
@@ -41,7 +41,7 @@ export function SideBar({ bannersHeight = 0 }: SideBarProps) {
               <UserDropdown />
             </div>
             <Link
-              href="/"
+              href="/app"
               className="hover:bg-subtle flex items-center rounded-md p-2 transition lg:hidden"
               aria-label="Go to dashboard"
             >
@@ -67,7 +67,7 @@ export function SideBar({ bannersHeight = 0 }: SideBarProps) {
               ))}
             </nav>
             <Link
-              href="/settings"
+              href="/app/settings"
               className="text-default hover:bg-subtle mt-2 hidden items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition lg:flex"
             >
               <NavIcon name="settings" className="h-4 w-4 shrink-0" />

@@ -1,7 +1,7 @@
 import { FeatureShellPage } from '@/components/shell/feature-shell-page';
 import { AddDocumentForm } from '@/features/library/components/add-document-form';
 
-export default function NewDocumentPage() {
+export default function AppLibraryNewPage() {
   return (
     <FeatureShellPage
       title="Add to Library"

@@ -14,37 +14,38 @@ const getNavigationItems = (): NavigationItemType[] => [
   {
     name: 'home',
     label: 'Home',
-    href: '/',
+    href: '/app',
     icon: 'layout-dashboard',
-    isCurrent: ({ pathname }) => pathname === '/',
+    isCurrent: ({ pathname }) => pathname === '/app',
   },
   {
     name: 'documents',
     label: 'Documents',
-    href: '/library',
+    href: '/app/library',
     icon: 'library',
-    isCurrent: ({ pathname }) => pathname?.startsWith('/library') ?? false,
+    isCurrent: ({ pathname }) => pathname?.startsWith('/app/library') ?? false,
   },
   {
     name: 'search',
     label: 'Search & Ask',
-    href: '/search',
+    href: '/app/search',
     icon: 'search',
-    isCurrent: ({ pathname }) => pathname?.startsWith('/search') ?? false,
+    isCurrent: ({ pathname }) => pathname?.startsWith('/app/search') ?? false,
   },
   {
     name: 'knowledge_graph',
     label: 'Knowledge Graph',
-    href: '/graph',
+    href: '/app/graph',
     icon: 'waypoints',
-    isCurrent: ({ pathname }) => pathname?.startsWith('/graph') ?? false,
+    isCurrent: ({ pathname }) => pathname?.startsWith('/app/graph') ?? false,
   },
   {
     name: 'analytics',
     label: 'Analytics',
-    href: '/analytics',
+    href: '/app/analytics',
     icon: 'chart-line',
-    isCurrent: ({ pathname }) => pathname?.startsWith('/analytics') ?? false,
+    isCurrent: ({ pathname }) =>
+      pathname?.startsWith('/app/analytics') ?? false,
   },
   {
     name: MORE_SEPARATOR_NAME,
@@ -54,30 +55,31 @@ const getNavigationItems = (): NavigationItemType[] => [
   {
     name: 'settings',
     label: 'Settings',
-    href: '/settings',
+    href: '/app/settings',
     icon: 'settings',
-    isCurrent: ({ pathname }) => pathname?.startsWith('/settings') ?? false,
+    isCurrent: ({ pathname }) =>
+      pathname?.startsWith('/app/settings') ?? false,
     moreOnMobile: true,
     child: [
       {
         name: 'profile',
         label: 'Profile',
-        href: '/settings',
-        isCurrent: ({ pathname }) => pathname === '/settings',
+        href: '/app/settings',
+        isCurrent: ({ pathname }) => pathname === '/app/settings',
       },
       {
         name: 'security',
         label: 'Security',
-        href: '/settings/security',
+        href: '/app/settings/security',
         isCurrent: ({ pathname }) =>
-          pathname?.startsWith('/settings/security') ?? false,
+          pathname?.startsWith('/app/settings/security') ?? false,
       },
       {
         name: 'llm_config',
         label: 'LLM Config',
-        href: '/settings/llm',
+        href: '/app/settings/llm',
         isCurrent: ({ pathname }) =>
-          pathname?.startsWith('/settings/llm') ?? false,
+          pathname?.startsWith('/app/settings/llm') ?? false,
       },
       {
         name: 'notion',

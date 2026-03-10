@@ -134,7 +134,7 @@ export function DocumentDetailView({ id }: { id: string }) {
   async function handleDeleteDocument() {
     if (!document) return;
     await deleteDocument.mutateAsync(document.id);
-    router.push('/library');
+    router.push('/app/library');
   }
 
   async function handleDeleteNote(noteId: string) {
@@ -198,7 +198,7 @@ export function DocumentDetailView({ id }: { id: string }) {
                 </EmptyDescription>
               </EmptyHeader>
               <EmptyContent>
-                <Button render={<Link href="/library" />} variant="outline" size="sm">
+                <Button render={<Link href="/app/library" />} variant="outline" size="sm">
                   <ChevronLeft className="size-4" />
                   Back to Library
                 </Button>
@@ -218,7 +218,7 @@ export function DocumentDetailView({ id }: { id: string }) {
       <PageBreadcrumbs
         current={document.title}
         items={[
-          { href: '/library', label: 'Library' },
+          { href: '/app/library', label: 'Library' },
           ...(folder ? [{ label: folder.name }] : []),
         ]}
       />
