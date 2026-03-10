@@ -82,16 +82,16 @@ const workflow = [
 export function LandingPage() {
   return (
     <main className="bg-default min-h-screen">
-      <section className="relative overflow-hidden border-b border-subtle">
+      <section className="relative min-h-svh overflow-hidden border-b border-subtle">
         <div className="absolute inset-0 -z-10">
-          <div className="absolute -left-32 top-0 h-96 w-96 rounded-full bg-[radial-gradient(circle,rgba(52,83,92,0.35),transparent_70%)]" />
-          <div className="absolute right-0 top-24 h-112 w-md rounded-full bg-[radial-gradient(circle,rgba(120,86,45,0.32),transparent_70%)]" />
-          <div className="absolute inset-x-0 bottom-0 h-40 bg-[linear-gradient(to_top,rgba(10,11,12,0.12),transparent)]" />
+          <div className="absolute -left-24 top-0 h-112 w-md rounded-full bg-[radial-gradient(circle,rgba(52,83,92,0.38),transparent_70%)]" />
+          <div className="absolute right-0 top-16 h-128 w-lg rounded-full bg-[radial-gradient(circle,rgba(120,86,45,0.34),transparent_70%)]" />
+          <div className="absolute inset-x-0 bottom-0 h-48 bg-[linear-gradient(to_top,rgba(10,11,12,0.18),transparent)]" />
         </div>
 
-        <div className="mx-auto max-w-6xl px-6 py-16 md:py-24">
-          <div className="flex flex-col gap-12 lg:flex-row lg:items-center">
-            <div className="max-w-xl space-y-6">
+        <div className="mx-auto flex min-h-svh max-w-7xl items-center px-6 py-10 md:py-16">
+          <div className="grid w-full gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+            <div className="space-y-6">
               <Badge variant="outline" className="w-fit">
                 Knowledge infrastructure for modern teams
               </Badge>
@@ -117,7 +117,7 @@ export function LandingPage() {
               </p>
             </div>
 
-            <Card className="w-full max-w-lg">
+            <Card className="w-full">
               <CardHeader>
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
                   <div className="flex items-center gap-2 font-medium">
@@ -177,18 +177,18 @@ export function LandingPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-6 py-16">
+      <section className="mx-auto max-w-7xl px-6 py-16">
         <div className="grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:items-center">
           <div className="space-y-4">
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
               Workflow
             </p>
             <h2 className="text-2xl font-semibold text-foreground sm:text-3xl">
-              With us, knowledge scheduling is easy.
+              A knowledge flow you can trust.
             </h2>
             <p className="text-subtle text-base">
-              Effortless scheduling for individuals and teams, powerful solutions
-              for modern knowledge-driven companies.
+              Capture, enrich, and retrieve without losing context or source of
+              truth.
             </p>
             <div className="flex flex-col gap-3">
               {workflow.map((step) => (
@@ -212,7 +212,7 @@ export function LandingPage() {
               <div className="flex flex-wrap gap-3">
                 <Button render={<Link href="/auth/login" />}>Get started</Button>
                 <Button variant="outline" render={<Link href="/app" />}>
-                  Book a demo
+                  Explore the app
                 </Button>
               </div>
             </div>
