@@ -1,4 +1,5 @@
 import { forwardRef, Module } from '@nestjs/common';
+import { PassportModule } from '@nestjs/passport';
 import { UsersModule } from '../users/users.module';
 import { AuthController } from './interface/auth.controller';
 import { GetSessionUseCase } from './application/use-cases/get-session.usecase';
@@ -10,8 +11,8 @@ import { TokenService } from './domain/services/token.service';
 import { RefreshSessionService } from './domain/services/refresh-session.service';
 import { AuthCookieService } from './infrastructure/cookies/auth-cookie.service';
 import { OAuthTransactionCookieService } from './infrastructure/cookies/oauth-transaction-cookie.service';
-import { AppAuthGuard } from './infrastructure/guards/app-auth.guard';
-import { RequestAuthService } from './infrastructure/guards/request-auth.service';
+import { JwtStrategy } from './infrastructure/strategies/jwt.strategy';
+import { JwtAuthGuard } from './infrastructure/guards/jwt-auth.guard';
 import { OAuthProviderService } from './infrastructure/oauth/oauth-provider.service';
 import { InitiateOAuthLoginUseCase } from './application/use-cases/initiate-oauth-login.usecase';
 import { HandleOAuthCallbackUseCase } from './application/use-cases/handle-oauth-callback.usecase';
@@ -21,7 +22,7 @@ import { MongooseExternalIdentityRepository } from './infrastructure/persistence
 import { MongooseRefreshSessionRepository } from './infrastructure/persistence/mongoose-refresh-session.repository';
 
 @Module({
-  imports: [forwardRef(() => UsersModule)],
+  imports: [forwardRef(() => UsersModule), PassportModule],
   controllers: [AuthController],
   providers: [
     GetSessionUseCase,
@@ -36,8 +37,8 @@ import { MongooseRefreshSessionRepository } from './infrastructure/persistence/m
     AuthCookieService,
     OAuthTransactionCookieService,
     OAuthProviderService,
-    AppAuthGuard,
-    RequestAuthService,
+    JwtStrategy,
+    JwtAuthGuard,
     {
       provide: IExternalIdentityRepository,
       useClass: MongooseExternalIdentityRepository,
@@ -52,8 +53,8 @@ import { MongooseRefreshSessionRepository } from './infrastructure/persistence/m
     TokenService,
     RefreshSessionService,
     AuthCookieService,
-    AppAuthGuard,
-    RequestAuthService,
+    JwtStrategy,
+    JwtAuthGuard,
     IExternalIdentityRepository,
     IRefreshSessionRepository,
   ],

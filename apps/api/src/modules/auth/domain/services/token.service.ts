@@ -32,6 +32,7 @@ export class TokenService {
       name: input.user.name,
       avatarUrl: input.user.avatarUrl,
       provider: input.user.provider,
+      role: input.user.role,
     };
 
     const accessToken = await this.signToken(
@@ -99,6 +100,7 @@ export class TokenService {
           typeof claims.avatarUrl === 'string' ? claims.avatarUrl : undefined,
         provider:
           typeof claims.provider === 'string' ? claims.provider : undefined,
+        role: typeof claims.role === 'string' ? claims.role : undefined,
       };
     } catch (error) {
       if (error instanceof UnauthorizedException) {

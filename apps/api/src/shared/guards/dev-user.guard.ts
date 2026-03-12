@@ -8,7 +8,8 @@ import type { AuthenticatedUser } from '@repo/types';
 import { EnsureDevUserUseCase } from '../../modules/users/application/use-cases/ensure-dev-user.usecase';
 import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
-import { RequestAuthService } from '../../modules/auth/infrastructure/guards/request-auth.service';
+import { TokenService } from '../../modules/auth/domain/services/token.service';
+import { AuthCookieService } from '../../modules/auth/infrastructure/cookies/auth-cookie.service';
 import type { Request } from 'express';
 
 @Injectable()
@@ -16,7 +17,8 @@ export class DevUserGuard implements CanActivate {
   constructor(
     private readonly ensureDevUserUseCase: EnsureDevUserUseCase,
     private readonly reflector: Reflector,
-    private readonly requestAuthService: RequestAuthService,
+    private readonly tokenService: TokenService,
+    private readonly authCookieService: AuthCookieService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -34,7 +36,16 @@ export class DevUserGuard implements CanActivate {
 
     let existingUser: AuthenticatedUser | null = null;
     try {
-      existingUser = await this.requestAuthService.authenticate(request);
+      const authHeader = request.headers.authorization;
+      const bearerToken = authHeader?.startsWith('Bearer ')
+        ? authHeader.slice(7).trim()
+        : null;
+      const cookieToken = this.authCookieService.getAccessToken(request);
+      const token = bearerToken || cookieToken;
+
+      if (token) {
+        existingUser = await this.tokenService.verifyAccessToken(token);
+      }
     } catch (error) {
       if (isPublic) return true;
       throw error;

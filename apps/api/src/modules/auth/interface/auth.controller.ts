@@ -207,7 +207,7 @@ export class AuthController {
     this.authCookieService.setSessionCookies(response, result.tokens);
 
     if (env.WEB_APP_URL) {
-      return response.redirect(env.WEB_APP_URL);
+      return response.redirect(`${env.WEB_APP_URL}/app`);
     }
 
     return response.json(

@@ -37,7 +37,7 @@ export function MobileNav() {
 					>
 						<div className="grid gap-y-2">
 							{navLinks.map((link) => (
-								<Button className="justify-start" key={link.label} variant="ghost" render={<a href={link.href} />} nativeButton={false}>{link.label}</Button>
+								<Button className="justify-start" key={link.label} variant="ghost" render={<a href={link.href} />}>{link.label}</Button>
 							))}
 						</div>
 						<div className="mt-12 flex flex-col gap-2">

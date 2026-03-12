@@ -1,5 +1,5 @@
-import { GraphExplorer } from '@/features/graph/components/graph-explorer';
+import { GraphExplorerClient } from "@/features/graph/components/graph-explorer.client";
 
 export default function AppGraphPage() {
-  return <GraphExplorer />;
+  return <GraphExplorerClient />;
 }

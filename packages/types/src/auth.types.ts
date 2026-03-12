@@ -10,6 +10,7 @@ export interface AuthenticatedUser {
   name?: string;
   avatarUrl?: string;
   provider?: IdentityProvider;
+  role?: string;
 }
 
 export type AuthTokenType = 'access' | 'refresh';
@@ -23,6 +24,7 @@ export interface AuthTokenClaims {
   name?: string;
   avatarUrl?: string;
   provider?: IdentityProvider;
+  role?: string;
 }
 
 export interface AuthSessionUser {
