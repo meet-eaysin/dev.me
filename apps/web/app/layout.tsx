@@ -1,18 +1,27 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
+import { Manrope, Sora } from 'next/font/google';
 import '../styles/index.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { AnchoredToastProvider, ToastProvider } from '@/components/ui/toast';
 import { QueryProvider } from '@/providers/query-provider';
 import { cn } from '@/lib/utils';
 
-const geistSans = localFont({
-  src: '../public/fonts/GeistVF.woff',
+const manrope = Manrope({
+  subsets: ['latin'],
   variable: '--font-sans',
+  display: 'swap',
 });
+
+const sora = Sora({
+  subsets: ['latin'],
+  variable: '--font-heading',
+  display: 'swap',
+});
+
 const geistMono = localFont({
   src: '../public/fonts/GeistMonoVF.woff',
-  variable: '--font-geist-mono',
+  variable: '--font-mono',
 });
 
 export const metadata: Metadata = {
@@ -29,9 +38,14 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn('font-sans', geistSans.variable)}
+      className={cn(
+        'scroll-smooth font-sans',
+        manrope.variable,
+        sora.variable,
+        geistMono.variable,
+      )}
     >
-      <body className={geistMono.variable}>
+      <body className="min-h-screen antialiased">
         <QueryProvider>
           <ToastProvider>
             <AnchoredToastProvider>
