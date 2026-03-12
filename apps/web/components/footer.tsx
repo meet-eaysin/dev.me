@@ -22,11 +22,12 @@ export function Footer() {
         <div className="absolute inset-x-0 h-px w-full bg-border" />
         <div className="grid max-w-5xl grid-cols-6 gap-6 p-4">
           <div className="col-span-6 flex flex-col gap-4 pt-5 md:col-span-4">
-            <a className="w-max" href="#">
+            <a className="w-max" href="#top">
               <Logo className="h-5" />
             </a>
             <p className="max-w-sm text-balance text-muted-foreground text-sm">
-              Beautify your app with efferd.
+              Mind Stack is your private AI knowledge system for everything you
+              read, watch, and research.
             </p>
             <div className="flex gap-2">
               {socialLinks.map((item, index) => (
@@ -73,7 +74,7 @@ export function Footer() {
         <div className="absolute inset-x-0 h-px w-full bg-border" />
         <div className="flex max-w-4xl flex-col justify-between gap-2 py-4">
           <p className="text-center font-light text-muted-foreground text-sm">
-            &copy; {new Date().getFullYear()} efferd, All rights reserved
+            &copy; {new Date().getFullYear()} Mind Stack, All rights reserved
           </p>
         </div>
       </div>
@@ -83,15 +84,15 @@ export function Footer() {
 
 const company = [
   {
-    title: 'About Us',
+    title: 'About',
     href: '#',
   },
   {
-    title: 'Careers',
+    title: 'System Design',
     href: '#',
   },
   {
-    title: 'Brand assets',
+    title: 'Changelog',
     href: '#',
   },
   {
@@ -106,23 +107,23 @@ const company = [
 
 const resources = [
   {
-    title: 'Blog',
+    title: 'Docs',
     href: '#',
   },
   {
-    title: 'Help Center',
-    href: '#',
-  },
-  {
-    title: 'Contact Support',
-    href: '#',
-  },
-  {
-    title: 'Community',
+    title: 'API Reference',
     href: '#',
   },
   {
     title: 'Security',
+    href: '#',
+  },
+  {
+    title: 'Status',
+    href: '#',
+  },
+  {
+    title: 'Support',
     href: '#',
   },
 ];

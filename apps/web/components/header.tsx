@@ -8,15 +8,15 @@ import { MobileNav } from '@/components/mobile-nav';
 export const navLinks = [
   {
     label: 'Features',
-    href: '#',
+    href: '#features',
   },
   {
-    label: 'Pricing',
-    href: '#',
+    label: 'Local-first',
+    href: '#local-first',
   },
   {
-    label: 'About',
-    href: '#',
+    label: 'Knowledge Graph',
+    href: '#knowledge-graph',
   },
 ];
 
@@ -43,7 +43,7 @@ export function Header() {
       >
         <a
           className="rounded-md p-2 hover:bg-muted dark:hover:bg-muted/50"
-          href="#"
+          href="#top"
         >
           <Logo className="h-4" />
         </a>
@@ -60,10 +60,12 @@ export function Header() {
               </Button>
             ))}
           </div>
-          <Button size="sm" variant="outline">
+          <Button size="sm" variant="outline" render={<a href="/auth/login" />}>
             Sign In
           </Button>
-          <Button size="sm">Get Started</Button>
+          <Button size="sm" render={<a href="/app" />}>
+            Open App
+          </Button>
         </div>
         <MobileNav />
       </nav>

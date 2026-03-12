@@ -6,7 +6,7 @@ import { ArrowRightIcon, PhoneCallIcon } from 'lucide-react';
 
 export function HeroSection() {
   return (
-    <section>
+    <section id="top">
       <div className="relative flex flex-col items-center justify-center gap-5 px-4 py-12 md:px-4 md:py-24 lg:py-28">
         {/* X Faded Borders & Shades */}
         <div
@@ -36,7 +36,7 @@ export function HeroSection() {
             <p className="font-mono text-xs">NOW</p>
           </div>
 
-          <span className="text-xs">accepting new client projects</span>
+          <span className="text-xs">local-first knowledge system for developers</span>
           <span className="block h-5 border-l" />
 
           <div className="pr-1">
@@ -50,7 +50,7 @@ export function HeroSection() {
             'fade-in slide-in-from-bottom-10 animate-in fill-mode-backwards delay-100 duration-500 ease-out',
           )}
         >
-          Building Digital Experiences That Drive Growth
+          Your private AI knowledge system, built around your documents
         </h1>
 
         <p
@@ -59,16 +59,16 @@ export function HeroSection() {
             'fade-in slide-in-from-bottom-10 animate-in fill-mode-backwards delay-200 duration-500 ease-out',
           )}
         >
-          We help brands scale faster through design, <br /> development and
-          strategic execution.
+          Mind Stack turns links, PDFs, notes, and videos into a personal brain
+          you can search, graph, and ask.
         </p>
 
         <div className="fade-in slide-in-from-bottom-10 flex w-fit animate-in items-center justify-center gap-3 fill-mode-backwards pt-2 delay-300 duration-500 ease-out">
-          <Button variant="outline">
-            <PhoneCallIcon data-icon="inline-start" /> Book a Call
+          <Button variant="outline" render={<a href="/auth/login" />}>
+            <PhoneCallIcon data-icon="inline-start" /> Sign In
           </Button>
-          <Button>
-            Get started <ArrowRightIcon data-icon="inline-end" />
+          <Button render={<a href="/app" />}>
+            Open your library <ArrowRightIcon data-icon="inline-end" />
           </Button>
         </div>
       </div>
