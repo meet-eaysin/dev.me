@@ -2,37 +2,25 @@
 
 import type React from 'react';
 import { Logo } from '@/components/logo';
+import { Particles } from '@/components/ui/particles';
 import { Button } from '@/components/ui/button';
-import { ChevronLeftIcon } from 'lucide-react';
-// import { useDevLogin } from '@/features/auth/hooks';
-// import { isDevAuthEnabled } from '@/lib/dev-auth';
 import { authApi } from '@/features/auth/api';
-import Link from 'next/link';
+import { ChevronLeftIcon } from 'lucide-react';
 
-export default function LoginPage() {
-  // const devLogin = useDevLogin();
-  // const devAuthEnabled = isDevAuthEnabled();
-
-  // const handleDevLogin = async (event: React.FormEvent<HTMLFormElement>) => {
-  //   event.preventDefault();
-  //   if (!devAuthEnabled) return;
-  //   const form = new FormData(event.currentTarget);
-  //   const email = String(form.get('email') ?? '').trim();
-  //   await devLogin.mutateAsync({ email: email || undefined });
-  //   window.location.href = '/app';
-  // };
-
-  const handleOAuthLogin = (provider: 'google' | 'github') => {
-    window.location.href = authApi.buildOAuthUrl(provider);
-  };
-
+export function AuthPage() {
   return (
     <div className="relative w-full md:h-screen md:overflow-hidden">
+      <Particles
+        className="absolute inset-0"
+        color="#666666"
+        ease={20}
+        quantity={120}
+      />
       <div className="relative mx-auto flex min-h-screen max-w-5xl flex-col justify-center px-8">
         <Button
           className="absolute top-4 left-4"
           variant="ghost"
-          render={<Link href="/" />}
+          render={<a href="#" />}
         >
           <ChevronLeftIcon data-icon="inline-start" />
           Home
@@ -52,7 +40,9 @@ export default function LoginPage() {
             <Button
               className="w-full"
               type="button"
-              onClick={() => handleOAuthLogin('google')}
+              onClick={() => {
+                window.location.href = authApi.buildOAuthUrl('google');
+              }}
             >
               <GoogleIcon data-icon="inline-start" />
               Continue with Google
@@ -60,7 +50,9 @@ export default function LoginPage() {
             <Button
               className="w-full"
               type="button"
-              onClick={() => handleOAuthLogin('google')}
+              onClick={() => {
+                window.location.href = authApi.buildOAuthUrl('github');
+              }}
             >
               <GithubIcon data-icon="inline-start" />
               Continue with GitHub
