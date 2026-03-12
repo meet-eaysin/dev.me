@@ -32,6 +32,30 @@ export class GraphEdgeEntity {
     return this.props.id;
   }
 
+  get userId(): string {
+    return this.props.userId;
+  }
+
+  get fromNodeId(): string {
+    return this.props.fromNodeId;
+  }
+
+  get toNodeId(): string {
+    return this.props.toNodeId;
+  }
+
+  get relationType(): GraphRelationType {
+    return this.props.relationType;
+  }
+
+  get weight(): number {
+    return this.props.weight;
+  }
+
+  get generationMethod(): GraphGenerationMethod {
+    return this.props.generationMethod;
+  }
+
   toView(): GraphEdgeView {
     return {
       id: this.props.id,

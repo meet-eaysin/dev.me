@@ -205,4 +205,49 @@ export class MongooseGraphRepository extends IGraphRepository {
       }).exec();
     }
   }
+
+  async hasPathToRoot(nodeId: string, userId: string): Promise<boolean> {
+    const rootNode = await this.findRootNode(userId);
+    if (!rootNode) return false;
+    if (rootNode.id === nodeId) return true;
+
+    // Standard BFS for reachability
+    const visited = new Set<string>();
+    const queue: string[] = [nodeId];
+    visited.add(nodeId);
+
+    const userIdObj = new Types.ObjectId(userId);
+
+    while (queue.length > 0) {
+      const currentId = queue.shift();
+      if (!currentId) continue;
+
+      // Find all neighbors (incoming or outgoing edges)
+      const currentIdObj = new Types.ObjectId(currentId);
+      const edges = await GraphEdgeModel.find({
+        userId: userIdObj,
+        $or: [{ fromNodeId: currentIdObj }, { toNodeId: currentIdObj }],
+      })
+        .lean<IGraphEdgeDocument[]>()
+        .exec();
+
+      for (const edge of edges) {
+        const nextId =
+          edge.fromNodeId.toString() === currentId
+            ? edge.toNodeId.toString()
+            : edge.fromNodeId.toString();
+
+        if (nextId === rootNode.id) {
+          return true;
+        }
+
+        if (!visited.has(nextId)) {
+          visited.add(nextId);
+          queue.push(nextId);
+        }
+      }
+    }
+
+    return false;
+  }
 }

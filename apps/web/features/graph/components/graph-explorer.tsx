@@ -111,13 +111,26 @@ function getRelationLabel(type: GraphRelationType) {
 function getRelationColor(type: GraphRelationType) {
   switch (type) {
     case GraphRelationType.ROOT_CONNECTION:
-      return '#94a3b8';
+      return '#64748b';
     case GraphRelationType.SEMANTIC_SIMILARITY:
       return '#0f766e';
     case GraphRelationType.SHARED_TAGS:
       return '#2563eb';
     case GraphRelationType.TOPICAL:
       return '#7c3aed';
+    default:
+      return '#94a3b8';
+  }
+}
+
+function getNodeColor(type: GraphNodeType, isFocused: boolean) {
+  switch (type) {
+    case GraphNodeType.ROOT:
+      return '#0f172a';
+    case GraphNodeType.CONCEPT:
+      return '#8b5cf6';
+    case GraphNodeType.DOCUMENT:
+      return isFocused ? '#2563eb' : '#94a3b8';
     default:
       return '#94a3b8';
   }
@@ -354,17 +367,14 @@ export function GraphExplorer() {
 
     for (const node of positionedNodes) {
       const isRoot = node.type === GraphNodeType.ROOT;
+      const isFocused = node.documentId === focusedDocumentId;
       sigmaGraph.addNode(node.id, {
-        color: isRoot
-          ? '#0f172a'
-          : node.documentId === focusedDocumentId
-            ? '#2563eb'
-            : '#94a3b8',
+        color: getNodeColor(node.type as GraphNodeType, isFocused),
         documentId: node.documentId,
         isRoot,
-        label: isRoot ? 'Knowledge Graph' : truncateLabel(node.label, 24),
+        label: isRoot ? 'User Brain' : truncateLabel(node.label, 24),
         originalLabel: node.label,
-        size: isRoot ? 14 : node.documentId === focusedDocumentId ? 8.5 : 7.5,
+        size: isRoot ? 14 : isFocused ? 8.5 : node.type === GraphNodeType.CONCEPT ? 8 : 7.5,
         x: node.x,
         y: node.y,
       });

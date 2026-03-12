@@ -1,6 +1,7 @@
 export enum GraphNodeType {
   ROOT = 'root',
   DOCUMENT = 'document',
+  CONCEPT = 'concept',
 }
 
 export enum GraphRelationType {

@@ -51,7 +51,7 @@ export class GraphBuilderService {
       if (!rootNode) {
         rootNode = await this.graphRepository.createRootNode(
           internalUserId,
-          'My Knowledge Graph',
+          'User Brain',
         );
       }
 
@@ -137,9 +137,6 @@ export class GraphBuilderService {
         }
 
         // 5. Topical and Tag-based connections
-        this.logger.log(
-          `[GraphBuilder] Searching for topical/tag-based connections.`,
-        );
         const { docs: otherDocs } = await this.documentRepository.findAll(
           internalUserId,
           { page: 1, limit: 100 },
@@ -158,9 +155,6 @@ export class GraphBuilderService {
               otherDoc.id,
             );
             if (targetNode) {
-              this.logger.log(
-                `[GraphBuilder] Creating topical edge to document: ${otherDoc.id} (${sharedTags.length} shared tags)`,
-              );
               const totalTags = new Set([
                 ...doc.toPublicView().tags,
                 ...otherDoc.toPublicView().tags,
@@ -180,9 +174,6 @@ export class GraphBuilderService {
               otherDoc.id,
             );
             if (targetNode) {
-              this.logger.log(
-                `[GraphBuilder] Creating shared-tags edge to document: ${otherDoc.id}`,
-              );
               await this.graphRepository.upsertEdge({
                 userId: internalUserId,
                 fromNodeId: docNode.id,
@@ -194,24 +185,31 @@ export class GraphBuilderService {
             }
           }
         }
-      } else {
-        this.logger.log(
-          `[GraphBuilder] Document ${documentId} does not have embeddings ready yet.`,
-        );
       }
 
-      // 6. ALWAYS upsert root connection
-      this.logger.log(
-        `[GraphBuilder] Creating root connection for ${documentId}`,
+      // 6. Connectivity Check: Ensure this node or its component is anchored to the root
+      const isAnchored = await this.graphRepository.hasPathToRoot(
+        docNode.id,
+        internalUserId,
       );
-      await this.graphRepository.upsertEdge({
-        userId: internalUserId,
-        fromNodeId: docNode.id,
-        toNodeId: rootNode.id,
-        relationType: GraphRelationType.ROOT_CONNECTION,
-        weight: 0.1,
-        generationMethod: GraphGenerationMethod.ROOT_CONNECTION,
-      });
+
+      if (!isAnchored) {
+        this.logger.log(
+          `[GraphBuilder] Anchor required for ${documentId}. Connecting to User Brain.`,
+        );
+        await this.graphRepository.upsertEdge({
+          userId: internalUserId,
+          fromNodeId: docNode.id,
+          toNodeId: rootNode.id,
+          relationType: GraphRelationType.ROOT_CONNECTION,
+          weight: 0.1,
+          generationMethod: GraphGenerationMethod.ROOT_CONNECTION,
+        });
+      } else {
+        this.logger.log(
+          `[GraphBuilder] Node ${documentId} is already anchored to root via relationships.`,
+        );
+      }
 
       this.logger.log(
         `[GraphBuilder] Finished building relationships for ${documentId}`,

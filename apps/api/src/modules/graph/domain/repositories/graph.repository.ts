@@ -42,4 +42,5 @@ export abstract class IGraphRepository {
     documentId: string,
     userId: string,
   ): Promise<void>;
+  abstract hasPathToRoot(nodeId: string, userId: string): Promise<boolean>;
 }
