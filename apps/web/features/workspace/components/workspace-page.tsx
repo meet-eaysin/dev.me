@@ -116,6 +116,11 @@ function InlineChat() {
     }
   };
 
+  const stopGeneration = () => {
+    threadStream.abortStream();
+    setIsStreaming(false);
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setQuestion(e.target.value);
   };
@@ -198,7 +203,7 @@ function InlineChat() {
 
   return (
     <>
-      <div className="flex flex-col h-[calc(100vh-140px)] max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="flex flex-col h-[calc(100vh-180px)] max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
         {/* Header */}
         <header className="flex items-center gap-4 mb-6 shrink-0">
           <Button variant="ghost" size="icon" onClick={goBack} className="shrink-0">
@@ -217,7 +222,7 @@ function InlineChat() {
         </header>
 
         {/* Messages and Input replacing manual blocks */}
-        <div className="flex-1 overflow-hidden pb-4">
+        <div className="flex-1 overflow-hidden pb-4 flex flex-col">
           <Chat 
             messages={messages}
             input={question}
@@ -225,6 +230,7 @@ function InlineChat() {
             handleSubmit={handleSubmit}
             isGenerating={isStreaming || !!activeStream?.isStreaming}
             onSourceClick={setPreviewId}
+            stop={stopGeneration}
           />
         </div>
       </div>

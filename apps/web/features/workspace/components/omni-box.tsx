@@ -24,9 +24,18 @@ export function OmniBox() {
     setQuery('');
 
     try {
+      const signal = threadStream.setStream({
+        answer: '',
+        conversationId: '', // Will be set on conversation event
+        error: null,
+        isStreaming: true,
+        question: trimmed,
+      });
+
       await searchApi.streamAsk(
         { question: trimmed },
         {
+          signal,
           onEvent: (event) => {
             if (event.type === 'conversation') {
               // Set context — WorkspacePage will detect this and render chat inline
@@ -60,7 +69,9 @@ export function OmniBox() {
 
             if (event.type === 'done') {
               threadStream.completeStream();
-              queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SEARCH.chat(event.data.conversationId) });
+              if (event.data?.conversationId) {
+                queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SEARCH.chat(event.data.conversationId) });
+              }
               queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SEARCH.chats() });
               setIsSubmitting(false);
             }

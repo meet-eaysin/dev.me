@@ -12,11 +12,13 @@ type StreamState = {
 
 type ThreadStreamContextValue = {
   activeStream: StreamState | null;
+  activeAbortSignal: AbortSignal | null;
   clearStream: () => void;
-  setStream: (state: StreamState) => void;
+  setStream: (state: StreamState) => AbortSignal;
   updateAnswer: (chunk: string) => void;
   completeStream: () => void;
   failStream: (error: string) => void;
+  abortStream: () => void;
 };
 
 const ThreadStreamContext = React.createContext<ThreadStreamContextValue | null>(
@@ -31,9 +33,17 @@ export function ThreadStreamProvider({
   const [activeStream, setActiveStream] = React.useState<StreamState | null>(
     null,
   );
+  const abortControllerRef = React.useRef<AbortController | null>(null);
 
   const setStream = React.useCallback((state: StreamState) => {
+    // Abort any existing stream before starting a new one
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
     setActiveStream(state);
+    return controller.signal;
   }, []);
 
   const updateAnswer = React.useCallback((chunk: string) => {
@@ -44,6 +54,7 @@ export function ThreadStreamProvider({
   }, []);
 
   const completeStream = React.useCallback(() => {
+    abortControllerRef.current = null;
     setActiveStream((prev) => {
       if (!prev) return prev;
       return { ...prev, isStreaming: false };
@@ -51,6 +62,7 @@ export function ThreadStreamProvider({
   }, []);
 
   const failStream = React.useCallback((error: string) => {
+    abortControllerRef.current = null;
     setActiveStream((prev) => {
       if (!prev) return prev;
       return { ...prev, error, isStreaming: false };
@@ -58,19 +70,36 @@ export function ThreadStreamProvider({
   }, []);
 
   const clearStream = React.useCallback(() => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
     setActiveStream(null);
+  }, []);
+
+  const abortStream = React.useCallback(() => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+    setActiveStream((prev) => {
+      if (!prev) return prev;
+      return { ...prev, isStreaming: false };
+    });
   }, []);
 
   const value = React.useMemo<ThreadStreamContextValue>(
     () => ({
       activeStream,
+      activeAbortSignal: abortControllerRef.current?.signal ?? null,
       clearStream,
       completeStream,
       failStream,
       setStream,
       updateAnswer,
+      abortStream,
     }),
-    [activeStream, clearStream, completeStream, failStream, setStream, updateAnswer],
+    [activeStream, clearStream, completeStream, failStream, setStream, updateAnswer, abortStream],
   );
 
   return (

@@ -67,19 +67,30 @@ export function ThreadView() {
     setQuestion('');
 
     try {
+      const signal = threadStream.setStream({
+        answer: '',
+        conversationId: threadId ?? '',
+        error: null,
+        isStreaming: true,
+        question: trimmed,
+      });
+
       await searchApi.streamAsk(
         {
           conversationId: threadId ?? '',
           question: trimmed,
         },
         {
+          signal,
           onEvent: (event) => {
             if (event.type === 'delta') {
               setStreamingAnswer((prev) => prev + event.chunk);
+              threadStream.updateAnswer(event.chunk);
             } else if (event.type === 'error') {
               console.error(event.message);
               setError(event.message);
               setIsStreaming(false);
+              threadStream.failStream(event.message);
               queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SEARCH.chat(threadId ?? '') });
               queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SEARCH.chats() });
             } else if (event.type === 'done') {
@@ -88,6 +99,7 @@ export function ThreadView() {
               setIsStreaming(false);
               setStreamingAnswer('');
               setStreamingQuestion('');
+              threadStream.completeStream();
             }
           },
         }
@@ -177,6 +189,11 @@ export function ThreadView() {
     return list;
   }, [conversation?.messages, omniStream, showOmniStream, showFollowUpStream, streamingQuestion, streamingAnswer, error]);
 
+  const stopGeneration = () => {
+    threadStream.abortStream();
+    setIsStreaming(false);
+  };
+
   if (isLoading && !hasOmniStream) {
     return (
       <div className="max-w-4xl mx-auto space-y-8 py-8">
@@ -192,7 +209,7 @@ export function ThreadView() {
 
   return (
     <>
-      <div className="flex flex-col h-[calc(100vh-140px)] max-w-4xl mx-auto">
+      <div className="flex flex-col h-[calc(100vh-180px)] max-w-4xl mx-auto">
         {/* Header */}
         <header className="flex items-center gap-4 mb-6 shrink-0">
           <Button variant="ghost" size="icon" onClick={() => router.push('/app')} className="shrink-0">
@@ -211,7 +228,7 @@ export function ThreadView() {
         </header>
 
         {/* Messages and Input replacing manual blocks */}
-        <div className="flex-1 overflow-hidden pb-4">
+        <div className="flex-1 overflow-hidden pb-4 flex flex-col">
           <Chat 
             messages={messages}
             input={question}
@@ -219,6 +236,7 @@ export function ThreadView() {
             handleSubmit={handleSubmit}
             isGenerating={isStreaming || !!omniStream?.isStreaming}
             onSourceClick={setPreviewId}
+            stop={stopGeneration}
           />
         </div>
       </div>
