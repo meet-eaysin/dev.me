@@ -195,7 +195,7 @@ export function Chat({
   )
 
   return (
-    <ChatContainer className={cn("min-h-[400px]", className)}>
+    <ChatContainer className={cn("h-full", className)}>
       {isEmpty && append && suggestions ? (
         <PromptSuggestions
           label="Try these prompts ✨"

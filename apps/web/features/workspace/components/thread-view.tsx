@@ -209,7 +209,7 @@ export function ThreadView() {
 
   return (
     <>
-      <div className="flex flex-col h-[calc(100vh-180px)] max-w-4xl mx-auto">
+      <div className="flex flex-col flex-1 h-full max-w-4xl mx-auto">
         {/* Header */}
         <header className="flex items-center gap-4 mb-6 shrink-0">
           <Button variant="ghost" size="icon" onClick={() => router.push('/app')} className="shrink-0">

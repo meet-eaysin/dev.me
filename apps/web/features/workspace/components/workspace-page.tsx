@@ -203,7 +203,7 @@ function InlineChat() {
 
   return (
     <>
-      <div className="flex flex-col h-[calc(100vh-180px)] max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="flex flex-col flex-1 h-full max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
         {/* Header */}
         <header className="flex items-center gap-4 mb-6 shrink-0">
           <Button variant="ghost" size="icon" onClick={goBack} className="shrink-0">
