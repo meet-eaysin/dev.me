@@ -25,8 +25,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: 'Mind Stack',
-  description: 'Your personal knowledge graph',
+  title: 'dev.me',
+  description: 'Your personal AI brain',
 };
 
 export default function RootLayout({

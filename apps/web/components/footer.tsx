@@ -2,10 +2,7 @@ import { cn } from '@/lib/utils';
 import { Logo } from '@/components/logo';
 import { Button } from '@/components/ui/button';
 import {
-  FacebookIcon,
   GithubIcon,
-  InstagramIcon,
-  LinkedinIcon,
   YoutubeIcon,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -15,142 +12,58 @@ export function Footer() {
     <footer className="relative">
       <div
         className={cn(
-          'mx-auto max-w-6xl lg:border-x',
+          'mx-auto max-w-6xl lg:border-x px-4 py-12',
           'dark:bg-[radial-gradient(35%_80%_at_15%_0%,--theme(--color-foreground/.1),transparent)]',
         )}
       >
-        <div className="absolute inset-x-0 h-px w-full bg-border" />
-        <div className="grid max-w-5xl grid-cols-6 gap-6 p-4">
-          <div className="col-span-6 flex flex-col gap-4 pt-5 md:col-span-4">
-            <a className="w-max" href="#top">
-              <Logo className="h-5" />
-            </a>
-            <p className="max-w-sm text-balance text-muted-foreground text-sm">
-              Mind Stack is your private AI knowledge system for everything you
-              read, watch, and research.
-            </p>
-            <div className="flex gap-2">
-              {socialLinks.map((item, index) => (
-                <Button
-                  key={`social-${item.link}-${index}`}
-                  size="icon-sm"
-                  variant="outline"
-                  render={<Link href={item.link} target="_blank" />}
-                >
-                  {item.icon}
-                </Button>
-              ))}
-            </div>
-          </div>
-          <div className="col-span-3 w-full md:col-span-1">
-            <span className="text-muted-foreground text-xs">Resources</span>
-            <div className="mt-2 flex flex-col gap-2">
-              {resources.map(({ href, title }) => (
-                <a
-                  className="w-max text-sm hover:underline"
-                  href={href}
-                  key={title}
-                >
-                  {title}
-                </a>
-              ))}
-            </div>
-          </div>
-          <div className="col-span-3 w-full md:col-span-1">
-            <span className="text-muted-foreground text-xs">Company</span>
-            <div className="mt-2 flex flex-col gap-2">
-              {company.map(({ href, title }) => (
-                <a
-                  className="w-max text-sm hover:underline"
-                  href={href}
-                  key={title}
-                >
-                  {title}
-                </a>
-              ))}
-            </div>
-          </div>
-        </div>
-        <div className="absolute inset-x-0 h-px w-full bg-border" />
-        <div className="flex max-w-4xl flex-col justify-between gap-2 py-4">
-          <p className="text-center font-light text-muted-foreground text-sm">
-            &copy; {new Date().getFullYear()} Mind Stack, All rights reserved
+        <div className="absolute inset-x-0 top-0 h-px w-full bg-border" />
+        
+        <div className="flex flex-col items-center justify-center gap-8 text-center">
+          <a className="w-max" href="#top">
+            <Logo className="h-6" />
+          </a>
+          
+          <p className="max-w-md text-balance text-muted-foreground text-sm leading-relaxed">
+            dev.me is a personal AI brain designed to help you organize everything you read, watch, and research. 
+            Open source and private by default.
           </p>
+
+          <div className="flex items-center gap-4">
+            {socialLinks.map((item, index) => (
+              <Button
+                key={`social-${item.link}-${index}`}
+                size="icon-sm"
+                variant="ghost"
+                className="hover:text-primary transition-colors"
+                render={<Link href={item.link} target="_blank" />}
+              >
+                {item.icon}
+              </Button>
+            ))}
+          </div>
+
+          <div className="pt-8 w-full border-t">
+            <p className="text-muted-foreground text-xs font-light">
+              &copy; {new Date().getFullYear()} dev.me. Built with passion for knowledge explorers.
+            </p>
+          </div>
         </div>
       </div>
     </footer>
   );
 }
 
-const company = [
-  {
-    title: 'About',
-    href: '#',
-  },
-  {
-    title: 'System Design',
-    href: '#',
-  },
-  {
-    title: 'Changelog',
-    href: '#',
-  },
-  {
-    title: 'Privacy Policy',
-    href: '#',
-  },
-  {
-    title: 'Terms of Service',
-    href: '#',
-  },
-];
-
-const resources = [
-  {
-    title: 'Docs',
-    href: '#',
-  },
-  {
-    title: 'API Reference',
-    href: '#',
-  },
-  {
-    title: 'Security',
-    href: '#',
-  },
-  {
-    title: 'Status',
-    href: '#',
-  },
-  {
-    title: 'Support',
-    href: '#',
-  },
-];
-
 const socialLinks = [
   {
-    icon: <FacebookIcon />,
+    icon: <GithubIcon className="size-5" />,
+    link: 'https://github.com/meet-eaysin/dev.me',
+  },
+  {
+    icon: <XIcon className="size-4" />,
     link: '#',
   },
   {
-    icon: <GithubIcon />,
-    link: '#',
-  },
-  {
-    icon: <InstagramIcon />,
-    link: '#',
-  },
-  {
-    icon: <LinkedinIcon />,
-    link: '#',
-  },
-  {
-    icon: <XIcon />,
-    link: '#',
-  },
-  {
-    icon: <YoutubeIcon />,
+    icon: <YoutubeIcon className="size-5" />,
     link: '#',
   },
 ];

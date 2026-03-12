@@ -106,27 +106,27 @@ function SetupVisual() {
   return (
     <>
       <div className="relative mx-auto flex size-32 items-center justify-center rounded-full border-4 border-dashed bg-background shadow-xs outline outline-border outline-offset-4">
-        <div className="absolute inset-0 z-10 scale-120 bg-radial from-foreground/20 via-foreground/5 to-transparent blur-xl" />
+        <div className="absolute inset-0 z-10 scale-120 bg-radial from-primary/20 via-primary/5 to-transparent blur-xl" />
         <div className="relative z-10 grid grid-cols-2 gap-2 text-[10px] font-mono text-muted-foreground">
           <span className="rounded-sm border bg-card px-2 py-1 text-foreground">
-            MongoDB
+            Postgres
           </span>
           <span className="rounded-sm border bg-card px-2 py-1 text-foreground">
-            Qdrant
+            Chroma
           </span>
           <span className="rounded-sm border bg-card px-2 py-1 text-foreground">
             Redis
           </span>
           <span className="rounded-sm border bg-card px-2 py-1 text-foreground">
-            Ollama
+            Dev.me
           </span>
         </div>
       </div>
 
       <div className="relative mt-8 space-y-1.5 text-center">
-        <FeatureTitle>Local-first in minutes</FeatureTitle>
+        <FeatureTitle>Developer First</FeatureTitle>
         <FeatureDescription>
-          Run the full stack on your machine: MongoDB, Qdrant, Redis, and Ollama.
+          Built for developers who value privacy and performance. Deploy anywhere in minutes.
         </FeatureDescription>
       </div>
     </>
@@ -246,11 +246,10 @@ function PresenceVisual() {
         </div>
         <div className="space-y-2">
           <FeatureTitle className="text-base">
-            Knowledge graph view
+            Knowledge Graph
           </FeatureTitle>
           <FeatureDescription>
-            Every document belongs to a personal graph, making relationships
-            easy to explore.
+            Explore your personal knowledge graph. dev.me automatically connects your docs and ideas.
           </FeatureDescription>
         </div>
       </div>

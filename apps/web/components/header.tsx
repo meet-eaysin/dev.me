@@ -4,19 +4,13 @@ import { Logo } from '@/components/logo';
 import { useScroll } from '@/hooks/use-scroll';
 import { Button } from '@/components/ui/button';
 import { MobileNav } from '@/components/mobile-nav';
+import { LayersIcon, LayoutDashboardIcon } from 'lucide-react';
 
 export const navLinks = [
   {
     label: 'Features',
     href: '#features',
-  },
-  {
-    label: 'Local-first',
-    href: '#local-first',
-  },
-  {
-    label: 'Knowledge Graph',
-    href: '#knowledge-graph',
+    icon: <LayersIcon className="size-4" />,
   },
 ];
 
@@ -56,6 +50,7 @@ export function Header() {
                 variant="ghost"
                 render={<a href={link.href} />}
               >
+                {link.icon && <span className="mr-2">{link.icon}</span>}
                 {link.label}
               </Button>
             ))}
@@ -64,7 +59,7 @@ export function Header() {
             Sign In
           </Button>
           <Button size="sm" render={<a href="/app" />}>
-            Open App
+            <LayoutDashboardIcon data-icon="inline-start" /> Open App
           </Button>
         </div>
         <MobileNav />

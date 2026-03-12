@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils';
 import { DecorIcon } from '@/components/ui/decor-icon';
 import { FullWidthDivider } from '@/components/ui/full-width-divider';
 import { Button } from '@/components/ui/button';
-import { ArrowRightIcon, PhoneCallIcon } from 'lucide-react';
+import { ArrowRightIcon } from 'lucide-react';
 
 export function HeroSection() {
   return (
@@ -30,13 +30,13 @@ export function HeroSection() {
             'group mx-auto flex w-fit items-center gap-3 rounded-sm border bg-card p-1 shadow',
             'fade-in slide-in-from-bottom-10 animate-in fill-mode-backwards transition-all delay-500 duration-500 ease-out',
           )}
-          href="#link"
+          href="#features"
         >
           <div className="rounded-xs border bg-card px-1.5 py-0.5 shadow-sm">
-            <p className="font-mono text-xs">NOW</p>
+            <p className="font-mono text-xs">NEW</p>
           </div>
 
-          <span className="text-xs">local-first knowledge system for developers</span>
+          <span className="text-xs">Your personal AI brain - dev.me</span>
           <span className="block h-5 border-l" />
 
           <div className="pr-1">
@@ -50,7 +50,7 @@ export function HeroSection() {
             'fade-in slide-in-from-bottom-10 animate-in fill-mode-backwards delay-100 duration-500 ease-out',
           )}
         >
-          Your private AI knowledge system, built around your documents
+          Build your personal knowledge graph with AI
         </h1>
 
         <p
@@ -59,16 +59,15 @@ export function HeroSection() {
             'fade-in slide-in-from-bottom-10 animate-in fill-mode-backwards delay-200 duration-500 ease-out',
           )}
         >
-          Mind Stack turns links, PDFs, notes, and videos into a personal brain
-          you can search, graph, and ask.
+          dev.me turns your docs, links, and PDFs into a private brain you can search, explore, and ask.
         </p>
 
         <div className="fade-in slide-in-from-bottom-10 flex w-fit animate-in items-center justify-center gap-3 fill-mode-backwards pt-2 delay-300 duration-500 ease-out">
           <Button variant="outline" render={<a href="/auth/login" />}>
-            <PhoneCallIcon data-icon="inline-start" /> Sign In
+            Sign In
           </Button>
           <Button render={<a href="/app" />}>
-            Open your library <ArrowRightIcon data-icon="inline-end" />
+            Get Started <ArrowRightIcon data-icon="inline-end" />
           </Button>
         </div>
       </div>
