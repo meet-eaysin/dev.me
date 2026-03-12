@@ -48,6 +48,7 @@ export interface ChatConversationSummary {
   lastMessagePreview: string | null;
   createdAt: string;
   updatedAt: string;
+  isArchived: boolean;
 }
 
 export interface ChatConversationDetail extends ChatConversationSummary {

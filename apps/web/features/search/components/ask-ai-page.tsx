@@ -82,6 +82,7 @@ function upsertConversationSummary(
     lastMessagePreview: result.answer.slice(0, 140) || null,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
+    isArchived: false,
   };
 
   const next = conversations ? [...conversations] : [];
@@ -121,6 +122,7 @@ function upsertConversationDetail(
     messageCount: existingMessages.length + 2,
     lastMessagePreview: result.answer.slice(0, 140) || null,
     createdAt: previous?.createdAt ?? now,
+    isArchived: false,
     updatedAt: now,
     messages: [
       ...existingMessages,

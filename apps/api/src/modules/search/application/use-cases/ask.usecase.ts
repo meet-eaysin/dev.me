@@ -34,11 +34,11 @@ export class AskUseCase {
             query.question,
             query.documentIds,
           );
-    const conversationId = this.getConversationId(conversation);
+    const conversationId = conversation.id;
     const activeDocumentIds =
       query.documentIds && query.documentIds.length > 0
         ? query.documentIds
-        : conversation.documentIds;
+        : conversation.props.documentIds;
 
     const history = await this.searchChatService.getPromptHistory(
       userId,
@@ -110,11 +110,11 @@ export class AskUseCase {
             query.question,
             query.documentIds,
           );
-    const conversationId = this.getConversationId(conversation);
+    const conversationId = conversation.id;
     const activeDocumentIds =
       query.documentIds && query.documentIds.length > 0
         ? query.documentIds
-        : conversation.documentIds;
+        : conversation.props.documentIds;
 
     await handlers.onConversation(conversationId);
 
@@ -168,24 +168,5 @@ export class AskUseCase {
       activeDocumentIds,
       history,
     );
-  }
-
-  private getConversationId(conversation: {
-    id?: unknown;
-    _id?: { toString(): string } | string;
-  }): string {
-    if (typeof conversation.id === 'string' && conversation.id.length > 0) {
-      return conversation.id;
-    }
-
-    if (typeof conversation._id === 'string' && conversation._id.length > 0) {
-      return conversation._id;
-    }
-
-    if (conversation._id && typeof conversation._id.toString === 'function') {
-      return conversation._id.toString();
-    }
-
-    throw new Error('Conversation id is missing');
   }
 }

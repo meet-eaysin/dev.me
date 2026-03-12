@@ -23,7 +23,8 @@ export const QUERY_KEYS = {
     ROOT: ['search'] as const,
     results: (params: Record<string, unknown>) =>
       ['search', 'results', params] as const,
-    chats: () => ['search', 'chats'] as const,
+    chats: (includeArchived = false) =>
+      ['search', 'chats', { includeArchived }] as const,
     chat: (id: string) => ['search', 'chats', id] as const,
   },
   REVIEW: {

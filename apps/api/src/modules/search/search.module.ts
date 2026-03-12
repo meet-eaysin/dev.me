@@ -9,6 +9,8 @@ import { LLMConfigModule } from '../llm-config/llm-config.module';
 import { SearchController } from './interface/search.controller';
 import { AnalyticsModule } from '../analytics/analytics.module';
 import { SearchChatService } from './domain/services/search-chat.service';
+import { IChatConversationRepository } from './domain/repositories/chat-conversation.repository';
+import { MongooseChatConversationRepository } from './infrastructure/persistence/mongoose-chat-conversation.repository';
 
 @Module({
   imports: [DocumentsModule, LLMConfigModule, AnalyticsModule],
@@ -20,6 +22,11 @@ import { SearchChatService } from './domain/services/search-chat.service';
     SearchChatService,
     SearchUseCase,
     AskUseCase,
+    {
+      provide: IChatConversationRepository,
+      useClass: MongooseChatConversationRepository,
+    },
   ],
+  exports: [IChatConversationRepository, SearchChatService],
 })
 export class SearchModule {}

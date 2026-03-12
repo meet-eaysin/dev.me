@@ -40,6 +40,7 @@ const chatConversationSchema = new Schema<IChatConversationDocument>(
     messages: { type: [chatMessageSchema], default: [] },
     title: { type: String, required: true },
     userId: { type: String, required: true, index: true },
+    isArchived: { type: Boolean, default: false },
   },
   { timestamps: true },
 );

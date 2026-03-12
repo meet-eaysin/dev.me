@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Query, Body, Param, Res } from '@nestjs/common';
+import { Controller, Get, Post, Query, Body, Param, Res, Delete, Patch, HttpCode } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { SearchUseCase } from '../application/use-cases/search.usecase';
 import { AskUseCase } from '../application/use-cases/ask.usecase';
@@ -34,6 +34,7 @@ export class SearchController {
   }
 
   @Post('ask')
+  @HttpCode(201)
   @ApiOperation({
     summary: 'Ask a natural language question based on your documents (RAG)',
   })
@@ -85,10 +86,40 @@ export class SearchController {
   @Get('chats')
   @ApiOperation({ summary: 'List previous AI chat conversations' })
   @ApiSuccessResponse(ChatConversationListDto)
-  async listChats(@User('userId') userId: string) {
-    const conversations =
-      await this.searchChatService.listConversations(userId);
-    return { conversations };
+  async listChats(
+    @User('userId') userId: string,
+    @Query('includeArchived') includeArchived?: string,
+  ) {
+    const conversations = await this.searchChatService.listConversations(userId);
+    const filtered =
+      includeArchived === 'true'
+        ? conversations
+        : conversations.filter((c) => !c.isArchived);
+    return { conversations: filtered };
+  }
+
+  @Delete('chats')
+  @ApiOperation({ summary: 'Clear all chat history' })
+  async clearHistory(@User('userId') userId: string) {
+    await this.searchChatService.clearHistory(userId);
+    return { success: true };
+  }
+
+  @Delete('chats/:id')
+  @ApiOperation({ summary: 'Delete a chat conversation' })
+  async deleteChat(@User('userId') userId: string, @Param('id') id: string) {
+    await this.searchChatService.deleteConversation(userId, id);
+    return { success: true };
+  }
+
+  @Patch('chats/:id/archive')
+  @ApiOperation({ summary: 'Archive/Unarchive a chat conversation' })
+  async archiveChat(
+    @User('userId') userId: string,
+    @Param('id') id: string,
+    @Body('isArchived') isArchived: boolean,
+  ) {
+    return this.searchChatService.archiveConversation(userId, id, isArchived);
   }
 
   @Get('chats/:id')

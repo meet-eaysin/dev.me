@@ -237,6 +237,9 @@ export class ChatConversationSummaryDto {
 
   @ApiProperty()
   updatedAt!: string;
+
+  @ApiProperty()
+  isArchived!: boolean;
 }
 
 export class ChatConversationDto extends ChatConversationSummaryDto {

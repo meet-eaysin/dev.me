@@ -1,50 +1,37 @@
-import {
-  ChatConversationModel,
-  type IChatConversationDocument,
-  type IChatSourceRef,
-} from '@repo/db';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import type {
   ChatConversationDetail,
   ChatConversationSummary,
   ChatMessageView,
 } from '@repo/types';
+import { IChatConversationRepository } from '../repositories/chat-conversation.repository';
+import type { ChatConversationEntity, ChatMessageProps } from '../entities/chat-conversation.entity';
+import type { IChatSourceRef } from '@repo/db';
 
 type PromptMessage = {
   role: 'user' | 'assistant';
   content: string;
 };
 
-type LeanConversation = {
-  _id?: { toString(): string } | string;
-  title?: string;
-  documentIds?: string[];
-  lastMessagePreview?: string | null;
-  messages?: Array<{
-    role: 'user' | 'assistant';
-    content: string;
-    status: 'completed' | 'error';
-    sources: IChatSourceRef[];
-    tokensUsed: number;
-    createdAt: Date | string;
-  }>;
-  createdAt?: Date | string;
-  updatedAt?: Date | string;
-};
-
 @Injectable()
 export class SearchChatService {
   private static readonly MAX_HISTORY_MESSAGES = 6;
+
+  constructor(private readonly chatRepository: IChatConversationRepository) {}
 
   async createConversation(
     userId: string,
     question: string,
     documentIds?: string[],
-  ): Promise<IChatConversationDocument> {
-    const conversation = await ChatConversationModel.create({
-      documentIds: documentIds ?? [],
-      title: this.buildTitle(question),
+  ): Promise<ChatConversationEntity> {
+    const conversation = await this.chatRepository.create({
       userId,
+      title: this.buildTitle(question),
+      documentIds: documentIds ?? [],
+      messages: [],
+      isArchived: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
 
     return conversation;
@@ -53,16 +40,11 @@ export class SearchChatService {
   async getConversationForUser(
     userId: string,
     conversationId: string,
-  ): Promise<IChatConversationDocument> {
-    const conversation = await ChatConversationModel.findOne({
-      _id: conversationId,
-      userId,
-    }).exec();
-
+  ): Promise<ChatConversationEntity> {
+    const conversation = await this.chatRepository.findById(conversationId, userId);
     if (!conversation) {
       throw new NotFoundException('Conversation not found');
     }
-
     return conversation;
   }
 
@@ -72,11 +54,8 @@ export class SearchChatService {
   ): Promise<PromptMessage[]> {
     if (!conversationId) return [];
 
-    const conversation = await this.getConversationForUser(
-      userId,
-      conversationId,
-    );
-    const recentMessages = conversation.messages.slice(
+    const conversation = await this.getConversationForUser(userId, conversationId);
+    const recentMessages = conversation.props.messages.slice(
       -SearchChatService.MAX_HISTORY_MESSAGES,
     );
 
@@ -87,37 +66,55 @@ export class SearchChatService {
   }
 
   async listConversations(userId: string): Promise<ChatConversationSummary[]> {
-    const conversations = await ChatConversationModel.find({ userId })
-      .sort({ updatedAt: -1 })
-      .lean()
-      .exec();
-
-    return conversations.map((conversation) =>
-      this.toConversationSummary(conversation as LeanConversation),
-    );
+    const conversations = await this.chatRepository.findAll(userId);
+    return conversations.map((conversation) => this.toConversationSummary(conversation));
   }
 
   async getConversationDetail(
     userId: string,
     conversationId: string,
   ): Promise<ChatConversationDetail> {
-    const conversation = await this.getConversationForUser(
-      userId,
-      conversationId,
-    );
+    const conversation = await this.getConversationForUser(userId, conversationId);
 
     return {
-      id: this.getConversationId(conversation),
+      id: conversation.id,
       title: conversation.title,
-      documentIds: conversation.documentIds ?? [],
-      messageCount: conversation.messages.length,
-      lastMessagePreview: conversation.lastMessagePreview ?? null,
-      createdAt: this.toIsoString(conversation.createdAt),
-      updatedAt: this.toIsoString(conversation.updatedAt),
-      messages: conversation.messages.map((message) =>
-        this.toMessageView(message),
-      ),
+      documentIds: conversation.props.documentIds ?? [],
+      messageCount: conversation.props.messages.length,
+      lastMessagePreview: conversation.props.lastMessagePreview ?? null,
+      createdAt: conversation.props.createdAt.toISOString(),
+      updatedAt: conversation.props.updatedAt.toISOString(),
+      messages: conversation.props.messages.map((message) => this.toMessageView(message)),
+      isArchived: conversation.isArchived,
     };
+  }
+
+  async deleteConversation(userId: string, conversationId: string): Promise<void> {
+    const deleted = await this.chatRepository.delete(conversationId, userId);
+    if (!deleted) {
+      throw new NotFoundException('Conversation not found');
+    }
+  }
+
+  async archiveConversation(
+    userId: string,
+    conversationId: string,
+    isArchived = true,
+  ): Promise<ChatConversationDetail> {
+    const updated = await this.chatRepository.update(conversationId, userId, {
+      isArchived,
+      updatedAt: new Date(),
+    });
+
+    if (!updated) {
+      throw new NotFoundException('Conversation not found');
+    }
+
+    return this.getConversationDetail(userId, conversationId);
+  }
+
+  async clearHistory(userId: string): Promise<void> {
+    await this.chatRepository.deleteAll(userId);
   }
 
   async appendExchange(params: {
@@ -130,16 +127,11 @@ export class SearchChatService {
     tokensUsed: number;
     userId: string;
   }): Promise<ChatConversationDetail> {
-    const conversation = await this.getConversationForUser(
-      params.userId,
-      params.conversationId,
-    );
-
-    if (params.documentIds && params.documentIds.length > 0) {
-      conversation.documentIds = params.documentIds;
-    }
-
-    conversation.messages.push({
+    const conversation = await this.getConversationForUser(params.userId, params.conversationId);
+    
+    const messages = [...conversation.props.messages];
+    messages.push({
+      id: '', // Server will handle
       role: 'user',
       content: params.question,
       status: 'completed',
@@ -147,7 +139,8 @@ export class SearchChatService {
       tokensUsed: 0,
       createdAt: new Date(),
     });
-    conversation.messages.push({
+    messages.push({
+      id: '', // Server will handle
       role: 'assistant',
       content: params.answer,
       status: params.status ?? 'completed',
@@ -155,10 +148,13 @@ export class SearchChatService {
       tokensUsed: params.tokensUsed,
       createdAt: new Date(),
     });
-    conversation.lastMessagePreview = this.buildPreview(params.answer);
-    conversation.updatedAt = new Date();
 
-    await conversation.save();
+    await this.chatRepository.update(params.conversationId, params.userId, {
+      messages,
+      documentIds: params.documentIds ?? conversation.props.documentIds,
+      lastMessagePreview: this.buildPreview(params.answer),
+      updatedAt: new Date(),
+    });
 
     return this.getConversationDetail(params.userId, params.conversationId);
   }
@@ -173,86 +169,30 @@ export class SearchChatService {
     return normalized.slice(0, 140) || null;
   }
 
-  private getConversationId(conversation: IChatConversationDocument): string {
-    if (typeof conversation.id === 'string' && conversation.id.length > 0) {
-      return conversation.id;
-    }
-
-    const rawId = (
-      conversation as unknown as { _id?: { toString(): string } | string }
-    )._id;
-
-    if (typeof rawId === 'string' && rawId.length > 0) {
-      return rawId;
-    }
-
-    if (rawId && typeof rawId.toString === 'function') {
-      return rawId.toString();
-    }
-
-    throw new Error('Conversation id is missing');
-  }
-
-  private toIsoString(value: Date | string | undefined): string {
-    if (value instanceof Date) {
-      return value.toISOString();
-    }
-
-    if (typeof value === 'string') {
-      return new Date(value).toISOString();
-    }
-
-    throw new Error('Expected a date value');
-  }
-
   private toConversationSummary(
-    conversation: LeanConversation,
+    conversation: ChatConversationEntity,
   ): ChatConversationSummary {
     return {
-      id: this.getLeanConversationId(conversation),
-      title: conversation.title ?? 'Untitled conversation',
-      documentIds: conversation.documentIds ?? [],
-      messageCount: conversation.messages?.length ?? 0,
-      lastMessagePreview: conversation.lastMessagePreview ?? null,
-      createdAt: this.toIsoString(conversation.createdAt),
-      updatedAt: this.toIsoString(conversation.updatedAt),
+      id: conversation.id,
+      title: conversation.title,
+      documentIds: conversation.props.documentIds ?? [],
+      messageCount: conversation.props.messages.length,
+      lastMessagePreview: conversation.props.lastMessagePreview ?? null,
+      createdAt: conversation.props.createdAt.toISOString(),
+      updatedAt: conversation.props.updatedAt.toISOString(),
+      isArchived: conversation.isArchived,
     };
   }
 
-  private getLeanConversationId(conversation: LeanConversation): string {
-    if (typeof conversation._id === 'string' && conversation._id.length > 0) {
-      return conversation._id;
-    }
-
-    if (conversation._id && typeof conversation._id.toString === 'function') {
-      return conversation._id.toString();
-    }
-
-    throw new Error('Conversation id is missing');
-  }
-
-  private toMessageView(
-    message: IChatConversationDocument['messages'][number],
-  ): ChatMessageView {
-    const messageId =
-      'id' in message && typeof message.id === 'string'
-        ? message.id
-        : String(
-            (
-              message as unknown as {
-                _id?: { toString(): string };
-              }
-            )._id?.toString() ?? '',
-          );
-
+  private toMessageView(message: ChatMessageProps): ChatMessageView {
     return {
-      id: messageId,
+      id: message.id,
       role: message.role,
       content: message.content,
       status: message.status,
       sources: message.sources,
       tokensUsed: message.tokensUsed,
-      createdAt: this.toIsoString(message.createdAt),
+      createdAt: message.createdAt.toISOString(),
     };
   }
 }

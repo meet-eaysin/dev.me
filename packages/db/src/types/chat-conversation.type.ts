@@ -26,6 +26,7 @@ export interface IChatConversation {
   documentIds: string[];
   lastMessagePreview?: string | null;
   messages: IChatMessage[];
+  isArchived: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
