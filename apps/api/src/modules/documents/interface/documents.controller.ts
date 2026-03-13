@@ -13,6 +13,7 @@ import {
   UploadedFile,
   BadRequestException,
 } from '@nestjs/common';
+import { env } from '../../../shared/utils/env';
 import {
   ApiTags,
   ApiOperation,
@@ -111,7 +112,13 @@ export class DocumentsController {
     },
   })
   @ApiCreatedResponse({ type: DocumentResponseDto })
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(
+    FileInterceptor('file', {
+      limits: {
+        fileSize: env.MAX_FILE_SIZE_MB * 1024 * 1024,
+      },
+    }),
+  )
   async uploadDocument(
     @User('userId') userId: string,
     @UploadedFile() file: Express.Multer.File,

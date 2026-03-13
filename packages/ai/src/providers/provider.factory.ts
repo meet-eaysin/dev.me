@@ -1,4 +1,4 @@
-import { LLMConfigModel, ILLMConfig } from '@repo/db';
+import { LLMConfigModel, type ILLMConfig } from '@repo/db';
 import { Types } from 'mongoose';
 import { decrypt } from '@repo/crypto';
 
@@ -49,7 +49,10 @@ export class ProviderFactory {
       chatModel: 'llama3.2',
       embeddingModel: 'nomic-embed-text',
       apiKey: null,
-      baseUrl: process.env.OLLAMA_BASE_URL ?? 'http://localhost:11434',
+      baseUrl:
+        process.env.OLLAMA_URL ??
+        process.env.OLLAMA_BASE_URL ??
+        'http://localhost:11434',
     };
   }
 }
