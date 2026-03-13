@@ -64,7 +64,6 @@ In hosted production, prefer your platform's env/secrets UI instead of committed
 | `NEXT_PUBLIC_API_BASE_URL`          | Web     | Browser-visible API base URL.              |
 | `NEXT_PUBLIC_DEV_USER_ID`           | Web     | Local development fallback user id header. |
 | `NEXT_PUBLIC_WEBAPP_URL`            | Web     | Public frontend origin.                    |
-| `NEXT_PUBLIC_CALCOM_VERSION`        | Web     | Asset version marker.                      |
 | `NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA` | Web     | Cache-busting build identifier.            |
 
 ## Production Credentials
