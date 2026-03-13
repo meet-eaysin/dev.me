@@ -14,14 +14,14 @@ export class AuthCookieService {
     response.cookie(ACCESS_COOKIE_NAME, tokens.accessToken, {
       httpOnly: true,
       secure: env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',
       path: '/',
     });
 
     response.cookie(REFRESH_COOKIE_NAME, tokens.refreshToken, {
       httpOnly: true,
       secure: env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',
       path: '/api/v1/auth',
     });
   }

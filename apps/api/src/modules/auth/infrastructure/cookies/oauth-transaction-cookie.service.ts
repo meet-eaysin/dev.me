@@ -31,7 +31,7 @@ export class OAuthTransactionCookieService {
     response.cookie(OAUTH_TRANSACTION_COOKIE, token, {
       httpOnly: true,
       secure: env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',
       path: '/api/v1/auth',
     });
   }
