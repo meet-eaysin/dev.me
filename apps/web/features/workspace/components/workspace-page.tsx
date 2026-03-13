@@ -237,7 +237,7 @@ function InlineChat() {
     >
       <div className="flex flex-col flex-1 h-full w-full">
         {/* Header */}
-        <header className="flex items-center gap-4 mb-6 shrink-0 w-full pt-4">
+        <header className="flex items-center gap-4 mb-6 shrink-0 w-full pt-4 max-w-4xl mx-auto px-4 md:px-8">
           <Button
             variant="ghost"
             size="icon"

@@ -265,7 +265,7 @@ export function ChatMessages({
       </div>
 
       {!shouldAutoScroll && (
-        <div className="pointer-events-none flex flex-1 items-end justify-end col-[1/1] row-[1/1]">
+        <div className="pointer-events-none flex flex-1 items-end justify-end col-[1/1] row-[1/1] w-full max-w-4xl mx-auto px-4 md:px-8 pb-4">
           <div className="sticky bottom-0 left-0 flex w-full justify-end">
             <Button
               onClick={scrollToBottom}

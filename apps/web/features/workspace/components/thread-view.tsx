@@ -232,9 +232,9 @@ export function ThreadView() {
 
   return (
     <PageContainer isFullHeight>
-      <div className="flex flex-col flex-1 h-full w-full">
+      <div className="flex flex-col flex-1 h-full w-full min-h-0">
         {/* Header */}
-        <header className="flex items-center gap-4 mb-6 shrink-0 pt-4">
+        <header className="flex items-center gap-4 mb-6 shrink-0 pt-4 w-full max-w-4xl mx-auto px-4 md:px-8">
           <Button
             variant="ghost"
             size="icon"
@@ -257,7 +257,7 @@ export function ThreadView() {
         </header>
 
         {/* Messages and Input replacing manual blocks */}
-        <div className="flex-1 overflow-hidden pb-4 flex flex-col">
+        <div className="flex-1 overflow-hidden pb-4 flex flex-col min-h-0">
           <Chat
             messages={messages}
             input={question}
