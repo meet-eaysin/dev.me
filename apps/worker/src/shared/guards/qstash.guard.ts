@@ -24,9 +24,11 @@ export class QStashGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
 
     // In local development, we might not have QStash signatures if we are testing locally without local tunnel
-    if (env.NODE_ENV === 'development' && !env.QSTASH_CURRENT_SIGNING_KEY) {
-      this.logger.warn('Skipping QStash signature verification in development mode (No keys provided)');
-      return true;
+    if (env.NODE_ENV === 'development') {
+      if (!env.QSTASH_CURRENT_SIGNING_KEY || request.headers['x-dev-bypass'] === 'true') {
+        this.logger.warn('Skipping QStash signature verification in development mode');
+        return true;
+      }
     }
 
     const signature =

@@ -130,7 +130,12 @@ export class IngestionController {
           ocrConfidence,
         });
       } else if (type === 'text') {
-        text = source;
+        if (doc.sourceType === 'file') {
+          const buffer = await this.localStorage.getFile(source);
+          text = buffer.toString('utf-8');
+        } else {
+          text = source;
+        }
       }
 
       if (text.length < 50) {
@@ -159,22 +164,23 @@ export class IngestionController {
           text.substring(0, 5000),
           config,
         );
-        for (const topic of topics) {
-          const tag = await TagModel.findOneAndUpdate(
-            { userId: new Types.ObjectId(userId), name: topic.toLowerCase() },
-            { $setOnInsert: { source: 'ai', color: '#6366f1' } },
-            { upsert: true, new: true },
-          );
-          if (tag) {
-            await DocumentModel.updateOne(
-              { _id: new Types.ObjectId(documentId) },
-              { $addToSet: { tags: tag.name } },
+        if (topics.length > 0) {
+          for (const topic of topics) {
+            const tag = await TagModel.findOneAndUpdate(
+              { userId: new Types.ObjectId(userId), name: topic.toLowerCase() },
+              { $setOnInsert: { source: 'ai', color: '#6366f1' } },
+              { upsert: true, new: true },
             );
+            if (tag) {
+              await DocumentModel.updateOne(
+                { _id: new Types.ObjectId(documentId) },
+                { $addToSet: { tags: tag.name } },
+              );
+            }
           }
         }
       } catch (error: unknown) {
-        const msg = error instanceof Error ? error.message : String(error);
-        this.logger.warn(`Classification failed: ${msg}, skipping...`);
+        this.logger.warn(`Topic classification skipped: ${error instanceof Error ? error.message : String(error)}`);
       }
 
       await this.ingestionJobRepository.updateStage(
@@ -264,10 +270,14 @@ export class IngestionController {
         action: NotionAction.CREATE,
       });
     } catch (error: unknown) {
+      this.logger.error(`Ingestion failed:`, error);
       const errorMessage =
         error instanceof Error ? error.message : String(error);
-      this.logger.error(`Ingestion failed: ${errorMessage}`);
-      throw new Error(errorMessage);
+      await this.documentRepository.update(documentId, userId, {
+        ingestionStatus: IngestionStatus.FAILED,
+        ingestionError: errorMessage || 'Unknown error',
+      } as any);
+      throw error;
     }
   }
 
@@ -276,23 +286,28 @@ export class IngestionController {
     config: ResolvedLLMConfig,
   ): Promise<string[]> {
     if (config.provider === 'ollama') {
-      interface OllamaGenerateResponse {
-        response: string;
-      }
-      const response = await axios.post<OllamaGenerateResponse>(
-        `${config.baseUrl}/api/generate`,
-        {
-          model: config.chatModel,
-          prompt: `Extract 3-5 main topics from this text as a comma-separated list. Only return the list.\n\nText: ${text}`,
-          stream: false,
-        },
-      );
-      const responseText = response.data?.response;
-      if (typeof responseText === 'string') {
-        return responseText
-          .split(',')
-          .map((s) => s.trim())
-          .filter(Boolean);
+      try {
+        interface OllamaGenerateResponse {
+          response: string;
+        }
+        const response = await axios.post<OllamaGenerateResponse>(
+          `${config.baseUrl}/api/generate`,
+          {
+            model: config.chatModel,
+            prompt: `Extract 3-5 main topics from this text as a comma-separated list. Only return the list.\n\nText: ${text}`,
+            stream: false,
+          },
+          { timeout: 10000 },
+        );
+        const responseText = response.data?.response;
+        if (typeof responseText === 'string') {
+          return responseText
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean);
+        }
+      } catch (error: any) {
+        return [];
       }
     }
     return [];

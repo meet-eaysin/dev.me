@@ -64,6 +64,9 @@ export class DocumentEntity {
   get status(): DocumentStatus {
     return this.props.status;
   }
+  get sourceType(): string {
+    return this.props.sourceType;
+  }
   get content(): string | undefined {
     return this.props.content;
   }
