@@ -24,7 +24,7 @@ export function ThreadPanelHeader({
         </div>
         <div
           className={cn(
-            'flex flex-col transition-all duration-300 origin-left overflow-hidden',
+            'flex flex-col transition-all duration-150 origin-left overflow-hidden',
             isExpanded
               ? 'opacity-100 w-32 ml-0'
               : 'opacity-0 w-0 -ml-2 pointer-events-none',
@@ -45,7 +45,7 @@ export function ThreadPanelHeader({
           variant="default"
           size="sm"
           className={cn(
-            'absolute -top-1 -right-1 px-1 h-3.5 min-w-8 text-[8px] font-black tracking-tighter transition-all duration-300',
+            'absolute -top-1 -right-1 px-1 h-3.5 min-w-8 text-[8px] font-black tracking-tighter transition-all duration-150',
             isExpanded
               ? 'opacity-0 scale-50 pointer-events-none'
               : 'opacity-100 scale-100',
@@ -56,7 +56,7 @@ export function ThreadPanelHeader({
       </Link>
       <div
         className={cn(
-          'absolute right-4 transition-all duration-300',
+          'absolute right-4 transition-all duration-150',
           isExpanded
             ? 'opacity-100 scale-100'
             : 'opacity-0 scale-50 pointer-events-none',

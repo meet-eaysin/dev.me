@@ -22,7 +22,7 @@ export function ThreadPanelSearch({
       <div className="relative h-10 w-full">
         <div
           className={cn(
-            'absolute inset-0 transition-all duration-300',
+            'absolute inset-0 transition-all duration-150',
             isExpanded
               ? 'opacity-100 scale-100'
               : 'opacity-0 scale-95 pointer-events-none',
@@ -40,7 +40,7 @@ export function ThreadPanelSearch({
         </div>
         <div
           className={cn(
-            'absolute inset-0 transition-all duration-300 flex justify-center',
+            'absolute inset-0 transition-all duration-150 flex justify-center',
             !isExpanded
               ? 'opacity-100 scale-100'
               : 'opacity-0 scale-95 pointer-events-none',

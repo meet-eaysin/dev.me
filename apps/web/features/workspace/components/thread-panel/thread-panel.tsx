@@ -56,7 +56,7 @@ export function ThreadPanel() {
   return (
     <aside
       className={cn(
-        'fixed top-0 left-0 h-screen bg-background border-r border-subtle z-30 hidden lg:flex flex-col transition-[width] duration-300 ease-in-out shadow-[1px_0_10px_rgba(0,0,0,0.02)] overflow-hidden',
+        'fixed top-0 left-0 h-screen bg-background border-r border-subtle z-30 hidden lg:flex flex-col transition-[width] duration-150 ease-out shadow-[1px_0_10px_rgba(0,0,0,0.02)] overflow-hidden',
         isExpanded ? 'w-80' : 'w-16',
       )}
     >

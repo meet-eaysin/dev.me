@@ -34,7 +34,7 @@ export function ThreadItem({
       <Link
         href={`/app/t/${chat.id}`}
         className={cn(
-          'flex transition-all duration-300 rounded-xl border border-transparent overflow-hidden',
+          'flex transition-all duration-150 rounded-xl border border-transparent overflow-hidden',
           isExpanded
             ? 'p-3.5 pr-12 w-full flex-col gap-1.5'
             : 'size-10 items-center justify-center mx-auto',
