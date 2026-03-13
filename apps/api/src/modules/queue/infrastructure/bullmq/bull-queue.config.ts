@@ -1,23 +1,15 @@
 import { env } from '../../../../shared/utils/env';
-import Redis from 'ioredis';
+import type { QueueOptions } from 'bullmq';
 
-// Reuse the same connect instance for all BullMQ default requests
-let sharedRedisConnection: Redis | null = null;
-
-export function createBullQueueConfig() {
-  if (!sharedRedisConnection) {
-    sharedRedisConnection = new Redis({
+export function createBullQueueConfig(): QueueOptions {
+  return {
+    connection: {
       host: env.REDIS_HOST,
       port: env.REDIS_PORT,
       ...(env.REDIS_PASSWORD ? { password: env.REDIS_PASSWORD } : {}),
       family: 4,
       enableOfflineQueue: false,
       keepAlive: 10000,
-      maxRetriesPerRequest: null,
-    });
-  }
-
-  return {
-    connection: sharedRedisConnection,
+    },
   };
 }

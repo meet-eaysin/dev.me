@@ -34,7 +34,6 @@
     "cookie-parser": "^1.4.7",
     "escape-html": "^1.0.3",
     "helmet": "^8.1.0",
-    "ioredis": "^5.10.0",
     "jose": "^6.2.0",
     "openid-client": "^6.8.2",
     "passport": "^0.7.0",
