@@ -1,7 +1,7 @@
 import { Controller, Get, Patch, Post, Body } from '@nestjs/common';
 import { LLMClientFactory, getProviderRegistry } from '@repo/ai';
 import { encrypt } from '@repo/crypto';
-import {
+import type {
   UpdateLLMConfigRequest,
   LLMSettingsResponse,
   TestLLMConfigRequest,
