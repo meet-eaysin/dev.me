@@ -19,9 +19,13 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@nestjs/common": "^11.1.11",
+    "@nestjs/common": "^11.1.16",
     "@repo/types": "*",
     "@upstash/qstash": "^2.7.3"
+  },
+  "peerDependencies": {
+    "reflect-metadata": "*",
+    "rxjs": "*"
   },
   "devDependencies": {
     "typescript": "5.5.4"

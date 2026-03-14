@@ -2241,7 +2241,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/common@npm:^11.1.11":
+"@nestjs/common@npm:^11.1.16":
   version: 11.1.16
   resolution: "@nestjs/common@npm:11.1.16"
   dependencies:
@@ -2264,7 +2264,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/core@npm:^11.1.11":
+"@nestjs/core@npm:^11.1.16":
   version: 11.1.16
   resolution: "@nestjs/core@npm:11.1.16"
   dependencies:
@@ -2331,7 +2331,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/platform-express@npm:^11.1.11":
+"@nestjs/platform-express@npm:^11.1.16":
   version: 11.1.16
   resolution: "@nestjs/platform-express@npm:11.1.16"
   dependencies:
@@ -2390,7 +2390,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/testing@npm:^11.1.11":
+"@nestjs/testing@npm:^11.1.16":
   version: 11.1.16
   resolution: "@nestjs/testing@npm:11.1.16"
   dependencies:
@@ -2409,10 +2409,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/env@npm:16.1.5":
-  version: 16.1.5
-  resolution: "@next/env@npm:16.1.5"
-  checksum: 10c0/9d6442bee75386593d5da6e952146cf3c4338202e68a0ba9464d70c24ab7abb0c7e4ecd0ab661ca211e544fe7d6bd075270379bee3e97c5da3b6d082f95a04cd
+"@next/env@npm:16.1.6":
+  version: 16.1.6
+  resolution: "@next/env@npm:16.1.6"
+  checksum: 10c0/ed7023edb94b9b2e5da3f9c99d08b614da9757c1edd0ecec792fce4d336b4f0c64db1a84955e07cfbd848b9e61c4118fff28f4098cd7b0a7f97814a90565ebe6
   languageName: node
   linkType: hard
 
@@ -2425,58 +2425,58 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/swc-darwin-arm64@npm:16.1.5":
-  version: 16.1.5
-  resolution: "@next/swc-darwin-arm64@npm:16.1.5"
+"@next/swc-darwin-arm64@npm:16.1.6":
+  version: 16.1.6
+  resolution: "@next/swc-darwin-arm64@npm:16.1.6"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@next/swc-darwin-x64@npm:16.1.5":
-  version: 16.1.5
-  resolution: "@next/swc-darwin-x64@npm:16.1.5"
+"@next/swc-darwin-x64@npm:16.1.6":
+  version: 16.1.6
+  resolution: "@next/swc-darwin-x64@npm:16.1.6"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@next/swc-linux-arm64-gnu@npm:16.1.5":
-  version: 16.1.5
-  resolution: "@next/swc-linux-arm64-gnu@npm:16.1.5"
+"@next/swc-linux-arm64-gnu@npm:16.1.6":
+  version: 16.1.6
+  resolution: "@next/swc-linux-arm64-gnu@npm:16.1.6"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@next/swc-linux-arm64-musl@npm:16.1.5":
-  version: 16.1.5
-  resolution: "@next/swc-linux-arm64-musl@npm:16.1.5"
+"@next/swc-linux-arm64-musl@npm:16.1.6":
+  version: 16.1.6
+  resolution: "@next/swc-linux-arm64-musl@npm:16.1.6"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@next/swc-linux-x64-gnu@npm:16.1.5":
-  version: 16.1.5
-  resolution: "@next/swc-linux-x64-gnu@npm:16.1.5"
+"@next/swc-linux-x64-gnu@npm:16.1.6":
+  version: 16.1.6
+  resolution: "@next/swc-linux-x64-gnu@npm:16.1.6"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@next/swc-linux-x64-musl@npm:16.1.5":
-  version: 16.1.5
-  resolution: "@next/swc-linux-x64-musl@npm:16.1.5"
+"@next/swc-linux-x64-musl@npm:16.1.6":
+  version: 16.1.6
+  resolution: "@next/swc-linux-x64-musl@npm:16.1.6"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@next/swc-win32-arm64-msvc@npm:16.1.5":
-  version: 16.1.5
-  resolution: "@next/swc-win32-arm64-msvc@npm:16.1.5"
+"@next/swc-win32-arm64-msvc@npm:16.1.6":
+  version: 16.1.6
+  resolution: "@next/swc-win32-arm64-msvc@npm:16.1.6"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@next/swc-win32-x64-msvc@npm:16.1.5":
-  version: 16.1.5
-  resolution: "@next/swc-win32-x64-msvc@npm:16.1.5"
+"@next/swc-win32-x64-msvc@npm:16.1.6":
+  version: 16.1.6
+  resolution: "@next/swc-win32-x64-msvc@npm:16.1.6"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -3994,11 +3994,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@repo/cache@workspace:packages/cache"
   dependencies:
-    "@nestjs/common": "npm:^11.1.11"
+    "@nestjs/common": "npm:^11.1.16"
     "@types/node": "npm:^22.19.3"
     "@upstash/redis": "npm:^1.34.4"
     ioredis: "npm:^5.4.1"
     typescript: "npm:5.5.4"
+  peerDependencies:
+    reflect-metadata: "*"
+    rxjs: "*"
   languageName: unknown
   linkType: soft
 
@@ -4037,6 +4040,8 @@ __metadata:
     prettier: "npm:^3.2.5"
     typescript: "npm:^5.8.2"
     typescript-eslint: "npm:^8.37.0"
+  peerDependencies:
+    turbo: "*"
   languageName: unknown
   linkType: soft
 
@@ -4046,8 +4051,11 @@ __metadata:
   dependencies:
     "@jest/types": "npm:^30.2.0"
     jest: "npm:^30.2.0"
-    next: "npm:16.1.5"
+    next: "npm:^16.1.6"
     typescript: "npm:^5.8.2"
+  peerDependencies:
+    react: "*"
+    react-dom: "*"
   languageName: unknown
   linkType: soft
 
@@ -4055,10 +4063,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@repo/queue@workspace:packages/queue"
   dependencies:
-    "@nestjs/common": "npm:^11.1.11"
+    "@nestjs/common": "npm:^11.1.16"
     "@repo/types": "npm:*"
     "@upstash/qstash": "npm:^2.7.3"
     typescript: "npm:5.5.4"
+  peerDependencies:
+    reflect-metadata: "*"
+    rxjs: "*"
   languageName: unknown
   linkType: soft
 
@@ -5441,7 +5452,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"acorn@npm:^8.11.0, acorn@npm:^8.15.0, acorn@npm:^8.4.1":
+"acorn@npm:^8.11.0, acorn@npm:^8.15.0, acorn@npm:^8.16.0, acorn@npm:^8.4.1":
   version: 8.16.0
   resolution: "acorn@npm:8.16.0"
   bin:
@@ -5617,14 +5628,14 @@ __metadata:
   dependencies:
     "@jest/globals": "npm:^30.2.0"
     "@nestjs/cli": "npm:^11.0.14"
-    "@nestjs/common": "npm:^11.1.11"
-    "@nestjs/core": "npm:^11.1.11"
+    "@nestjs/common": "npm:^11.1.16"
+    "@nestjs/core": "npm:^11.1.16"
     "@nestjs/jwt": "npm:^11.0.2"
     "@nestjs/passport": "npm:^11.0.5"
-    "@nestjs/platform-express": "npm:^11.1.11"
+    "@nestjs/platform-express": "npm:^11.1.16"
     "@nestjs/schematics": "npm:^11.0.9"
     "@nestjs/swagger": "npm:^11.2.6"
-    "@nestjs/testing": "npm:^11.1.11"
+    "@nestjs/testing": "npm:^11.1.16"
     "@repo/ai": "npm:*"
     "@repo/cache": "npm:*"
     "@repo/crypto": "npm:*"
@@ -5646,6 +5657,7 @@ __metadata:
     cookie-parser: "npm:^1.4.7"
     escape-html: "npm:^1.0.3"
     eslint: "npm:^9.39.2"
+    express: "npm:^5.0.1"
     helmet: "npm:^8.1.0"
     jest: "npm:^30.2.0"
     jose: "npm:^6.2.0"
@@ -5662,6 +5674,7 @@ __metadata:
     ts-node: "npm:^10.9.2"
     tsconfig-paths: "npm:^4.2.0"
     typescript: "npm:5.5.4"
+    webpack: "npm:^5.98.0"
   languageName: unknown
   linkType: soft
 
@@ -7191,7 +7204,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"enhanced-resolve@npm:^5.0.0, enhanced-resolve@npm:^5.17.4, enhanced-resolve@npm:^5.19.0, enhanced-resolve@npm:^5.7.0":
+"enhanced-resolve@npm:^5.0.0, enhanced-resolve@npm:^5.17.4, enhanced-resolve@npm:^5.19.0, enhanced-resolve@npm:^5.20.0, enhanced-resolve@npm:^5.7.0":
   version: 5.20.0
   resolution: "enhanced-resolve@npm:5.20.0"
   dependencies:
@@ -7745,7 +7758,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"express@npm:5.2.1, express@npm:^5.2.1":
+"express@npm:5.2.1, express@npm:^5.0.1, express@npm:^5.2.1":
   version: 5.2.1
   resolution: "express@npm:5.2.1"
   dependencies:
@@ -8426,6 +8439,13 @@ __metadata:
   version: 4.2.11
   resolution: "graceful-fs@npm:4.2.11"
   checksum: 10c0/386d011a553e02bc594ac2ca0bd6d9e4c22d7fa8cfbfc448a6d148c59ea881b092db9dbe3547ae4b88e55f1b01f7c4a2ecc53b310c042793e63aa44cf6c257f2
+  languageName: node
+  linkType: hard
+
+"graphology-types@npm:^0.24.8":
+  version: 0.24.8
+  resolution: "graphology-types@npm:0.24.8"
+  checksum: 10c0/2c829a739ed2554934489b994140130007ae5b2281cb818f90371cae5cbeb27d574b552597af462d22694044abfeddfe179c2b94c736c8cfb2a7a35e43a8f894
   languageName: node
   linkType: hard
 
@@ -11151,7 +11171,7 @@ __metadata:
     "@repo/eslint-config": "npm:*"
     "@repo/typescript-config": "npm:*"
     prettier: "npm:^3.2.5"
-    turbo: "npm:^2.8.13"
+    turbo: "npm:^2.8.17"
   languageName: unknown
   linkType: soft
 
@@ -11471,19 +11491,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"next@npm:16.1.5":
-  version: 16.1.5
-  resolution: "next@npm:16.1.5"
+"next@npm:^16.1.6":
+  version: 16.1.6
+  resolution: "next@npm:16.1.6"
   dependencies:
-    "@next/env": "npm:16.1.5"
-    "@next/swc-darwin-arm64": "npm:16.1.5"
-    "@next/swc-darwin-x64": "npm:16.1.5"
-    "@next/swc-linux-arm64-gnu": "npm:16.1.5"
-    "@next/swc-linux-arm64-musl": "npm:16.1.5"
-    "@next/swc-linux-x64-gnu": "npm:16.1.5"
-    "@next/swc-linux-x64-musl": "npm:16.1.5"
-    "@next/swc-win32-arm64-msvc": "npm:16.1.5"
-    "@next/swc-win32-x64-msvc": "npm:16.1.5"
+    "@next/env": "npm:16.1.6"
+    "@next/swc-darwin-arm64": "npm:16.1.6"
+    "@next/swc-darwin-x64": "npm:16.1.6"
+    "@next/swc-linux-arm64-gnu": "npm:16.1.6"
+    "@next/swc-linux-arm64-musl": "npm:16.1.6"
+    "@next/swc-linux-x64-gnu": "npm:16.1.6"
+    "@next/swc-linux-x64-musl": "npm:16.1.6"
+    "@next/swc-win32-arm64-msvc": "npm:16.1.6"
+    "@next/swc-win32-x64-msvc": "npm:16.1.6"
     "@swc/helpers": "npm:0.5.15"
     baseline-browser-mapping: "npm:^2.8.3"
     caniuse-lite: "npm:^1.0.30001579"
@@ -11527,7 +11547,7 @@ __metadata:
       optional: true
   bin:
     next: dist/bin/next
-  checksum: 10c0/ff9f7dd0cae79f7ba2a64ac0d29ca77c94921dfc37b36899f4f997b948242f72585f4bb75829aaf8704d46c6f7d1a9796b8ff30688a3467c04c738b3a4247a9f
+  checksum: 10c0/543766bf879bb5a5d454dc18cb302953270a92efba1d01dd028ea83c64b69573ce7d6e6c3759ecbaabec0a84131b0237263c24d1ccd7c8a97205e776dcd34e0b
   languageName: node
   linkType: hard
 
@@ -14100,7 +14120,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"terser-webpack-plugin@npm:^5.3.16":
+"terser-webpack-plugin@npm:^5.3.16, terser-webpack-plugin@npm:^5.3.17":
   version: 5.4.0
   resolution: "terser-webpack-plugin@npm:5.4.0"
   dependencies:
@@ -14429,58 +14449,58 @@ __metadata:
   languageName: node
   linkType: hard
 
-"turbo-darwin-64@npm:2.8.16":
-  version: 2.8.16
-  resolution: "turbo-darwin-64@npm:2.8.16"
+"turbo-darwin-64@npm:2.8.17":
+  version: 2.8.17
+  resolution: "turbo-darwin-64@npm:2.8.17"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"turbo-darwin-arm64@npm:2.8.16":
-  version: 2.8.16
-  resolution: "turbo-darwin-arm64@npm:2.8.16"
+"turbo-darwin-arm64@npm:2.8.17":
+  version: 2.8.17
+  resolution: "turbo-darwin-arm64@npm:2.8.17"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"turbo-linux-64@npm:2.8.16":
-  version: 2.8.16
-  resolution: "turbo-linux-64@npm:2.8.16"
+"turbo-linux-64@npm:2.8.17":
+  version: 2.8.17
+  resolution: "turbo-linux-64@npm:2.8.17"
   conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
 
-"turbo-linux-arm64@npm:2.8.16":
-  version: 2.8.16
-  resolution: "turbo-linux-arm64@npm:2.8.16"
+"turbo-linux-arm64@npm:2.8.17":
+  version: 2.8.17
+  resolution: "turbo-linux-arm64@npm:2.8.17"
   conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
 
-"turbo-windows-64@npm:2.8.16":
-  version: 2.8.16
-  resolution: "turbo-windows-64@npm:2.8.16"
+"turbo-windows-64@npm:2.8.17":
+  version: 2.8.17
+  resolution: "turbo-windows-64@npm:2.8.17"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
-"turbo-windows-arm64@npm:2.8.16":
-  version: 2.8.16
-  resolution: "turbo-windows-arm64@npm:2.8.16"
+"turbo-windows-arm64@npm:2.8.17":
+  version: 2.8.17
+  resolution: "turbo-windows-arm64@npm:2.8.17"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"turbo@npm:^2.8.13":
-  version: 2.8.16
-  resolution: "turbo@npm:2.8.16"
+"turbo@npm:^2.8.17":
+  version: 2.8.17
+  resolution: "turbo@npm:2.8.17"
   dependencies:
-    turbo-darwin-64: "npm:2.8.16"
-    turbo-darwin-arm64: "npm:2.8.16"
-    turbo-linux-64: "npm:2.8.16"
-    turbo-linux-arm64: "npm:2.8.16"
-    turbo-windows-64: "npm:2.8.16"
-    turbo-windows-arm64: "npm:2.8.16"
+    turbo-darwin-64: "npm:2.8.17"
+    turbo-darwin-arm64: "npm:2.8.17"
+    turbo-linux-64: "npm:2.8.17"
+    turbo-linux-arm64: "npm:2.8.17"
+    turbo-windows-64: "npm:2.8.17"
+    turbo-windows-arm64: "npm:2.8.17"
   dependenciesMeta:
     turbo-darwin-64:
       optional: true
@@ -14496,7 +14516,7 @@ __metadata:
       optional: true
   bin:
     turbo: bin/turbo
-  checksum: 10c0/5ac16e61a723f45e8ab265d7bbeb932f8843e982d8b9eca07d8df4778d5c2152d96d2a54ddca761588c5a538178333cce5b55ba765a32c2cb4c5be07609c25de
+  checksum: 10c0/879b9dbb337097fac8f5d2fe22d200c6af80bda3c8b9edc4a45d1febcd6e4a54b5be89de082b2eac693828b5b9795e7863d4c1b92137414ce832271c20564d5d
   languageName: node
   linkType: hard
 
@@ -15114,7 +15134,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"watchpack@npm:^2.4.4":
+"watchpack@npm:^2.4.4, watchpack@npm:^2.5.1":
   version: 2.5.1
   resolution: "watchpack@npm:2.5.1"
   dependencies:
@@ -15163,8 +15183,9 @@ __metadata:
     eslint: "npm:^9.31.0"
     framer-motion: "npm:11"
     graphology: "npm:^0.26.0"
+    graphology-types: "npm:^0.24.8"
     lucide-react: "npm:^0.577.0"
-    next: "npm:16.1.5"
+    next: "npm:^16.1.6"
     next-themes: "npm:^0.4.6"
     postcss: "npm:^8.5.8"
     radix-ui: "npm:^1.4.3"
@@ -15212,7 +15233,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack-sources@npm:^3.3.3":
+"webpack-sources@npm:^3.3.3, webpack-sources@npm:^3.3.4":
   version: 3.3.4
   resolution: "webpack-sources@npm:3.3.4"
   checksum: 10c0/94a42508531338eb41939cf1d48a4a8a6db97f3a47e5453cff2133a68d3169ca779d4bcbe9dfed072ce16611959eba1e16f085bc2dc56714e1a1c1783fd661a3
@@ -15254,6 +15275,44 @@ __metadata:
   bin:
     webpack: bin/webpack.js
   checksum: 10c0/ea78c57f80bbd7684f4f1bb38a18408ab0ef4c5b962e25ad382c595d10b9e9701e077f5248a8cef5f127a55902698664c18837e64243bb972fbecf4e5d9aaab0
+  languageName: node
+  linkType: hard
+
+"webpack@npm:^5.98.0":
+  version: 5.105.4
+  resolution: "webpack@npm:5.105.4"
+  dependencies:
+    "@types/eslint-scope": "npm:^3.7.7"
+    "@types/estree": "npm:^1.0.8"
+    "@types/json-schema": "npm:^7.0.15"
+    "@webassemblyjs/ast": "npm:^1.14.1"
+    "@webassemblyjs/wasm-edit": "npm:^1.14.1"
+    "@webassemblyjs/wasm-parser": "npm:^1.14.1"
+    acorn: "npm:^8.16.0"
+    acorn-import-phases: "npm:^1.0.3"
+    browserslist: "npm:^4.28.1"
+    chrome-trace-event: "npm:^1.0.2"
+    enhanced-resolve: "npm:^5.20.0"
+    es-module-lexer: "npm:^2.0.0"
+    eslint-scope: "npm:5.1.1"
+    events: "npm:^3.2.0"
+    glob-to-regexp: "npm:^0.4.1"
+    graceful-fs: "npm:^4.2.11"
+    json-parse-even-better-errors: "npm:^2.3.1"
+    loader-runner: "npm:^4.3.1"
+    mime-types: "npm:^2.1.27"
+    neo-async: "npm:^2.6.2"
+    schema-utils: "npm:^4.3.3"
+    tapable: "npm:^2.3.0"
+    terser-webpack-plugin: "npm:^5.3.17"
+    watchpack: "npm:^2.5.1"
+    webpack-sources: "npm:^3.3.4"
+  peerDependenciesMeta:
+    webpack-cli:
+      optional: true
+  bin:
+    webpack: bin/webpack.js
+  checksum: 10c0/e9896d20bac351b119d59942b7efae5b117056ecf203acc0d1a84ecbf0a5a9a80ca733735f96bd163e3530be6ab7f615cd67e5320bd3c47d709c9bfe376c3280
   languageName: node
   linkType: hard
 
@@ -15390,10 +15449,10 @@ __metadata:
   resolution: "worker@workspace:apps/worker"
   dependencies:
     "@nestjs/cli": "npm:^11.0.14"
-    "@nestjs/common": "npm:^11.1.11"
-    "@nestjs/core": "npm:^11.1.11"
+    "@nestjs/common": "npm:^11.1.16"
+    "@nestjs/core": "npm:^11.1.16"
     "@nestjs/schematics": "npm:^11.0.9"
-    "@nestjs/testing": "npm:^11.1.11"
+    "@nestjs/testing": "npm:^11.1.16"
     "@repo/ai": "npm:*"
     "@repo/cache": "npm:*"
     "@repo/db": "npm:*"
@@ -15410,6 +15469,7 @@ __metadata:
     ts-node: "npm:^10.9.2"
     tsconfig-paths: "npm:^4.2.0"
     typescript: "npm:5.5.4"
+    webpack: "npm:^5.98.0"
   languageName: unknown
   linkType: soft
 

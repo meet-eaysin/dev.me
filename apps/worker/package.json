@@ -13,8 +13,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@nestjs/common": "^11.1.11",
-    "@nestjs/core": "^11.1.11",
+    "@nestjs/common": "^11.1.16",
+    "@nestjs/core": "^11.1.16",
     "@repo/ai": "*",
     "@repo/cache": "*",
     "@repo/db": "*",
@@ -26,7 +26,7 @@
   "devDependencies": {
     "@nestjs/cli": "^11.0.14",
     "@nestjs/schematics": "^11.0.9",
-    "@nestjs/testing": "^11.1.11",
+    "@nestjs/testing": "^11.1.16",
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
     "@types/node": "^22.19.3",
@@ -35,6 +35,7 @@
     "ts-loader": "^9.5.4",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "5.5.4"
+    "typescript": "5.5.4",
+    "webpack": "^5.98.0"
   }
 }
