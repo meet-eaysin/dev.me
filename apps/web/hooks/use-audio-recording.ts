@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { recordAudio } from '@/lib/audio-utils';
 
 interface UseAudioRecordingOptions {
-  transcribeAudio?: (blob: Blob) => Promise<string>;
+  transcribeAudio?: (blob: Blob | null) => Promise<string>;
   onTranscriptionComplete?: (text: string) => void;
 }
 
@@ -16,7 +16,7 @@ export function useAudioRecording({
   const [isRecording, setIsRecording] = useState(false);
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [audioStream, setAudioStream] = useState<MediaStream | null>(null);
-  const activeRecordingRef = useRef<any>(null);
+  const activeRecordingRef = useRef<Promise<Blob | null> | null>(null);
 
   useEffect(() => {
     const checkSpeechSupport = async () => {
