@@ -1,29 +1,38 @@
-# Getting Started
+# Mind Stack - Web App
 
-First, run the development server:
+This is the frontend application for Mind Stack, built with **Next.js 16 (App Router)**.
+
+## 🚀 Tech Stack
+
+- **Framework:** Next.js 16
+- **Language:** TypeScript 5
+- **Styling:** TailwindCSS v4
+- **UI Components:** Shadcn UI, Radix UI
+- **State Management:** React Query, React Hook Form
+- **Animations:** Framer Motion
+
+## 🛠 Setup & Development
+
+Ensure you have run `yarn install` from the root of the monorepo.
+
+To start the development server for this app specifically:
 
 ```bash
-pnpm dev
-# Also works with NPM, YARN, BUN, ...
+yarn workspace web dev
 ```
 
-Browse [localhost:3001](http://localhost:3001) to see the result.
+Or run the dev script from the root using Turbo:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+yarn turbo run dev --filter web
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load Inter, a custom Google Font.
+## 🏗 Key Features
 
-## Learn More
+- **Modern Architecture:** Uses React 19 and Next.js 16 App Router for optimal performance and SEO.
+- **Responsive UI:** Fully responsive design built with TailwindCSS.
+- **Type-safe:** End-to-end type safety using shared interfaces from `@repo/types`.
 
-Learn more about `Next.js` with the following resources:
+## ⚙️ Environment Variables
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Make sure to configure the `.env` file according to the properties required by this application (e.g., `WEB_APP_URL`, authentication callbacks, etc.). Review the root `turbo.globalEnv` list for required variables.

@@ -7,10 +7,7 @@ import {
   Headers,
 } from '@nestjs/common';
 import { QStashGuard } from '../../../shared/guards/qstash.guard';
-import {
-  QUEUE_NOTION_SYNC,
-  NotionAction,
-} from '@repo/types';
+import { QUEUE_NOTION_SYNC, NotionAction } from '@repo/types';
 import type { NotionSyncJobData } from '@repo/types';
 import { DocumentModel, NotionConfigModel } from '@repo/db';
 import { NotionClient } from '../notion-client';

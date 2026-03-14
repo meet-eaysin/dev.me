@@ -1,122 +1,111 @@
-# Turborepo starter
+# 🧠 Mind Stack
 
-This is a community-maintained example. If you experience a problem, please submit a pull request with a fix. GitHub Issues will be closed.
+![License](https://img.shields.io/badge/license-UNLICENSED-blue.svg)
+![Node](https://img.shields.io/badge/Node.js-24.x-brightgreen.svg)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue.svg)
+![Next.js](https://img.shields.io/badge/Next.js-16.x-black.svg)
+![NestJS](https://img.shields.io/badge/NestJS-11.x-red.svg)
 
-## Using this example
+Mind Stack is a robust, production-ready monorepo built for advanced document processing, AI-driven knowledge extraction, and scalable Web applications. It combines a high-performance **NestJS backend pipeline** with a modern **Next.js front-end**, all orchestrated by **Turborepo**.
 
-Run the following command:
+## 🏗 System Architecture
+
+Mind Stack utilizes a service-oriented architecture, splitting responsibilities between a client-facing web app, a core API API, and a background worker.
+
+```mermaid
+graph TD
+    Client[Web App - Next.js] --> API[Core API - NestJS]
+    API --> DB[(MongoDB)]
+    API --> Cache[(Redis Cache)]
+    API --> Queue[QStash Queue]
+
+    Queue --> Worker[Worker Services - NestJS]
+    Worker --> DB
+    Worker --> AI[Local AI - Ollama]
+    Worker --> VectorDB[(Qdrant Vector DB)]
+```
+
+### 📦 Applications (`apps/`)
+
+- **`apps/web`**: Frontend Next.js 16 application. Features modern UI (TailwindCSS v4, Shadcn), React Query for state management, and strict TypeScript integration.
+- **`apps/api`**: Core NestJS API handling user authentication (OAuth + JWT), document uploads, and serving data to the client. Includes Swagger/OpenAPI documentation.
+- **`apps/worker`**: Dedicated NestJS background processing service. Handles resource-intensive tasks such as document parsing, chunking, and interacting with AI models (LLMs and vector embedding).
+
+### 🧩 Shared Packages (`packages/`)
+
+- **`@repo/ai`**: Qdrant and Ollama integrations for embeddings and AI interactions.
+- **`@repo/cache`**: Redis and Upstash caching utilities.
+- **`@repo/crypto`**: Security and encryption utilities.
+- **`@repo/db`**: MongoDB connection handlers and Mongoose schemas.
+- **`@repo/queue`**: QStash integration for background job dispatch and routing.
+- **`@repo/types`**: Shared TypeScript interfaces across the monorepo.
+- **`@repo/eslint-config`, `@repo/jest-config`, `@repo/typescript-config`**: Centralized configurations ensuring consistency.
+
+## 🚀 Tech Stack
+
+- **Frontend:** Next.js 16 (App Router), React 19, TailwindCSS v4, Shadcn UI, Framer Motion
+- **Backend:** NestJS 11, Express
+- **Database:** MongoDB
+- **Caching & Queues:** Redis, Upstash, QStash
+- **AI & Vector DB:** Ollama (Local LLMs), Qdrant (Vector DB)
+- **Tooling:** Turborepo, Yarn 4 (Workspaces), ESLint, Prettier, Jest
+
+## 🛠 Getting Started
+
+### Prerequisites
+
+Ensure you have the following installed on your system:
+
+- **Node.js** (v24.x recommended)
+- **Yarn** (v4.5.1 configured via corepack)
+- **Docker** and **Docker Compose** (for running local dependencies)
+
+### Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone <repository_url>
+   cd mind-stack
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   yarn install
+   ```
+
+3. Start backing services via Docker (MongoDB, Redis, Qdrant, Ollama):
+
+   ```bash
+   docker compose up -d
+   ```
+
+4. Set up environment variables (copy `.env.example` to `.env` in respective apps and packages as required).
+
+### Development
+
+Run the entire stack in development mode:
 
 ```bash
-npx create-turbo@latest -e with-nestjs
+yarn dev
 ```
 
-## What's inside?
+This command will start the Next.js web app, the NestJS API, and the NestJS Worker concurrently using Turborepo.
 
-This Turborepo includes the following packages & apps:
+### Operations
 
-### Apps and Packages
+- `yarn build`: Builds all apps and packages.
+- `yarn test`: Runs unit tests across the monorepo.
+- `yarn test:e2e`: Runs end-to-end tests.
+- `yarn lint`: Lints all code.
+- `yarn format`: Formats code using Prettier.
+- `yarn typecheck`: Runs TypeScript compiler (noEmit) to catch type errors.
 
-```shell
-.
-├── apps
-│   ├── api                       # NestJS app (https://nestjs.com).
-│   └── web                       # Next.js app (https://nextjs.org).
-└── packages
-    ├── @repo/eslint-config       # `eslint` configurations (includes `prettier`)
-    ├── @repo/jest-config         # `jest` configurations
-    ├── @repo/typescript-config   # `tsconfig.json`s used throughout the monorepo
-```
+## 🤝 Contributing
 
-Each package and application are mostly written in [TypeScript](https://www.typescriptlang.org/).
+We welcome contributions! Please see our [Contributing Guide](./CONTRIBUTING.md) for detailed instructions on branching, coding standards, and submitting pull requests.
 
-### Utilities
+## 📜 License
 
-This `Turborepo` has some additional tools already set for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type-safety
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-- [Jest](https://prettier.io) & [Playwright](https://playwright.dev/) for testing
-
-### Commands
-
-This `Turborepo` already configured useful commands for all your apps and packages.
-
-#### Build
-
-```bash
-# Will build all the app & packages with the supported `build` script.
-pnpm run build
-
-# ℹ️ If you plan to only build apps individually,
-# Please make sure you've built the packages first.
-```
-
-#### Develop
-
-```bash
-# Will run the development server for all the app & packages with the supported `dev` script.
-pnpm run dev
-```
-
-#### test
-
-```bash
-# Will launch a test suites for all the app & packages with the supported `test` script.
-pnpm run test
-
-# You can launch e2e testes with `test:e2e`
-pnpm run test:e2e
-
-# See `@repo/jest-config` to customize the behavior.
-```
-
-#### Lint
-
-```bash
-# Will lint all the app & packages with the supported `lint` script.
-# See `@repo/eslint-config` to customize the behavior.
-pnpm run lint
-```
-
-#### Format
-
-```bash
-# Will format all the supported `.ts,.js,json,.tsx,.jsx` files.
-# See `@repo/eslint-config/prettier-base.js` to customize the behavior.
-pnpm format
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```bash
-npx turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```bash
-npx turbo link
-```
-
-## Useful Links
-
-This example take some inspiration the [with-nextjs](https://github.com/vercel/turborepo/tree/main/examples/with-nextjs) `Turbo` example and [01-cats-app](https://github.com/nestjs/nest/tree/master/sample/01-cats-app) `NestJs` sample.
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+[UNLICENSED](./LICENSE)

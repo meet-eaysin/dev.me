@@ -1,8 +1,4 @@
-import {
-  Module,
-  OnModuleInit,
-  OnApplicationShutdown,
-} from '@nestjs/common';
+import { Module, OnModuleInit, OnApplicationShutdown } from '@nestjs/common';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { connectMongoDB, disconnectMongoDB } from '@repo/db';
 import { env } from './shared/utils/env';

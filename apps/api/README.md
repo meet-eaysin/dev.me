@@ -1,26 +1,36 @@
-# With-NestJs | API
+# Mind Stack - Core API
 
-## Getting Started
+This is the core backend application for Mind Stack, built with **NestJS 11**.
 
-First, run the development server:
+## 🚀 Tech Stack
+
+- **Framework:** NestJS 11
+- **Language:** TypeScript 5
+- **Authentication:** Passport, JWT, OAuth (Google/GitHub)
+- **API Docs:** Swagger (OpenAPI)
+
+## 🛠 Setup & Development
+
+Ensure you have run `yarn install` from the root of the monorepo.
+
+To start the development server for this app specifically:
 
 ```bash
-pnpm run dev
-# Also works with NPM, YARN, BUN, ...
+yarn workspace api dev
 ```
 
-By default, your server will run at [localhost:3000](http://localhost:3000). You can use your favorite API platform like [Insomnia](https://insomnia.rest/) or [Postman](https://www.postman.com/) to test your APIs
+Or run the dev script from the root using Turbo:
 
-You can start editing the demo **APIs** by modifying [linksService](./src/links/links.service.ts) provider.
+```bash
+yarn turbo run dev --filter api
+```
 
-### Important Note 🚧
+## 🏗 Key Features
 
-If you plan to `build` or `test` the app. Please make sure to build the `packages/*` first.
+- **Robust Architecture:** Follows NestJS modular architecture and dependency injection.
+- **Secure:** Integrated authentication strategies, OAuth Proxies, and helmet protection.
+- **Shared Packages:** Leverages `@repo/db` for MongoDB connections, `@repo/cache` for Redis, and `@repo/queue` to dispatch background jobs to the worker.
 
-## Learn More
+## ⚙️ Environment Variables
 
-Learn more about `NestJs` with following resources:
-
-- [Official Documentation](https://docs.nestjs.com) - A progressive Node.js framework for building efficient, reliable and scalable server-side applications.
-- [Official NestJS Courses](https://courses.nestjs.com) - Learn everything you need to master NestJS and tackle modern backend applications at any scale.
-- [GitHub Repo](https://github.com/nestjs/nest)
+Make sure to configure the `.env` file for the API. It requires connections to MongoDB, Redis, configuration for QStash, JWT secrets, and OAuth Client IDs/Secrets.
