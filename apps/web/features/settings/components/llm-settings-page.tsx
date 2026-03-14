@@ -4,19 +4,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import {
-  ArrowLeft,
-  Bot,
-  Cpu,
-  KeyRound,
-  Shield,
-  Zap,
-} from 'lucide-react';
+import { ArrowLeft, Bot, Cpu, KeyRound, Shield, Zap } from 'lucide-react';
 import Link from 'next/link';
-import type { 
-  UpdateLLMConfigRequest, 
-  LLMProvider,
-} from '@repo/types';
+import type { UpdateLLMConfigRequest, LLMProvider } from '@repo/types';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -27,7 +17,12 @@ import {
   CardPanel,
   CardTitle,
 } from '@/components/ui/card';
-import { Field, FieldDescription, FieldLabel, FieldError } from '@/components/ui/field';
+import {
+  Field,
+  FieldDescription,
+  FieldLabel,
+  FieldError,
+} from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -39,11 +34,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { Switch } from '@/components/ui/switch';
 import { ApiError } from '@/lib/api';
-import {
-  useLLMConfig,
-  useUpdateLLMConfig,
-  useTestLLMConfig,
-} from '../hooks';
+import { useLLMConfig, useUpdateLLMConfig, useTestLLMConfig } from '../hooks';
 
 const llmSettingsSchema = z.object({
   useSystemDefault: z.boolean(),
@@ -94,9 +85,10 @@ export function LlmSettingsPage() {
   const watchedProviderId = form.watch('providerId');
   const watchedUseSystemDefault = form.watch('useSystemDefault');
 
-  const selectedProvider = useMemo(() => 
-    registry.find((p: LLMProvider) => p.id === watchedProviderId),
-  [registry, watchedProviderId]);
+  const selectedProvider = useMemo(
+    () => registry.find((p: LLMProvider) => p.id === watchedProviderId),
+    [registry, watchedProviderId],
+  );
 
   const handleProviderChange = (value: string | null) => {
     if (!value) return;
@@ -117,14 +109,15 @@ export function LlmSettingsPage() {
       });
     } catch (err) {
       if (err instanceof ApiError && err.details) {
-        err.details.forEach(detail => {
+        err.details.forEach((detail) => {
           form.setError(detail.field as keyof LlmSettingsFormValues, {
-            message: detail.messages[0]
+            message: detail.messages[0],
           });
         });
       }
       setFeedback({
-        message: err instanceof Error ? err.message : 'Failed to update configuration',
+        message:
+          err instanceof Error ? err.message : 'Failed to update configuration',
         tone: 'error',
       });
     }
@@ -181,7 +174,9 @@ export function LlmSettingsPage() {
           <ArrowLeft className="size-5" />
         </Button>
         <div className="space-y-1">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">LLM Config</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
+            LLM Config
+          </h1>
           <p className="text-muted-foreground">
             Choose the provider and model defaults that power AI features.
           </p>
@@ -192,14 +187,18 @@ export function LlmSettingsPage() {
         {error ? (
           <Alert variant="error">
             <AlertTitle>Error loading configuration</AlertTitle>
-            <AlertDescription>{error instanceof Error ? error.message : 'Unknown error'}</AlertDescription>
+            <AlertDescription>
+              {error instanceof Error ? error.message : 'Unknown error'}
+            </AlertDescription>
           </Alert>
         ) : null}
 
         {feedback ? (
           <Alert variant={feedback.tone === 'success' ? 'success' : 'error'}>
             <AlertTitle>
-              {feedback.tone === 'success' ? 'Update complete' : 'Request failed'}
+              {feedback.tone === 'success'
+                ? 'Update complete'
+                : 'Request failed'}
             </AlertTitle>
             <AlertDescription>{feedback.message}</AlertDescription>
           </Alert>
@@ -219,7 +218,8 @@ export function LlmSettingsPage() {
                   <div className="space-y-0.5">
                     <FieldLabel>Use system defaults</FieldLabel>
                     <FieldDescription>
-                      Enable this to use the platform&apos;s recommended models (zero config needed).
+                      Enable this to use the platform&apos;s recommended models
+                      (zero config needed).
                     </FieldDescription>
                   </div>
                   <Controller
@@ -261,7 +261,9 @@ export function LlmSettingsPage() {
                           )}
                         />
                         {form.formState.errors.providerId && (
-                          <FieldError>{form.formState.errors.providerId.message}</FieldError>
+                          <FieldError>
+                            {form.formState.errors.providerId.message}
+                          </FieldError>
                         )}
                       </Field>
 
@@ -290,7 +292,9 @@ export function LlmSettingsPage() {
                           )}
                         />
                         {form.formState.errors.modelId && (
-                          <FieldError>{form.formState.errors.modelId.message}</FieldError>
+                          <FieldError>
+                            {form.formState.errors.modelId.message}
+                          </FieldError>
                         )}
                       </Field>
                     </div>
@@ -300,24 +304,27 @@ export function LlmSettingsPage() {
                       <Input
                         id="llm-api-key"
                         type="password"
-                        placeholder={activeConfig?.hasApiKey ? "••••••••••••••••" : "Enter API key"}
+                        placeholder={
+                          activeConfig?.hasApiKey
+                            ? '••••••••••••••••'
+                            : 'Enter API key'
+                        }
                         {...form.register('apiKey')}
                       />
                       <FieldDescription>
                         Your API key is encrypted and stored securely.
                       </FieldDescription>
                       {form.formState.errors.apiKey && (
-                        <FieldError>{form.formState.errors.apiKey.message}</FieldError>
+                        <FieldError>
+                          {form.formState.errors.apiKey.message}
+                        </FieldError>
                       )}
                     </Field>
                   </div>
                 )}
 
                 <div className="flex flex-wrap gap-3">
-                  <Button
-                    type="submit"
-                    disabled={updateConfig.isPending}
-                  >
+                  <Button type="submit" disabled={updateConfig.isPending}>
                     <Bot className="size-4" />
                     {updateConfig.isPending ? 'Saving...' : 'Save changes'}
                   </Button>
@@ -351,25 +358,35 @@ export function LlmSettingsPage() {
                     </div>
                     <div>
                       <p className="text-sm font-medium text-foreground">
-                        {watchedUseSystemDefault ? 'System Managed' : 'User Configured'}
+                        {watchedUseSystemDefault
+                          ? 'System Managed'
+                          : 'User Configured'}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        {watchedUseSystemDefault ? 'Using platform defaults' : 'Using personal API key'}
+                        {watchedUseSystemDefault
+                          ? 'Using platform defaults'
+                          : 'Using personal API key'}
                       </p>
                     </div>
                   </div>
                 </div>
 
                 <div className="rounded-xl border border-border/60 p-4">
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Current Model</p>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">
+                    Current Model
+                  </p>
                   <p className="mt-1 text-sm font-medium text-foreground">
-                    {activeConfig ? `${activeConfig.providerId} / ${activeConfig.modelId}` : 'System Default'}
+                    {activeConfig
+                      ? `${activeConfig.providerId} / ${activeConfig.modelId}`
+                      : 'System Default'}
                   </p>
                 </div>
 
                 {activeConfig && (
                   <div className="rounded-xl border border-border/60 p-4">
-                    <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Capabilities</p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">
+                      Capabilities
+                    </p>
                     <div className="mt-2 flex flex-wrap gap-2">
                       <Badge variant="secondary">Chat</Badge>
                       <Badge variant="secondary">Summarization</Badge>
@@ -386,14 +403,28 @@ export function LlmSettingsPage() {
               </CardHeader>
               <CardPanel className="space-y-3">
                 {[
-                  { icon: Bot, title: 'AI Chat', text: 'Real-time conversation' },
-                  { icon: Cpu, title: 'Processing', text: 'Summaries & extraction' },
-                  { icon: KeyRound, title: 'Security', text: 'Encrypted storage' },
+                  {
+                    icon: Bot,
+                    title: 'AI Chat',
+                    text: 'Real-time conversation',
+                  },
+                  {
+                    icon: Cpu,
+                    title: 'Processing',
+                    text: 'Summaries & extraction',
+                  },
+                  {
+                    icon: KeyRound,
+                    title: 'Security',
+                    text: 'Encrypted storage',
+                  },
                 ].map(({ icon: Icon, title, text }) => (
                   <div key={title} className="flex items-center gap-3 p-1">
                     <Icon className="size-4 text-muted-foreground" />
                     <div>
-                      <p className="text-sm font-medium text-foreground">{title}</p>
+                      <p className="text-sm font-medium text-foreground">
+                        {title}
+                      </p>
                       <p className="text-xs text-muted-foreground">{text}</p>
                     </div>
                   </div>

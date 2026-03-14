@@ -38,10 +38,16 @@ export const settingsApi = {
   revokeUserSession: (sessionId: string) =>
     apiDelete<{ success: boolean }>(API_ENDPOINTS.USERS.session(sessionId)),
   updateLLMConfig: (body: UpdateLLMConfigRequest) =>
-    apiPatch<{ success: boolean; message: string }>(API_ENDPOINTS.LLM_SETTINGS.ROOT, { body }),
+    apiPatch<{ success: boolean; message: string }>(
+      API_ENDPOINTS.LLM_SETTINGS.ROOT,
+      { body },
+    ),
   syncNotion: () => apiPost<NotionSyncResult>(API_ENDPOINTS.NOTION.SYNC),
   updateNotionConfig: (body: UpdateNotionConfigInput) =>
     apiPatch<NotionConfigPublicView>(API_ENDPOINTS.NOTION.CONFIG, { body }),
   testLLMConfig: (body: TestLLMConfigRequest) =>
-    apiPost<{ success: boolean; message: string; response?: string }>(API_ENDPOINTS.LLM_SETTINGS.TEST, { body }),
+    apiPost<{ success: boolean; message: string; response?: string }>(
+      API_ENDPOINTS.LLM_SETTINGS.TEST,
+      { body },
+    ),
 };

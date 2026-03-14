@@ -98,7 +98,8 @@ export class TranscriptController {
     await transcriptDoc.save();
 
     const chunks = chunkText(fullText);
-    const resolvedConfig = await this.llmClientFactory.resolveConfigForUserId(userId);
+    const resolvedConfig =
+      await this.llmClientFactory.resolveConfigForUserId(userId);
 
     for (let i = 0; i < chunks.length; i++) {
       const chunkObj = chunks[i];

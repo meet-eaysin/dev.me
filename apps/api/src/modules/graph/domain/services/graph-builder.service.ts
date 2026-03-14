@@ -77,7 +77,8 @@ export class GraphBuilderService {
 
       // 4. If embeddings are ready, build similarity edges
       if (doc.embeddingsReady) {
-        const config = await this.llmClientFactory.resolveConfigForUserId(internalUserId);
+        const config =
+          await this.llmClientFactory.resolveConfigForUserId(internalUserId);
 
         try {
           const queryVector = await embeddingAdapter.embedText(

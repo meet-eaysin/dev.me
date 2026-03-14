@@ -1,14 +1,5 @@
-import {
-  Controller,
-  Get,
-  Patch,
-  Post,
-  Body,
-} from '@nestjs/common';
-import {
-  LLMClientFactory,
-  getProviderRegistry,
-} from '@repo/ai';
+import { Controller, Get, Patch, Post, Body } from '@nestjs/common';
+import { LLMClientFactory, getProviderRegistry } from '@repo/ai';
 import { encrypt } from '@repo/crypto';
 import {
   UpdateLLMConfigRequest,
@@ -20,9 +11,7 @@ import { env } from '../../../shared/utils/env';
 
 @Controller('user/settings/llm')
 export class UserLlmSettingsController {
-  constructor(
-    private readonly llmClientFactory: LLMClientFactory,
-  ) {}
+  constructor(private readonly llmClientFactory: LLMClientFactory) {}
 
   @Get()
   async getSettings(
@@ -103,14 +92,22 @@ export class UserLlmSettingsController {
       const testConfig = {
         providerId: body.providerId,
         modelId: body.modelId,
-        apiKey: body.apiKey ? encrypt(body.apiKey, env.ENCRYPTION_KEY) : undefined,
+        apiKey: body.apiKey
+          ? encrypt(body.apiKey, env.ENCRYPTION_KEY)
+          : undefined,
         useSystemDefault: body.useSystemDefault,
       };
 
-      const resolvedClient = await this.llmClientFactory.createForUser(testConfig);
+      const resolvedClient =
+        await this.llmClientFactory.createForUser(testConfig);
 
       const response = await resolvedClient.complete({
-        messages: [{ role: 'user', content: body.message || 'Hello! Test my connection.' }],
+        messages: [
+          {
+            role: 'user',
+            content: body.message || 'Hello! Test my connection.',
+          },
+        ],
       });
 
       return {
@@ -119,7 +116,8 @@ export class UserLlmSettingsController {
         response,
       };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Connection failed';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Connection failed';
       return {
         success: false,
         message: errorMessage,

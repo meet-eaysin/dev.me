@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { z } from 'zod';
 import type { ResolvedLLMConfig } from './provider.factory';
+import { GoogleEmbeddingAdapter } from './google-embedding.adapter';
 
 const OllamaEmbeddingResponseSchema = z.object({
   embedding: z.array(z.number()),
@@ -16,6 +17,11 @@ const OpenAIEmbeddingResponseSchema = z.object({
 
 export class EmbeddingAdapter {
   async embedText(text: string, config: ResolvedLLMConfig): Promise<number[]> {
+    if (config.provider === 'google') {
+      const adapter = new GoogleEmbeddingAdapter(config.apiKey || '');
+      return adapter.embedText(text, config);
+    }
+
     if (config.provider === 'ollama') {
       try {
         const response = await axios.post(
@@ -65,6 +71,11 @@ export class EmbeddingAdapter {
     texts: string[],
     config: ResolvedLLMConfig,
   ): Promise<number[][]> {
+    if (config.provider === 'google') {
+      const adapter = new GoogleEmbeddingAdapter(config.apiKey || '');
+      return adapter.embedBatch(texts, config);
+    }
+
     if (config.provider === 'ollama') {
       try {
         // Use the newer /api/embed API for batches

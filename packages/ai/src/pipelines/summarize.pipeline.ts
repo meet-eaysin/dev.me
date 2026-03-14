@@ -1,5 +1,8 @@
 import { DocumentType } from '@repo/types';
-import type { ResolvedClient, ChatCompletionMessageParam } from '../providers/provider.factory';
+import type {
+  ResolvedClient,
+  ChatCompletionMessageParam,
+} from '../providers/provider.factory';
 
 export class SummarizePipeline {
   private async callLlm(
@@ -95,4 +98,3 @@ export class SummarizePipeline {
 }
 
 export const summarizePipeline = new SummarizePipeline();
-

@@ -80,6 +80,24 @@ export const PROVIDER_REGISTRY: Record<string, LLMProvider> = {
         contextWindow: 1000000,
         free: true,
       },
+      {
+        id: 'gemini-embedding-001',
+        name: 'Gemini Embedding 001',
+        contextWindow: 2048,
+        free: true,
+      },
+      {
+        id: 'text-embedding-004',
+        name: 'Text Embedding 004',
+        contextWindow: 2048,
+        free: true,
+      },
+      {
+        id: 'gemini-embedding-2-preview',
+        name: 'Gemini Embedding 2 (Preview)',
+        contextWindow: 2048,
+        free: true,
+      },
     ],
   },
   openai: {

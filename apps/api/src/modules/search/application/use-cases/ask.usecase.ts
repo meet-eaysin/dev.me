@@ -45,9 +45,10 @@ export class AskUseCase {
       userId,
       conversationId,
     );
-    
+
     const resolvedClient = await this.llmClientFactory.createForUserId(userId);
-    const resolvedConfig = await this.llmClientFactory.resolveConfigForUserId(userId);
+    const resolvedConfig =
+      await this.llmClientFactory.resolveConfigForUserId(userId);
 
     const result = await this.ragService.ask(
       userId,
@@ -128,7 +129,8 @@ export class AskUseCase {
       conversationId,
     );
     const resolvedClient = await this.llmClientFactory.createForUserId(userId);
-    const resolvedConfig = await this.llmClientFactory.resolveConfigForUserId(userId);
+    const resolvedConfig =
+      await this.llmClientFactory.resolveConfigForUserId(userId);
 
     await this.ragService.stream(
       userId,

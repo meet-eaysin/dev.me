@@ -7,7 +7,13 @@ import {
   AskResultDto,
   SourceRefDto,
 } from '../../interface/schemas/search.schema';
-import { QdrantWrapper, embeddingAdapter, ResolvedLLMConfig, ResolvedClient, ChatCompletionMessageParam } from '@repo/ai';
+import {
+  QdrantWrapper,
+  embeddingAdapter,
+  ResolvedLLMConfig,
+  ResolvedClient,
+  ChatCompletionMessageParam,
+} from '@repo/ai';
 import { env } from '../../../../shared/utils/env';
 import { DocumentChunkModel, DocumentModel, IDocument } from '@repo/db';
 import { Types } from 'mongoose';
@@ -312,10 +318,12 @@ export class RagService {
   ): ChatCompletionMessageParam[] {
     const systemPrompt = `You are a helpful AI assistant. Answer the user's question ONLY using the provided context. If the context does not contain the answer, say "I cannot answer this based on the provided documents." clearly. Always cite which document your answer comes from using the [Source: Title] format. Prefer clear markdown with headings, short paragraphs, and bullet lists when useful.`;
 
-    const historyMessages: ChatCompletionMessageParam[] = history.map((message) => ({
-      role: message.role,
-      content: message.content,
-    }));
+    const historyMessages: ChatCompletionMessageParam[] = history.map(
+      (message) => ({
+        role: message.role,
+        content: message.content,
+      }),
+    );
 
     const userPrompt =
       contextStr.trim().length > 0

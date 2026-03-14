@@ -23,7 +23,7 @@ export interface ResolvedClient {
   }): Promise<string>;
 }
 
-class OpenAIResolvedClient implements ResolvedClient {
+export class OpenAIResolvedClient implements ResolvedClient {
   constructor(
     private client: OpenAI,
     public readonly providerId: string,
@@ -76,7 +76,7 @@ class OpenAIResolvedClient implements ResolvedClient {
   }
 }
 
-class GeminiResolvedClient implements ResolvedClient {
+export class GeminiResolvedClient implements ResolvedClient {
   private client: GoogleGenAI;
 
   constructor(

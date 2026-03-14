@@ -12,7 +12,7 @@ const llmConfigSchema = new Schema<LLMConfig>(
     apiKey: { type: String },
     useSystemDefault: { type: Boolean, default: true },
   },
-  { _id: false }
+  { _id: false },
 );
 
 const userSchema = new Schema<IUserDocument>(
