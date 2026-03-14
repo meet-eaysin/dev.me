@@ -8,7 +8,8 @@ import {
 } from '@nestjs/common';
 import { QStashGuard } from '../../../shared/guards/qstash.guard';
 import { summarizePipeline, ProviderFactory } from '@repo/ai';
-import { SummaryJobData, QUEUE_SUMMARY, DocumentType } from '@repo/types';
+import { QUEUE_SUMMARY, DocumentType } from '@repo/types';
+import type { SummaryJobData } from '@repo/types';
 import {
   IDocumentRepository,
   DocumentChunkModel,

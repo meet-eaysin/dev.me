@@ -17,10 +17,9 @@ import {
   embeddingAdapter,
   QdrantWrapper,
   ProviderFactory,
-  ResolvedLLMConfig,
 } from '@repo/ai';
+import type { ResolvedLLMConfig } from '@repo/ai';
 import {
-  IngestionJobData,
   IngestionStatus,
   IngestionStage,
   NotionAction,
@@ -28,6 +27,7 @@ import {
   QUEUE_GRAPH,
   QUEUE_NOTION_SYNC,
 } from '@repo/types';
+import type { IngestionJobData } from '@repo/types';
 import {
   IDocumentRepository,
   IIngestionJobRepository,

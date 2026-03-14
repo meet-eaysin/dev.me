@@ -7,7 +7,8 @@ import {
   Headers,
 } from '@nestjs/common';
 import { QStashGuard } from '../../../shared/guards/qstash.guard';
-import { GraphJobData, QUEUE_GRAPH } from '@repo/types';
+import { QUEUE_GRAPH } from '@repo/types';
+import type { GraphJobData } from '@repo/types';
 import { GraphBuilderService } from '../graph-builder.service';
 
 @Controller('api/webhooks')

@@ -14,7 +14,8 @@ import {
   QdrantWrapper,
   ProviderFactory,
 } from '@repo/ai';
-import { TranscriptJobData, QUEUE_TRANSCRIPT, DocumentType } from '@repo/types';
+import { QUEUE_TRANSCRIPT, DocumentType } from '@repo/types';
+import type { TranscriptJobData } from '@repo/types';
 import {
   IDocumentRepository,
   DocumentTranscriptModel,
