@@ -6,7 +6,7 @@ import {
   Body,
   Headers,
 } from '@nestjs/common';
-import { type EmailJobData, QUEUE_EMAILS } from '@repo/types';
+import { EmailJobData, QUEUE_EMAILS } from '@repo/types';
 import { QStashGuard } from '../../../shared/guards/qstash.guard';
 
 @Controller('api/webhooks')

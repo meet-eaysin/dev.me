@@ -4030,6 +4030,8 @@ __metadata:
   dependencies:
     "@eslint/js": "npm:^9.31.0"
     "@next/eslint-plugin-next": "npm:^15.4.2"
+    "@typescript-eslint/eslint-plugin": "npm:^8.57.0"
+    "@typescript-eslint/parser": "npm:^8.57.0"
     eslint: "npm:^9.31.0"
     eslint-config-prettier: "npm:^10.1.1"
     eslint-plugin-only-warn: "npm:^1.1.0"
@@ -4946,7 +4948,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:8.57.0":
+"@typescript-eslint/eslint-plugin@npm:8.57.0, @typescript-eslint/eslint-plugin@npm:^8.57.0":
   version: 8.57.0
   resolution: "@typescript-eslint/eslint-plugin@npm:8.57.0"
   dependencies:
@@ -4966,7 +4968,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:8.57.0":
+"@typescript-eslint/parser@npm:8.57.0, @typescript-eslint/parser@npm:^8.57.0":
   version: 8.57.0
   resolution: "@typescript-eslint/parser@npm:8.57.0"
   dependencies:

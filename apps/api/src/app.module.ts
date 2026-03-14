@@ -2,7 +2,6 @@ import {
   Module,
   OnModuleInit,
   OnApplicationShutdown,
-  Logger,
 } from '@nestjs/common';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { connectMongoDB, disconnectMongoDB } from '@repo/db';
@@ -74,8 +73,6 @@ import { CacheModule } from '@repo/cache';
   ],
 })
 export class AppModule implements OnModuleInit, OnApplicationShutdown {
-  private readonly logger = new Logger(AppModule.name);
-
   async onModuleInit() {
     await connectMongoDB(env.MONGODB_URI);
   }
