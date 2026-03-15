@@ -21,8 +21,10 @@ export class QdrantWrapper {
   constructor(url: string, apiKey?: string) {
     this.client = new QdrantClient({
       url,
+      checkCompatibility: false,
       ...(apiKey ? { apiKey } : {}),
     });
+
   }
 
   async ensureCollection(name: string, vectorSize: number): Promise<void> {
