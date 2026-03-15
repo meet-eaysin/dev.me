@@ -28,7 +28,7 @@
     "@repo/types": "*",
     "axios": "^1.6.7",
     "openai": "^6.29.0",
-    "p-limit": "^5.0.0",
+    "p-limit": "^3.1.0",
     "pdf-parse": "^1.1.1",
     "pdfjs-dist": "^4.10.38",
     "sharp": "^0.33.2",
