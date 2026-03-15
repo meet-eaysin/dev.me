@@ -1,16 +1,25 @@
 import type { Model } from 'mongoose';
 import mongoose, { Schema } from 'mongoose';
 import type { IUserDocument } from '../types/user.type';
-import type { LLMConfig } from '@repo/types';
+import type { LLMUserSettings, LLMConfig } from '@repo/types';
 
 // The shape stored on the User
 const llmConfigSchema = new Schema<LLMConfig>(
   {
-    providerId: { type: String },
-    modelId: { type: String },
+    id: { type: String },
+    providerId: { type: String, required: true },
+    modelId: { type: String, required: true },
     embeddingModelId: { type: String },
     apiKey: { type: String },
     useSystemDefault: { type: Boolean, default: true },
+  },
+  { _id: false },
+);
+
+const llmUserSettingsSchema = new Schema<LLMUserSettings>(
+  {
+    configs: { type: [llmConfigSchema], default: [] },
+    activeConfigId: { type: String },
   },
   { _id: false },
 );
@@ -21,7 +30,7 @@ const userSchema = new Schema<IUserDocument>(
     name: { type: String, required: true },
     avatarUrl: { type: String },
     authId: { type: String, required: true, unique: true, index: true },
-    llmConfig: { type: llmConfigSchema },
+    llmUserSettings: { type: llmUserSettingsSchema },
   },
   { timestamps: true },
 );

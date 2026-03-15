@@ -70,7 +70,7 @@ export class IngestionController {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       this.logger.error(
-        `[IngestionController] Job ${messageId} failed: ${errorMessage}`,
+        `Job ${messageId} failed: ${errorMessage}`,
       );
       const { documentId, userId } = data;
       await this.ingestionJobRepository.markFailed(documentId, errorMessage);
@@ -90,13 +90,13 @@ export class IngestionController {
     const { documentId, userId } = data;
 
     this.logger.log(
-      `[IngestionController] Starting ingestion for document: ${documentId}, user: ${userId}`,
+      `Starting ingestion for document: ${documentId}, user: ${userId}`,
     );
-
+ 
     const doc = await this.documentRepository.findById(documentId, userId);
     if (!doc) {
       this.logger.error(
-        `[IngestionController] Document not found: ${documentId} for user: ${userId}`,
+        `Document not found: ${documentId} for user: ${userId}`,
       );
       throw new NotFoundException('Document not found');
     }

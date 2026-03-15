@@ -68,7 +68,13 @@ export function LlmSettingsPage() {
   });
 
   const registry = useMemo(() => data?.registry || [], [data]);
-  const activeConfig = data?.config;
+  const activeConfig = useMemo(() => {
+    if (!data?.configs?.length) return null;
+    if (data.activeConfigId) {
+      return data.configs.find((c) => c.id === data.activeConfigId) || data.configs[0];
+    }
+    return data.configs[0];
+  }, [data]);
 
   useEffect(() => {
     if (activeConfig) {
@@ -102,7 +108,10 @@ export function LlmSettingsPage() {
   const onSubmit = async (values: LlmSettingsFormValues) => {
     setFeedback(null);
     try {
-      await updateConfig.mutateAsync(values as UpdateLLMConfigRequest);
+      await updateConfig.mutateAsync({
+        ...values,
+        id: activeConfig?.id,
+      } as UpdateLLMConfigRequest);
       setFeedback({
         message: 'LLM configuration updated successfully.',
         tone: 'success',

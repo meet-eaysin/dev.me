@@ -48,6 +48,9 @@ export class LLMClientFactory {
             'Failed to decrypt user API key. The key might be invalid or the encryption key changed.',
           );
         }
+      } else if (this.options.providerKeys && this.options.providerKeys[providerId]) {
+        // Fallback to system-wide provider key if user didn't provide one
+        apiKey = this.options.providerKeys[providerId];
       }
     }
 
@@ -76,6 +79,10 @@ export class LLMClientFactory {
     if (useSystemDefault && this.options.defaultEmbeddingProviderId) {
       embeddingProviderId = this.options.defaultEmbeddingProviderId;
       embeddingApiKey = this.options.defaultEmbeddingApiKey;
+    } else if (!useSystemDefault && this.options.providerKeys && this.options.providerKeys[embeddingProviderId]) {
+      // If user specified a chat provider, and we have a system key for that same provider,
+      // use it for embedding too if the user didn't provide their own key.
+      embeddingApiKey = apiKey; 
     }
 
     const embeddingProviderDef =
@@ -150,24 +157,25 @@ export class LLMClientFactory {
     }
 
     const { UserModel } = await import('@repo/db');
-    const user = await UserModel.findById(userId).select('llmConfig').lean();
+    const user = await UserModel.findById(userId)
+      .select('llmUserSettings')
+      .lean();
 
-    return this.resolveConfig(user?.llmConfig);
+    if (!user || !user.llmUserSettings || !user.llmUserSettings.configs.length) {
+      return this.resolveConfig(null);
+    }
+
+    const { configs, activeConfigId } = user.llmUserSettings;
+    const activeConfig =
+      configs.find((c) => c.id === activeConfigId) || configs[0];
+
+    return this.resolveConfig(activeConfig);
   }
 
   async createForUserId(userId: string): Promise<ResolvedClient> {
-    if (!Types.ObjectId.isValid(userId)) {
-      return this.createForUser(null);
-    }
-
-    const { UserModel } = await import('@repo/db');
-    const user = await UserModel.findById(userId).select('llmConfig').lean();
-
-    if (!user || !user.llmConfig) {
-      return this.createForUser(null);
-    }
-
-    return this.createForUser(user.llmConfig);
+    const resolved = await this.resolveConfigForUserId(userId);
+    const adapter = getProviderAdapter(resolved.adapterKey);
+    return adapter.createClient(resolved);
   }
 
   private isGoogleEmbeddingModel(

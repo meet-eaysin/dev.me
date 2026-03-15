@@ -144,6 +144,8 @@ export const env = {
     key: 'DEFAULT_EMBEDDING_API_KEY',
     required: false,
   }),
+  GROQ_API_KEY: getEnv({ key: 'GROQ_API_KEY', required: false }),
+  GOOGLE_AI_STUDIO_KEY: getEnv({ key: 'GOOGLE_AI_STUDIO_KEY', required: false }),
   JWT_SECRET: getEnv({ key: 'JWT_SECRET' }),
   JWT_EXPIRES_IN: getEnv({ key: 'JWT_EXPIRES_IN' }),
   REFRESH_TOKEN_SECRET: getEnv({ key: 'REFRESH_TOKEN_SECRET' }),

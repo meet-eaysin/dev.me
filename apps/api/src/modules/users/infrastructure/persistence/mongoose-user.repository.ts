@@ -81,7 +81,7 @@ export class MongooseUserRepository implements IUserRepository {
 
   private toEntity(doc: IUserDocument): UserEntity {
     return new UserEntity({
-      id: doc._id.toString(),
+      id: doc.id,
       email: doc.email,
       name: doc.name,
       avatarUrl: doc.avatarUrl,

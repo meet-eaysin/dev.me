@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import Link from 'next/link';
 import { Bot, ShieldCheck, UserCircle2, Workflow } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -39,6 +40,17 @@ export function SettingsPage() {
   const { data: sessions } = useUserSessions();
   const { data: llmConfig, error: llmError } = useLLMConfig();
   const { data: notionConfig, error: notionError } = useNotionConfig();
+ 
+  const activeConfig = useMemo(() => {
+    if (!llmConfig?.configs?.length) return null;
+    if (llmConfig.activeConfigId) {
+      return (
+        llmConfig.configs.find((c) => c.id === llmConfig.activeConfigId) ||
+        llmConfig.configs[0]
+      );
+    }
+    return llmConfig.configs[0];
+  }, [llmConfig]);
 
   const fatalLlmError =
     llmError && !isNotConfigured(llmError) ? (llmError as Error) : null;
@@ -167,15 +179,15 @@ export function SettingsPage() {
                   <p className="text-sm font-medium text-foreground">
                     LLM config
                   </p>
-                  <Badge variant={llmConfig?.config ? 'secondary' : 'outline'}>
-                    {llmConfig?.config
-                      ? llmConfig.config.providerId
+                  <Badge variant={activeConfig ? 'secondary' : 'outline'}>
+                    {activeConfig
+                      ? activeConfig.providerId
                       : 'Not configured'}
                   </Badge>
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {llmConfig?.config
-                    ? `${llmConfig.config.modelId} is ready for AI features.`
+                  {activeConfig
+                    ? `${activeConfig.modelId} is ready for AI features.`
                     : 'Save a provider and model set to enable AI-powered features.'}
                 </p>
               </div>

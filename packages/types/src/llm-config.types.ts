@@ -15,6 +15,7 @@ export interface LLMProvider {
 }
 
 export interface LLMConfig {
+  id?: string;
   providerId: string;
   modelId: string;
   embeddingModelId?: string;
@@ -22,12 +23,23 @@ export interface LLMConfig {
   useSystemDefault: boolean;
 }
 
+export interface LLMUserSettings {
+  configs: LLMConfig[];
+  activeConfigId?: string;
+}
+
 export interface LLMSettingsResponse {
-  config: (Omit<LLMConfig, 'apiKey'> & { hasApiKey: boolean }) | null;
+  configs: (Omit<LLMConfig, 'apiKey'> & { hasApiKey: boolean })[];
+  activeConfigId?: string;
   registry: LLMProvider[];
 }
 
-export interface UpdateLLMConfigRequest {
+export interface UpdateLLMConfigRequest extends UpdateLLMConfigSubRequest {
+  activeConfigId?: string;
+}
+
+export interface UpdateLLMConfigSubRequest {
+  id?: string;
   providerId: string;
   modelId: string;
   embeddingModelId?: string;

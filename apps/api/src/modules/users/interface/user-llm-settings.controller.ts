@@ -1,10 +1,12 @@
 import { Controller, Get, Patch, Post, Body } from '@nestjs/common';
+import { Types } from 'mongoose';
 import { LLMClientFactory, getProviderRegistry } from '@repo/ai';
 import { encrypt } from '@repo/crypto';
 import type {
   UpdateLLMConfigRequest,
   LLMSettingsResponse,
   TestLLMConfigRequest,
+  LLMConfig,
 } from '@repo/types';
 import { User } from '../../../shared/decorators/user.decorator';
 import { env } from '../../../shared/utils/env';
@@ -18,20 +20,20 @@ export class UserLlmSettingsController {
     @User('userId') userId: string,
   ): Promise<LLMSettingsResponse> {
     const { UserModel } = await import('@repo/db');
-    const user = await UserModel.findById(userId).select('llmConfig').lean();
-    const config = user?.llmConfig;
+    const user = await UserModel.findById(userId).select('llmUserSettings').lean();
+    const settings = user?.llmUserSettings || { configs: [], activeConfigId: undefined };
 
     return {
       registry: getProviderRegistry(),
-      config: config
-        ? {
-            providerId: config.providerId,
-            modelId: config.modelId,
-            embeddingModelId: config.embeddingModelId,
-            useSystemDefault: config.useSystemDefault,
-            hasApiKey: !!config.apiKey,
-          }
-        : null,
+      configs: settings.configs.map((config) => ({
+        id: config.id,
+        providerId: config.providerId,
+        modelId: config.modelId,
+        embeddingModelId: config.embeddingModelId,
+        useSystemDefault: config.useSystemDefault,
+        hasApiKey: !!config.apiKey,
+      })),
+      activeConfigId: settings.activeConfigId,
     };
   }
 
@@ -47,40 +49,52 @@ export class UserLlmSettingsController {
       return { success: false, message: 'User not found' };
     }
 
-    const llmConfig = user.llmConfig || {
-      useSystemDefault: true,
-      providerId: '',
-      modelId: '',
+    const settings = user.llmUserSettings || {
+      configs: [],
+      activeConfigId: undefined,
     };
 
-    if (body.useSystemDefault !== undefined) {
-      llmConfig.useSystemDefault = body.useSystemDefault;
+    if (body.activeConfigId !== undefined) {
+      settings.activeConfigId = body.activeConfigId;
     }
 
-    if (body.providerId !== undefined) {
-      llmConfig.providerId = body.providerId;
-    }
+    // If providerId is present, we are updating or adding a specific config
+    if (body.providerId) {
+      const configIndex = settings.configs.findIndex((c) => c.id === body.id);
 
-    if (body.modelId !== undefined) {
-      llmConfig.modelId = body.modelId;
-    }
+      const newConfig: LLMConfig = {
+        id: body.id || new Types.ObjectId().toHexString(),
+        providerId: body.providerId,
+        modelId: body.modelId,
+        embeddingModelId: body.embeddingModelId,
+        useSystemDefault: body.useSystemDefault,
+      };
 
-    if (body.embeddingModelId !== undefined) {
-      llmConfig.embeddingModelId = body.embeddingModelId;
-    }
+      if (body.apiKey !== undefined) {
+        if (body.apiKey.trim() === '') {
+          newConfig.apiKey = undefined;
+        } else {
+          newConfig.apiKey = encrypt(body.apiKey, env.ENCRYPTION_KEY);
+        }
+      } else if (configIndex > -1) {
+        // Keep existing API key if it wasn't provided in the update
+        newConfig.apiKey = settings.configs[configIndex]?.apiKey;
+      }
 
-    if (body.apiKey !== undefined) {
-      if (body.apiKey.trim() === '') {
-        llmConfig.apiKey = undefined;
+      if (configIndex > -1) {
+        settings.configs[configIndex] = newConfig;
       } else {
-        llmConfig.apiKey = encrypt(body.apiKey, env.ENCRYPTION_KEY);
+        settings.configs.push(newConfig);
+        if (!settings.activeConfigId) {
+          settings.activeConfigId = newConfig.id;
+        }
       }
     }
 
-    user.llmConfig = llmConfig;
+    user.llmUserSettings = settings;
     await user.save();
 
-    return { success: true, message: 'LLM configuration updated successfully' };
+    return { success: true, message: 'LLM settings updated successfully' };
   }
 
   @Post('test')

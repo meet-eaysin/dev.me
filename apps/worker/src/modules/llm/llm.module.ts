@@ -15,6 +15,10 @@ import { env } from '../../shared/utils/env';
           defaultEmbeddingProviderId: env.DEFAULT_EMBEDDING_PROVIDER_ID,
           defaultEmbeddingModelId: env.DEFAULT_EMBEDDING_MODEL_ID,
           defaultEmbeddingApiKey: env.DEFAULT_EMBEDDING_API_KEY,
+          providerKeys: {
+            groq: env.GROQ_API_KEY,
+            google: env.GOOGLE_AI_STUDIO_KEY,
+          },
           encryptionKey: env.ENCRYPTION_KEY,
           ollamaUrl: env.OLLAMA_URL,
           allowDevFallback: env.NODE_ENV === 'development',

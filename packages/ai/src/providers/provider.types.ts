@@ -7,6 +7,7 @@ export interface LlmFactoryOptions {
   defaultEmbeddingProviderId?: string;
   defaultEmbeddingModelId?: string;
   defaultEmbeddingApiKey?: string;
+  providerKeys?: Record<string, string>;
   encryptionKey?: string;
   ollamaUrl?: string;
   allowDevFallback?: boolean;
