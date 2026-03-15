@@ -33,7 +33,7 @@ import { CacheModule } from '@repo/cache';
         token: env.UPSTASH_REDIS_REST_TOKEN,
       },
       redis: {
-        url: 'redis://localhost:6379',
+        url: env.REDIS_URL,
       },
     }),
     AnalyticsModule,

@@ -215,8 +215,10 @@ export class GraphBuilderService {
       );
     } catch (error) {
       this.logger.error(
-        `[GraphBuilder] Error processing ${documentId}:`,
-        error,
+        `[GraphBuilder] Error processing ${documentId}: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
+        error instanceof Error ? error.stack : undefined,
       );
     }
   }

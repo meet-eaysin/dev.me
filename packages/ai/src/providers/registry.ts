@@ -1,12 +1,37 @@
-import { LLMProvider } from '@repo/types';
+import type { LLMProvider } from '@repo/types';
+import type { ProviderAdapterKey } from './provider.types';
 
-export const PROVIDER_REGISTRY: Record<string, LLMProvider> = {
+export interface ProviderDefinition extends LLMProvider {
+  adapterKey?: ProviderAdapterKey;
+  defaultEmbeddingModelId?: string;
+}
+
+export const PROVIDER_REGISTRY: Record<string, ProviderDefinition> = {
+  ollama: {
+    id: 'ollama',
+    name: 'Ollama',
+    baseURL: 'http://localhost:11434',
+    requiresApiKey: false,
+    defaultModel: 'llama3',
+    adapterKey: 'ollama',
+    defaultEmbeddingModelId: 'nomic-embed-text',
+    models: [
+      {
+        id: 'llama3',
+        name: 'Llama 3',
+        contextWindow: 8192,
+        free: true,
+      },
+    ],
+  },
   openrouter: {
     id: 'openrouter',
     name: 'OpenRouter',
     baseURL: 'https://openrouter.ai/api/v1',
     requiresApiKey: true,
     defaultModel: 'meta-llama/llama-3.3-70b-instruct:free',
+    adapterKey: 'openai',
+    defaultEmbeddingModelId: 'nomic-embed-text',
     models: [
       {
         id: 'meta-llama/llama-3.3-70b-instruct:free',
@@ -28,6 +53,8 @@ export const PROVIDER_REGISTRY: Record<string, LLMProvider> = {
     baseURL: 'https://api.groq.com/openai/v1',
     requiresApiKey: true,
     defaultModel: 'llama-3.3-70b-versatile',
+    adapterKey: 'openai',
+    defaultEmbeddingModelId: 'nomic-embed-text',
     models: [
       {
         id: 'llama-3.3-70b-versatile',
@@ -49,6 +76,8 @@ export const PROVIDER_REGISTRY: Record<string, LLMProvider> = {
     baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/',
     requiresApiKey: true,
     defaultModel: 'gemini-2.5-flash',
+    adapterKey: 'google',
+    defaultEmbeddingModelId: 'gemini-embedding-001',
     models: [
       {
         id: 'gemini-1.5-flash',
@@ -106,6 +135,8 @@ export const PROVIDER_REGISTRY: Record<string, LLMProvider> = {
     baseURL: 'https://api.openai.com/v1',
     requiresApiKey: true,
     defaultModel: 'gpt-4o-mini',
+    adapterKey: 'openai',
+    defaultEmbeddingModelId: 'text-embedding-3-small',
     models: [
       {
         id: 'gpt-4o-mini',
@@ -127,6 +158,8 @@ export const PROVIDER_REGISTRY: Record<string, LLMProvider> = {
     baseURL: 'https://openrouter.ai/api/v1',
     requiresApiKey: true,
     defaultModel: 'anthropic/claude-3-5-sonnet',
+    adapterKey: 'openai',
+    defaultEmbeddingModelId: 'nomic-embed-text',
     models: [
       {
         id: 'anthropic/claude-3-5-sonnet',
@@ -145,9 +178,17 @@ export const PROVIDER_REGISTRY: Record<string, LLMProvider> = {
 };
 
 export const getProviderRegistry = (): LLMProvider[] => {
-  return Object.values(PROVIDER_REGISTRY);
+  return Object.values(PROVIDER_REGISTRY).map(
+    ({ adapterKey, ...rest }) => rest,
+  );
 };
 
-export const getProviderById = (id: string): LLMProvider | undefined => {
+export const getProviderById = (id: string): ProviderDefinition | undefined => {
   return PROVIDER_REGISTRY[id];
+};
+
+export const getProviderAdapterKey = (
+  id: string,
+): ProviderAdapterKey | undefined => {
+  return PROVIDER_REGISTRY[id]?.adapterKey;
 };

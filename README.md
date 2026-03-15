@@ -17,7 +17,7 @@ graph TD
     Client[Web App - Next.js] --> API[Core API - NestJS]
     API --> DB[(MongoDB)]
     API --> Cache[(Redis Cache)]
-    API --> Queue[QStash Queue]
+    API --> Queue[Queue Provider]
 
     Queue --> Worker[Worker Services - NestJS]
     Worker --> DB
@@ -37,7 +37,7 @@ graph TD
 - **`@repo/cache`**: Redis and Upstash caching utilities.
 - **`@repo/crypto`**: Security and encryption utilities.
 - **`@repo/db`**: MongoDB connection handlers and Mongoose schemas.
-- **`@repo/queue`**: QStash integration for background job dispatch and routing.
+- **`@repo/queue`**: Pluggable queue providers for background job dispatch and routing.
 - **`@repo/types`**: Shared TypeScript interfaces across the monorepo.
 - **`@repo/eslint-config`, `@repo/jest-config`, `@repo/typescript-config`**: Centralized configurations ensuring consistency.
 
@@ -46,7 +46,7 @@ graph TD
 - **Frontend:** Next.js 16 (App Router), React 19, TailwindCSS v4, Shadcn UI, Framer Motion
 - **Backend:** NestJS 11, Express
 - **Database:** MongoDB
-- **Caching & Queues:** Redis, Upstash, QStash
+- **Caching & Queues:** Redis, Upstash, Queue Providers
 - **AI & Vector DB:** Ollama (Local LLMs), Qdrant (Vector DB)
 - **Tooling:** Turborepo, Yarn 4 (Workspaces), ESLint, Prettier, Jest
 

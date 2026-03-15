@@ -5,8 +5,10 @@ import {
   UseGuards,
   Body,
   Headers,
+  InternalServerErrorException,
+  HttpException,
 } from '@nestjs/common';
-import { QStashGuard } from '../../../shared/guards/qstash.guard';
+import { QueueWebhookGuard } from '../../../shared/guards/queue-webhook.guard';
 import { QUEUE_NOTION_SYNC, NotionAction } from '@repo/types';
 import type { NotionSyncJobData } from '@repo/types';
 import { DocumentModel, NotionConfigModel } from '@repo/db';
@@ -21,19 +23,22 @@ export class NotionController {
   constructor(private readonly notionClient: NotionClient) {}
 
   @Post(QUEUE_NOTION_SYNC)
-  @UseGuards(QStashGuard)
+  @UseGuards(QueueWebhookGuard)
   async process(
     @Body() data: NotionSyncJobData,
     @Headers('Upstash-Message-Id') messageId: string,
   ): Promise<void> {
     try {
       await this.processJob(data);
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : String(err);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       this.logger.error(
         `[NotionController] Job ${messageId} failed: ${errorMessage}`,
       );
-      throw err;
+      if (err instanceof HttpException) {
+        throw err;
+      }
+      throw new InternalServerErrorException('Notion sync job failed');
     }
   }
 
@@ -108,19 +113,28 @@ export class NotionController {
         if (doc && typeof pageId === 'string') {
           try {
             await this.notionClient.deletePage(token, pageId);
-          } catch (error: unknown) {
-            const message =
-              error instanceof Error ? error.message : String(error);
-            this.logger.error(`Failed to delete Notion page: ${message}`);
+          } catch (error) {
+            this.logger.error(
+              `Failed to delete Notion page: ${
+                error instanceof Error ? error.message : 'Unknown error'
+              }`,
+              error instanceof Error ? error.stack : undefined,
+            );
           }
           doc.notionPageId = undefined;
           await doc.save();
         }
       }
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : String(error);
-      this.logger.error(`Sync failed for doc ${documentId}: ${message}`);
-      throw error; // Let QStash handle retries
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(
+        `Sync failed for doc ${documentId}: ${message}`,
+        error instanceof Error ? error.stack : undefined,
+      );
+      throw new InternalServerErrorException(
+        'Notion sync failed. Retry scheduled.',
+      );
     }
   }
 }

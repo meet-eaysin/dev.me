@@ -4,7 +4,7 @@ import {
   UnprocessableEntityException,
   Logger,
 } from '@nestjs/common';
-import { QStashService } from '@repo/queue';
+import { QueueService } from '@repo/queue';
 import { IDocumentRepository } from '../../domain/repositories/document.repository';
 import { IngestionStatus, QUEUE_INGESTION } from '@repo/types';
 
@@ -14,7 +14,7 @@ export class RetryIngestionUseCase {
 
   constructor(
     private readonly documentRepository: IDocumentRepository,
-    private readonly qstashService: QStashService,
+    private readonly queueService: QueueService,
   ) {}
 
   async execute(id: string, userId: string): Promise<{ jobId: string }> {
@@ -39,7 +39,7 @@ export class RetryIngestionUseCase {
     });
 
     // Re-push to ingestion webhook
-    this.qstashService
+    this.queueService
       .publishMessage(QUEUE_INGESTION, {
         documentId: id,
         userId: userId,
@@ -47,7 +47,7 @@ export class RetryIngestionUseCase {
         source: doc.sourceUrl ?? '',
       })
       .catch((err: Error) => {
-        this.logger.error(`Failed to publish to QStash: ${err.message}`);
+        this.logger.error(`Failed to publish to queue: ${err.message}`);
       });
 
     return { jobId: `dummy-job-${id}` };

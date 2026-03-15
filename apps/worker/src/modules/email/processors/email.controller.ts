@@ -8,14 +8,14 @@ import {
 } from '@nestjs/common';
 import { QUEUE_EMAILS } from '@repo/types';
 import type { EmailJobData } from '@repo/types';
-import { QStashGuard } from '../../../shared/guards/qstash.guard';
+import { QueueWebhookGuard } from '../../../shared/guards/queue-webhook.guard';
 
 @Controller('api/webhooks')
 export class EmailController {
   private readonly logger = new Logger(EmailController.name);
 
   @Post(QUEUE_EMAILS)
-  @UseGuards(QStashGuard)
+  @UseGuards(QueueWebhookGuard)
   async process(
     @Body() data: EmailJobData,
     @Headers('Upstash-Message-Id') messageId: string,

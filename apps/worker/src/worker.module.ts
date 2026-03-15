@@ -23,6 +23,7 @@ import { GraphModule } from './modules/graph/graph.module';
 import { NotionModule } from './modules/notion/notion.module';
 
 import { CacheModule } from '@repo/cache';
+import { QueueModule as SharedQueueModule } from '@repo/queue';
 
 import { LlmModule } from './modules/llm/llm.module';
 
@@ -36,7 +37,19 @@ import { LlmModule } from './modules/llm/llm.module';
         token: env.UPSTASH_REDIS_REST_TOKEN,
       },
       redis: {
-        url: 'redis://localhost:6379',
+        url: env.REDIS_URL,
+      },
+    }),
+    SharedQueueModule.forRoot({
+      provider: env.QUEUE_PROVIDER,
+      qstash: {
+        token: env.QSTASH_TOKEN,
+        workerUrl: env.WORKER_URL,
+        devBypass: env.NODE_ENV === 'development',
+      },
+      http: {
+        baseUrl: env.WORKER_URL,
+        devBypassHeader: true,
       },
     }),
     LlmModule,

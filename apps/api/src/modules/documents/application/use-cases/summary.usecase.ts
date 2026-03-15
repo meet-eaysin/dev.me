@@ -4,14 +4,14 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { IngestionStatus, QUEUE_SUMMARY } from '@repo/types';
-import { QStashService } from '@repo/queue';
+import { QueueService } from '@repo/queue';
 import { IDocumentRepository } from '../../domain/repositories/document.repository';
 
 @Injectable()
 export class SummaryUseCase {
   constructor(
     private readonly documentRepository: IDocumentRepository,
-    private readonly qstashService: QStashService,
+    private readonly queueService: QueueService,
   ) {}
 
   async generateSummary(documentId: string, userId: string): Promise<void> {
@@ -22,7 +22,7 @@ export class SummaryUseCase {
       throw new BadRequestException('Document ingestion is not completed yet');
     }
 
-    await this.qstashService.publishMessage(QUEUE_SUMMARY, {
+    await this.queueService.publishMessage(QUEUE_SUMMARY, {
       documentId,
       userId,
     });

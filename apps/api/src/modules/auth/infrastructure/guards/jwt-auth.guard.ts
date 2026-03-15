@@ -6,6 +6,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { IS_PUBLIC_KEY } from '../../../../shared/decorators/public.decorator';
+import { env } from '../../../../shared/utils/env';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -25,10 +26,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     const request = context.switchToHttp().getRequest();
 
     // Dev auth bypass
-    if (
-      process.env.DEV_AUTH_ENABLED === 'true' &&
-      request.headers['x-user-id']
-    ) {
+    if (env.DEV_AUTH_ENABLED && request.headers['x-user-id']) {
       request.user = { id: request.headers['x-user-id'] };
       return true;
     }
@@ -36,7 +34,13 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     return super.canActivate(context);
   }
 
-  handleRequest(err: any, user: any) {
+  handleRequest<TUser = unknown>(
+    err: unknown,
+    user: TUser | null,
+    _info: unknown,
+    _context: ExecutionContext,
+    _status?: unknown,
+  ): TUser {
     if (err || !user) {
       throw err || new UnauthorizedException('Authentication required');
     }

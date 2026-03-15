@@ -1,4 +1,10 @@
-import { DynamicModule, Module, Global, Provider } from '@nestjs/common';
+import {
+  DynamicModule,
+  Module,
+  Global,
+  Provider,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { ICacheProvider } from './interfaces/cache-provider.interface';
 import { UpstashCacheProvider } from './providers/upstash-cache.provider';
 import { RedisCacheProvider } from './providers/redis-cache.provider';
@@ -22,7 +28,7 @@ export class CacheModule {
 
     if (options.provider === 'upstash') {
       if (!options.upstash) {
-        throw new Error(
+        throw new InternalServerErrorException(
           'Upstash configuration is required for Upstash provider',
         );
       }
@@ -36,7 +42,9 @@ export class CacheModule {
       });
     } else if (options.provider === 'redis') {
       if (!options.redis) {
-        throw new Error('Redis configuration is required for Redis provider');
+        throw new InternalServerErrorException(
+          'Redis configuration is required for Redis provider',
+        );
       }
 
       providers.push({
@@ -44,7 +52,9 @@ export class CacheModule {
         useValue: new RedisCacheProvider(options.redis.url),
       });
     } else {
-      throw new Error(`Provider ${options.provider} not supported`);
+      throw new InternalServerErrorException(
+        `Provider ${options.provider} not supported`,
+      );
     }
 
     return {

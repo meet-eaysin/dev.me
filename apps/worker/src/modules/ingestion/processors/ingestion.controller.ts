@@ -5,9 +5,12 @@ import {
   UseGuards,
   Body,
   Headers,
+  NotFoundException,
+  InternalServerErrorException,
+  HttpException,
 } from '@nestjs/common';
-import { QStashGuard } from '../../../shared/guards/qstash.guard';
-import { QStashService } from '@repo/queue';
+import { QueueWebhookGuard } from '../../../shared/guards/queue-webhook.guard';
+import { QueueService } from '@repo/queue';
 import {
   pdfExtractor,
   urlExtractor,
@@ -50,33 +53,36 @@ export class IngestionController {
     private readonly documentRepository: IDocumentRepository,
     private readonly ingestionJobRepository: IIngestionJobRepository,
     private readonly localStorage: LocalStorage,
-    private readonly qstashService: QStashService,
+    private readonly queueService: QueueService,
     private readonly llmClientFactory: LLMClientFactory,
   ) {
     this.qdrant = new QdrantWrapper(env.QDRANT_URL, env.QDRANT_API_KEY);
   }
 
   @Post(QUEUE_INGESTION)
-  @UseGuards(QStashGuard)
+  @UseGuards(QueueWebhookGuard)
   async process(
     @Body() data: IngestionJobData,
     @Headers('Upstash-Message-Id') messageId: string,
   ): Promise<void> {
     try {
       await this.processJob(data);
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : String(err);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       this.logger.error(
         `[IngestionController] Job ${messageId} failed: ${errorMessage}`,
       );
       const { documentId, userId } = data;
       await this.ingestionJobRepository.markFailed(documentId, errorMessage);
       await this.documentRepository.update(documentId, userId, {
-        ingestionStatus: IngestionStatus.FAILED as any,
+        ingestionStatus: IngestionStatus.FAILED,
         ingestionError: errorMessage,
       });
 
-      throw err;
+      if (err instanceof HttpException) {
+        throw err;
+      }
+      throw new InternalServerErrorException('Ingestion job failed');
     }
   }
 
@@ -84,7 +90,9 @@ export class IngestionController {
     const { documentId, userId } = data;
 
     const doc = await this.documentRepository.findById(documentId, userId);
-    if (!doc) throw new Error('Document not found');
+    if (!doc) {
+      throw new NotFoundException('Document not found');
+    }
 
     const type = doc.type;
     const source = doc.sourceUrl || '';
@@ -97,7 +105,7 @@ export class IngestionController {
     );
 
     await this.documentRepository.update(documentId, userId, {
-      ingestionStatus: IngestionStatus.PROCESSING as any,
+      ingestionStatus: IngestionStatus.PROCESSING,
     });
 
     try {
@@ -146,7 +154,7 @@ export class IngestionController {
 
       if (text.length < 50) {
         await this.documentRepository.update(documentId, userId, {
-          ingestionStatus: IngestionStatus.COMPLETED as any,
+          ingestionStatus: IngestionStatus.COMPLETED,
           embeddingsReady: false,
         });
         await this.ingestionJobRepository.updateStage(
@@ -185,9 +193,11 @@ export class IngestionController {
             }
           }
         }
-      } catch (error: unknown) {
+      } catch (error) {
         this.logger.warn(
-          `Topic classification skipped: ${error instanceof Error ? error.message : String(error)}`,
+          `Topic classification skipped: ${
+            error instanceof Error ? error.message : 'Unknown error'
+          }`,
         );
       }
 
@@ -257,13 +267,13 @@ export class IngestionController {
         IngestionStatus.PROCESSING,
         userId,
       );
-      await this.qstashService.publishMessage(QUEUE_GRAPH, {
+      await this.queueService.publishMessage(QUEUE_GRAPH, {
         documentId,
         userId,
       });
 
       await this.documentRepository.update(documentId, userId, {
-        ingestionStatus: IngestionStatus.COMPLETED as any,
+        ingestionStatus: IngestionStatus.COMPLETED,
         embeddingsReady: true,
         chunkCount: chunks.length,
         content: text.substring(0, 10000),
@@ -275,20 +285,26 @@ export class IngestionController {
         userId,
       );
 
-      await this.qstashService.publishMessage(QUEUE_NOTION_SYNC, {
+      await this.queueService.publishMessage(QUEUE_NOTION_SYNC, {
         documentId,
         userId,
         action: NotionAction.CREATE,
       });
-    } catch (error: unknown) {
-      this.logger.error(`Ingestion failed:`, error);
+    } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : String(error);
+        error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(
+        'Ingestion failed',
+        error instanceof Error ? error.stack : undefined,
+      );
       await this.documentRepository.update(documentId, userId, {
         ingestionStatus: IngestionStatus.FAILED,
         ingestionError: errorMessage || 'Unknown error',
       });
-      throw error;
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Ingestion failed');
     }
   }
 

@@ -9,9 +9,9 @@ import { Receiver } from '@upstash/qstash';
 import { env } from '../utils/env';
 
 @Injectable()
-export class QStashGuard implements CanActivate {
+export class QueueWebhookGuard implements CanActivate {
   private receiver: Receiver;
-  private readonly logger = new Logger(QStashGuard.name);
+  private readonly logger = new Logger(QueueWebhookGuard.name);
 
   constructor() {
     this.receiver = new Receiver({
@@ -23,14 +23,17 @@ export class QStashGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
 
-    // In local development, we might not have QStash signatures if we are testing locally without local tunnel
+    if (env.QUEUE_PROVIDER !== 'qstash') {
+      return true;
+    }
+
     if (env.NODE_ENV === 'development') {
       if (
         !env.QSTASH_CURRENT_SIGNING_KEY ||
         request.headers['x-dev-bypass'] === 'true'
       ) {
         this.logger.warn(
-          'Skipping QStash signature verification in development mode',
+          'Skipping webhook signature verification in development mode',
         );
         return true;
       }
@@ -52,9 +55,9 @@ export class QStashGuard implements CanActivate {
         body: rawBody,
       });
       return isValid;
-    } catch (error: unknown) {
+    } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : String(error);
+        error instanceof Error ? error.message : 'Unknown error';
       this.logger.error(
         `Webhook signature verification failed: ${errorMessage}`,
       );

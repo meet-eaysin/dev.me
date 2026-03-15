@@ -8,14 +8,17 @@ import type {
 } from '@repo/ai';
 
 // Type definitions for mocks
+type MockValue = string | number | boolean | null | object;
+type MockArgs = Array<string | number | boolean | object | null>;
+
 interface MockAxiosResponse {
-  data: Record<string, unknown>;
+  data: Record<string, MockValue>;
 }
 
 interface MockQdrantResult {
   id: string;
   score: number;
-  payload: Record<string, unknown>;
+  payload: Record<string, MockValue>;
 }
 
 interface MockLLMConfig {
@@ -53,72 +56,63 @@ const createMockStream = (chunks: string[]) =>
     },
   });
 
-global.fetch = jest.fn(
-  async (input: string | URL | Request, init?: RequestInit) => {
-    const url = typeof input === 'string' ? input : input.toString();
-    const requestBody =
-      typeof init?.body === 'string'
-        ? init.body
-        : input instanceof Request
-          ? await input.text()
-          : '';
-    const streaming = requestBody.includes('"stream":true');
+const createJsonResponse = (body: Record<string, MockValue>) =>
+  new Response(JSON.stringify(body), {
+    status: 200,
+    headers: { 'Content-Type': 'application/json' },
+  });
 
-    if (url.includes('/api/chat')) {
-      if (streaming) {
-        return {
-          ok: true,
-          status: 200,
-          body: createMockStream([
-            JSON.stringify({
-              message: { content: 'Mocked AI response content' },
-              done: true,
-            }) + '\n',
-          ]),
-          json: async () => ({
-            message: { content: 'Mocked AI response content' },
-          }),
-        } as Response;
-      }
+const createStreamResponse = (chunks: string[]) =>
+  new Response(createMockStream(chunks), {
+    status: 200,
+    headers: { 'Content-Type': 'text/event-stream' },
+  });
 
-      return {
-        ok: true,
-        status: 200,
-        body: null,
-        json: async () => ({
+async function fetchMock(
+  input: string | URL | Request,
+  init?: RequestInit,
+): Promise<Response> {
+  const url = typeof input === 'string' ? input : input.toString();
+  const requestBody =
+    typeof init?.body === 'string'
+      ? init.body
+      : input instanceof Request
+        ? await input.text()
+        : '';
+  const streaming = requestBody.includes('"stream":true');
+
+  if (url.includes('/api/chat')) {
+    if (streaming) {
+      return createStreamResponse([
+        JSON.stringify({
           message: { content: 'Mocked AI response content' },
-        }),
-      } as Response;
+          done: true,
+        }) + '\n',
+      ]);
     }
 
-    if (url.includes('/chat/completions')) {
-      if (streaming) {
-        return {
-          ok: true,
-          status: 200,
-          body: createMockStream([
-            'data: {"choices":[{"delta":{"content":"Mocked AI response content"}}]}\n',
-            'data: [DONE]\n',
-          ]),
-          json: async () => ({
-            choices: [{ message: { content: 'Mocked AI response content' } }],
-          }),
-        } as Response;
-      }
+    return createJsonResponse({
+      message: { content: 'Mocked AI response content' },
+    });
+  }
 
-      return {
-        ok: true,
-        status: 200,
-        body: null,
-        json: async () => ({
-          choices: [{ message: { content: 'Mocked AI response content' } }],
-        }),
-      } as Response;
+  if (url.includes('/chat/completions')) {
+    if (streaming) {
+      return createStreamResponse([
+        'data: {"choices":[{"delta":{"content":"Mocked AI response content"}}]}\n',
+        'data: [DONE]\n',
+      ]);
     }
 
-    throw new Error(`Unhandled fetch mock for ${url}`);
-  },
-) as typeof fetch;
+    return createJsonResponse({
+      choices: [{ message: { content: 'Mocked AI response content' } }],
+    });
+  }
+
+  throw new Error(`Unhandled fetch mock for ${url}`);
+}
+
+global.fetch = fetchMock;
 
 jest.mock('@repo/ai', () => ({
   QdrantWrapper: jest.fn().mockImplementation(() => ({
@@ -175,6 +169,8 @@ jest.mock('@repo/ai', () => ({
         embeddingModel: 'nomic-embed-text',
         baseUrl: 'http://localhost:11434',
         apiKey: 'mock-api-key',
+        adapterKey: 'ollama',
+        allowDevFallback: false,
       }),
     createForUser: jest
       .fn<(config?: LLMConfig | null) => Promise<ResolvedClient>>()
@@ -221,6 +217,8 @@ jest.mock('@repo/ai', () => ({
         embeddingModel: 'nomic-embed-text',
         baseUrl: 'http://localhost:11434',
         apiKey: 'mock-api-key',
+        adapterKey: 'ollama',
+        allowDevFallback: false,
       }),
     createForUserId: jest
       .fn<(userId: string) => Promise<ResolvedClient>>()
@@ -268,15 +266,15 @@ jest.mock('@repo/ai', () => ({
 jest.mock('@upstash/qstash', () => ({
   Client: jest.fn().mockImplementation(() => ({
     publishJSON: jest
-      .fn<(...args: unknown[]) => Promise<{ messageId: string }>>()
+      .fn<(...args: MockArgs) => Promise<{ messageId: string }>>()
       .mockResolvedValue({ messageId: 'mock-message-id' }),
     publish: jest
-      .fn<(...args: unknown[]) => Promise<{ messageId: string }>>()
+      .fn<(...args: MockArgs) => Promise<{ messageId: string }>>()
       .mockResolvedValue({ messageId: 'mock-message-id' }),
   })),
   Receiver: jest.fn().mockImplementation(() => ({
     verify: jest
-      .fn<(...args: unknown[]) => Promise<boolean>>()
+      .fn<(...args: MockArgs) => Promise<boolean>>()
       .mockResolvedValue(true),
   })),
 }));
@@ -284,19 +282,17 @@ jest.mock('@upstash/qstash', () => ({
 jest.mock('@upstash/redis', () => ({
   Redis: jest.fn().mockImplementation(() => ({
     get: jest
-      .fn<(...args: unknown[]) => Promise<unknown>>()
+      .fn<(...args: MockArgs) => Promise<string>>()
       .mockResolvedValue('mock-value'),
     set: jest
-      .fn<(...args: unknown[]) => Promise<string>>()
+      .fn<(...args: MockArgs) => Promise<string>>()
       .mockResolvedValue('OK'),
-    del: jest
-      .fn<(...args: unknown[]) => Promise<number>>()
-      .mockResolvedValue(1),
+    del: jest.fn<(...args: MockArgs) => Promise<number>>().mockResolvedValue(1),
     exists: jest
-      .fn<(...args: unknown[]) => Promise<number>>()
+      .fn<(...args: MockArgs) => Promise<number>>()
       .mockResolvedValue(1),
     expire: jest
-      .fn<(...args: unknown[]) => Promise<number>>()
+      .fn<(...args: MockArgs) => Promise<number>>()
       .mockResolvedValue(1),
   })),
 }));

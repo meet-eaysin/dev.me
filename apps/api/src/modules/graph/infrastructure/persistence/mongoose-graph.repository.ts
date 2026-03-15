@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Types } from 'mongoose';
 import {
   GraphNodeModel,
@@ -85,7 +85,9 @@ export class MongooseGraphRepository extends IGraphRepository {
       .lean<IGraphNodeDocument>()
       .exec();
 
-    if (!doc) throw new Error('Failed to upsert document node');
+    if (!doc) {
+      throw new InternalServerErrorException('Failed to upsert document node');
+    }
     return this.mapNode(doc);
   }
 
@@ -120,7 +122,9 @@ export class MongooseGraphRepository extends IGraphRepository {
       .lean<IGraphEdgeDocument>()
       .exec();
 
-    if (!doc) throw new Error('Failed to upsert edge');
+    if (!doc) {
+      throw new InternalServerErrorException('Failed to upsert edge');
+    }
     return this.mapEdge(doc);
   }
 

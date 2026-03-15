@@ -5,8 +5,11 @@ import {
   UseGuards,
   Body,
   Headers,
+  BadRequestException,
+  InternalServerErrorException,
+  HttpException,
 } from '@nestjs/common';
-import { QStashGuard } from '../../../shared/guards/qstash.guard';
+import { QueueWebhookGuard } from '../../../shared/guards/queue-webhook.guard';
 import { QUEUE_GRAPH } from '@repo/types';
 import type { GraphJobData } from '@repo/types';
 import { GraphBuilderService } from '../graph-builder.service';
@@ -18,26 +21,31 @@ export class GraphController {
   constructor(private readonly graphBuilder: GraphBuilderService) {}
 
   @Post(QUEUE_GRAPH)
-  @UseGuards(QStashGuard)
+  @UseGuards(QueueWebhookGuard)
   async process(
     @Body() data: GraphJobData,
     @Headers('Upstash-Message-Id') messageId: string,
   ): Promise<void> {
     try {
       await this.processJob(data);
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : String(err);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       this.logger.error(
         `[GraphController] Job ${messageId} failed: ${errorMessage}`,
       );
-      throw err;
+      if (err instanceof HttpException) {
+        throw err;
+      }
+      throw new InternalServerErrorException('Graph job failed');
     }
   }
 
   private async processJob(data: GraphJobData): Promise<void> {
     const { documentId, userId } = data;
     if (typeof documentId !== 'string' || typeof userId !== 'string') {
-      throw new Error('Invalid job data: documentId or userId is missing');
+      throw new BadRequestException(
+        'Invalid job data: documentId or userId is missing',
+      );
     }
 
     this.logger.log(

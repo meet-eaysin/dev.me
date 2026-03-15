@@ -1,8 +1,9 @@
 import { GoogleGenAI } from '@google/genai';
-import type { ResolvedLLMConfig } from './provider.factory';
+import type { ResolvedLLMConfig } from './provider.types';
 
 export class GoogleEmbeddingAdapter {
   private client: GoogleGenAI;
+  private readonly outputDimensionality = 768;
 
   constructor(apiKey: string) {
     this.client = new GoogleGenAI({ apiKey });
@@ -13,6 +14,9 @@ export class GoogleEmbeddingAdapter {
       const response = await this.client.models.embedContent({
         model: config.embeddingModel,
         contents: [{ role: 'user', parts: [{ text }] }],
+        config: {
+          outputDimensionality: this.outputDimensionality,
+        },
       });
 
       if (
@@ -38,6 +42,9 @@ export class GoogleEmbeddingAdapter {
       const response = await this.client.models.embedContent({
         model: config.embeddingModel,
         contents: texts.map((text) => ({ role: 'user', parts: [{ text }] })),
+        config: {
+          outputDimensionality: this.outputDimensionality,
+        },
       });
 
       if (!response.embeddings) {

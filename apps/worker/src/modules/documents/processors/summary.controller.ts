@@ -5,8 +5,12 @@ import {
   UseGuards,
   Body,
   Headers,
+  NotFoundException,
+  UnprocessableEntityException,
+  InternalServerErrorException,
+  HttpException,
 } from '@nestjs/common';
-import { QStashGuard } from '../../../shared/guards/qstash.guard';
+import { QueueWebhookGuard } from '../../../shared/guards/queue-webhook.guard';
 import { summarizePipeline, LLMClientFactory } from '@repo/ai';
 import { QUEUE_SUMMARY, DocumentType } from '@repo/types';
 import type { SummaryJobData } from '@repo/types';
@@ -26,19 +30,22 @@ export class SummaryController {
   ) {}
 
   @Post(QUEUE_SUMMARY)
-  @UseGuards(QStashGuard)
+  @UseGuards(QueueWebhookGuard)
   async process(
     @Body() data: SummaryJobData,
     @Headers('Upstash-Message-Id') messageId: string,
   ): Promise<void> {
     try {
       await this.processJob(data);
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : String(err);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       this.logger.error(
         `[SummaryController] Job ${messageId} failed: ${errorMessage}`,
       );
-      throw err;
+      if (err instanceof HttpException) {
+        throw err;
+      }
+      throw new InternalServerErrorException('Summary job failed');
     }
   }
 
@@ -46,7 +53,9 @@ export class SummaryController {
     const { documentId, userId } = data;
 
     const doc = await this.documentRepository.findById(documentId, userId);
-    if (!doc) throw new Error('Document not found');
+    if (!doc) {
+      throw new NotFoundException('Document not found');
+    }
 
     let textForSummary = '';
     const type = doc.type;
@@ -70,7 +79,9 @@ export class SummaryController {
     }
 
     if (!textForSummary || textForSummary.trim().length === 0) {
-      throw new Error('Document has no extractable text for summarization');
+      throw new UnprocessableEntityException(
+        'Document has no extractable text for summarization',
+      );
     }
 
     const resolvedClient = await this.llmClientFactory.createForUserId(userId);

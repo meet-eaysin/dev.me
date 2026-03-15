@@ -29,31 +29,37 @@ In hosted production, prefer your platform's env/secrets UI instead of committed
 
 ### Required for all environments
 
-| Variable                   | Used by     | Purpose                                         |
-| -------------------------- | ----------- | ----------------------------------------------- |
-| `NODE_ENV`                 | API         | Runtime mode. Use `production` in production.   |
-| `HOST`                     | API         | API bind host.                                  |
-| `PORT`                     | API         | API port.                                       |
-| `MONGODB_URI`              | API         | Main database connection string.                |
-| `REDIS_URL`                | API workers | Queue and background jobs.                      |
-| `QDRANT_URL`               | API         | Vector database endpoint.                       |
-| `OLLAMA_URL`               | API         | AI provider default endpoint.                   |
-| `OLLAMA_BASE_URL`          | AI package  | Default Ollama base URL fallback.               |
-| `JWT_SECRET`               | API         | Access token signing secret.                    |
-| `JWT_EXPIRES_IN`           | API         | Access token TTL.                               |
-| `REFRESH_TOKEN_SECRET`     | API         | Refresh token signing secret.                   |
-| `REFRESH_TOKEN_EXPIRES_IN` | API         | Refresh token TTL.                              |
-| `ENCRYPTION_KEY`           | API         | 32-byte AES key for stored tokens and API keys. |
-| `FILE_UPLOAD_DIR`          | API         | Local document storage path.                    |
-| `MAX_FILE_SIZE_MB`         | API         | Upload limit.                                   |
-| `WEB_APP_URL`              | API         | Frontend redirect target after OAuth.           |
-| `CORS_ORIGIN`              | API         | Allowed frontend origin.                        |
+| Variable                   | Used by | Purpose                                          |
+| -------------------------- | ------- | ------------------------------------------------ |
+| `NODE_ENV`                 | API     | Runtime mode. Use `production` in production.    |
+| `HOST`                     | API     | API bind host.                                   |
+| `PORT`                     | API     | API port.                                        |
+| `MONGODB_URI`              | API     | Main database connection string.                 |
+| `WORKER_URL`               | API     | Worker base URL for queue dispatch.              |
+| `CACHE_PROVIDER`           | API     | Cache provider selection (`redis` or `upstash`). |
+| `REDIS_URL`                | API     | Redis connection URL (when using Redis).         |
+| `QDRANT_URL`               | API     | Vector database endpoint.                        |
+| `OLLAMA_URL`               | API     | AI provider default endpoint.                    |
+| `QUEUE_PROVIDER`           | API     | Queue provider selection (`qstash` or `http`).   |
+| `JWT_SECRET`               | API     | Access token signing secret.                     |
+| `JWT_EXPIRES_IN`           | API     | Access token TTL.                                |
+| `REFRESH_TOKEN_SECRET`     | API     | Refresh token signing secret.                    |
+| `REFRESH_TOKEN_EXPIRES_IN` | API     | Refresh token TTL.                               |
+| `ENCRYPTION_KEY`           | API     | 32-byte AES key for stored tokens and API keys.  |
+| `FILE_UPLOAD_DIR`          | API     | Local document storage path.                     |
+| `MAX_FILE_SIZE_MB`         | API     | Upload limit.                                    |
+| `WEB_APP_URL`              | API     | Frontend redirect target after OAuth.            |
+| `CORS_ORIGIN`              | API     | Allowed frontend origin.                         |
 
 ### Optional API Variables
 
 | Variable                                                            | Purpose                                               |
 | ------------------------------------------------------------------- | ----------------------------------------------------- |
 | `QDRANT_API_KEY`                                                    | Required only when your Qdrant deployment is secured. |
+| `QSTASH_TOKEN`                                                      | Required when `QUEUE_PROVIDER=qstash`.                |
+| `QSTASH_CURRENT_SIGNING_KEY` / `QSTASH_NEXT_SIGNING_KEY`            | Required when verifying QStash webhooks.              |
+| `DEFAULT_LLM_PROVIDER_ID` / `DEFAULT_LLM_MODEL_ID`                  | Override system default LLM provider/model.           |
+| `DEFAULT_LLM_API_KEY`                                               | System default API key for the selected provider.     |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` / `GOOGLE_CALLBACK_URL` | Required only if you enable Google OAuth login.       |
 | `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` / `GITHUB_CALLBACK_URL` | Required only if you enable GitHub OAuth login.       |
 
@@ -92,7 +98,7 @@ PY
 - `MONGODB_URI`: MongoDB Atlas, AWS DocumentDB, or your own MongoDB cluster.
 - `REDIS_URL`: Redis Cloud, Upstash Redis, AWS ElastiCache, or self-hosted Redis.
 - `QDRANT_URL` and `QDRANT_API_KEY`: Qdrant Cloud or self-hosted Qdrant.
-- `OLLAMA_URL` and `OLLAMA_BASE_URL`: your own Ollama server reachable from the API hosts.
+- `OLLAMA_URL`: your own Ollama server reachable from the API hosts.
 
 ### OAuth credentials
 

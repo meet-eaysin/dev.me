@@ -4,7 +4,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { DocumentType, QUEUE_TRANSCRIPT } from '@repo/types';
-import { QStashService } from '@repo/queue';
+import { QueueService } from '@repo/queue';
 import { IDocumentRepository } from '../../domain/repositories/document.repository';
 import { ITranscriptRepository } from '../../domain/repositories/transcript.repository';
 
@@ -13,7 +13,7 @@ export class TranscriptUseCase {
   constructor(
     private readonly documentRepository: IDocumentRepository,
     private readonly transcriptRepository: ITranscriptRepository,
-    private readonly qstashService: QStashService,
+    private readonly queueService: QueueService,
   ) {}
 
   async getTranscript(documentId: string, userId: string) {
@@ -63,7 +63,7 @@ export class TranscriptUseCase {
       };
     }
 
-    await this.qstashService.publishMessage(QUEUE_TRANSCRIPT, {
+    await this.queueService.publishMessage(QUEUE_TRANSCRIPT, {
       documentId,
       userId,
     });

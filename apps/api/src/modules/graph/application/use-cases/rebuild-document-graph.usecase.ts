@@ -1,19 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { QUEUE_GRAPH } from '@repo/types';
-import { QStashService } from '@repo/queue';
+import { QueueService } from '@repo/queue';
 import { IGraphRepository } from '../../domain/repositories/graph.repository';
 
 @Injectable()
 export class RebuildDocumentGraphUseCase {
   constructor(
     private readonly graphRepository: IGraphRepository,
-    private readonly qstashService: QStashService,
+    private readonly queueService: QueueService,
   ) {}
 
   async execute(documentId: string, userId: string): Promise<string> {
     await this.graphRepository.deleteEdgesForDocument(documentId, userId);
 
-    await this.qstashService.publishMessage(QUEUE_GRAPH, {
+    await this.queueService.publishMessage(QUEUE_GRAPH, {
       documentId,
       userId,
     });

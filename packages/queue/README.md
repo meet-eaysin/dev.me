@@ -4,10 +4,10 @@ This package handles background job dispatching and routing for Mind Stack.
 
 ## 🚀 Purpose
 
-Integrates with Upstash QStash to:
+Supports pluggable queue providers to:
 
 - Enqueue asynchronous tasks (e.g., document summarization, embedding generation).
-- Ensure reliable, serverless-friendly webhook deliveries to the `apps/worker` processor.
+- Ensure reliable webhook deliveries to the `apps/worker` processor.
 
 ## 📦 Usage
 

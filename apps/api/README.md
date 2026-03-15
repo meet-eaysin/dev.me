@@ -33,4 +33,4 @@ yarn turbo run dev --filter api
 
 ## ⚙️ Environment Variables
 
-Make sure to configure the `.env` file for the API. It requires connections to MongoDB, Redis, configuration for QStash, JWT secrets, and OAuth Client IDs/Secrets.
+Make sure to configure the `.env` file for the API. It requires connections to MongoDB, Redis, queue provider configuration, JWT secrets, and OAuth Client IDs/Secrets.

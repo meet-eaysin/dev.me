@@ -5,8 +5,13 @@ import {
   UseGuards,
   Body,
   Headers,
+  NotFoundException,
+  BadRequestException,
+  UnprocessableEntityException,
+  InternalServerErrorException,
+  HttpException,
 } from '@nestjs/common';
-import { QStashGuard } from '../../../shared/guards/qstash.guard';
+import { QueueWebhookGuard } from '../../../shared/guards/queue-webhook.guard';
 import {
   youtubeExtractor,
   chunkText,
@@ -36,19 +41,22 @@ export class TranscriptController {
   }
 
   @Post(QUEUE_TRANSCRIPT)
-  @UseGuards(QStashGuard)
+  @UseGuards(QueueWebhookGuard)
   async process(
     @Body() data: TranscriptJobData,
     @Headers('Upstash-Message-Id') messageId: string,
   ): Promise<void> {
     try {
       await this.processJob(data);
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : String(err);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       this.logger.error(
         `[TranscriptController] Job ${messageId} failed: ${errorMessage}`,
       );
-      throw err;
+      if (err instanceof HttpException) {
+        throw err;
+      }
+      throw new InternalServerErrorException('Transcript job failed');
     }
   }
 
@@ -56,7 +64,9 @@ export class TranscriptController {
     const { documentId, userId } = data;
 
     const doc = await this.documentRepository.findById(documentId, userId);
-    if (!doc) throw new Error('Document not found');
+    if (!doc) {
+      throw new NotFoundException('Document not found');
+    }
 
     if (doc.type !== DocumentType.YOUTUBE) {
       this.logger.log(
@@ -76,12 +86,16 @@ export class TranscriptController {
     }
 
     if (!doc.sourceUrl) {
-      throw new Error('No sourceUrl found for video transcript generation');
+      throw new BadRequestException(
+        'No sourceUrl found for video transcript generation',
+      );
     }
 
     const result = await youtubeExtractor.extractYouTube(doc.sourceUrl);
     if (!result.transcript || result.transcript.length === 0) {
-      throw new Error('Could not extract transcript from YouTube video');
+      throw new UnprocessableEntityException(
+        'Could not extract transcript from YouTube video',
+      );
     }
 
     const fullText = result.transcript.map((t) => t.text).join(' ');

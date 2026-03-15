@@ -1,5 +1,13 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import type { AuthenticatedUser, AuthTokenClaims } from '@repo/types';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import type {
+  AuthenticatedUser,
+  AuthTokenClaims,
+  IdentityProvider,
+} from '@repo/types';
 import type { JWTPayload } from '../types/esm-bridge.types';
 import { randomUUID } from 'crypto';
 import { env } from '../../../../shared/utils/env';
@@ -68,7 +76,8 @@ export class TokenService {
     expiresIn: string,
   ): Promise<string> {
     const { SignJWT } = await import('jose');
-    return new SignJWT(claims as unknown as JWTPayload)
+    const jwtPayload: JWTPayload = { ...claims };
+    return new SignJWT(jwtPayload)
       .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
       .setSubject(claims.sub)
       .setIssuedAt()
@@ -84,7 +93,7 @@ export class TokenService {
     try {
       const { jwtVerify } = await import('jose');
       const { payload } = await jwtVerify(token, secret);
-      const claims = payload as JWTPayload & Partial<AuthTokenClaims>;
+      const claims = payload;
 
       if (claims.typ !== expectedType || typeof claims.sub !== 'string') {
         throw new UnauthorizedException('Invalid token');
@@ -98,8 +107,9 @@ export class TokenService {
         name: typeof claims.name === 'string' ? claims.name : undefined,
         avatarUrl:
           typeof claims.avatarUrl === 'string' ? claims.avatarUrl : undefined,
-        provider:
-          typeof claims.provider === 'string' ? claims.provider : undefined,
+        provider: this.isIdentityProvider(claims.provider)
+          ? claims.provider
+          : undefined,
         role: typeof claims.role === 'string' ? claims.role : undefined,
       };
     } catch (error) {
@@ -114,7 +124,7 @@ export class TokenService {
   private parseDurationMs(input: string): number {
     const match = /^(\d+)(ms|s|m|h|d)$/.exec(input);
     if (!match) {
-      throw new Error(`Unsupported duration format: ${input}`);
+      throw new BadRequestException(`Unsupported duration format: ${input}`);
     }
 
     const amount = Number(match[1]);
@@ -131,7 +141,17 @@ export class TokenService {
       case 'd':
         return amount * 24 * 60 * 60 * 1000;
       default:
-        throw new Error(`Unsupported duration unit: ${String(unit)}`);
+        throw new BadRequestException(
+          `Unsupported duration unit: ${String(unit)}`,
+        );
     }
+  }
+
+  private isIdentityProvider(value: unknown): value is IdentityProvider {
+    return (
+      value === 'google' ||
+      value === 'github' ||
+      value === 'dev'
+    );
   }
 }

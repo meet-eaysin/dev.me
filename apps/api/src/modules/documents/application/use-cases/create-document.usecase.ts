@@ -1,5 +1,5 @@
 import { Injectable, Logger, ConflictException } from '@nestjs/common';
-import { QStashService } from '@repo/queue';
+import { QueueService } from '@repo/queue';
 import { IDocumentRepository } from '../../domain/repositories/document.repository';
 import {
   DocumentEntity,
@@ -20,7 +20,7 @@ export class CreateDocumentUseCase {
 
   constructor(
     private readonly documentRepository: IDocumentRepository,
-    private readonly qstashService: QStashService,
+    private readonly queueService: QueueService,
   ) {}
 
   async execute(command: CreateDocumentCommand): Promise<DocumentPublicView> {
@@ -65,7 +65,7 @@ export class CreateDocumentUseCase {
     );
 
     // Push to ingestion webhook - do NOT await
-    this.qstashService
+    this.queueService
       .publishMessage(QUEUE_INGESTION, {
         documentId: savedDoc.id,
         userId: command.userId,
