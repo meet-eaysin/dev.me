@@ -3,7 +3,7 @@ import { getProviderAdapter } from './provider.adapters';
 
 export class EmbeddingAdapter {
   async embedText(text: string, config: ResolvedLLMConfig): Promise<number[]> {
-    const adapter = getProviderAdapter(config.adapterKey);
+    const adapter = getProviderAdapter(config.embeddingAdapterKey);
     return adapter.embedText(text, config);
   }
 
@@ -11,7 +11,7 @@ export class EmbeddingAdapter {
     texts: string[],
     config: ResolvedLLMConfig,
   ): Promise<number[][]> {
-    const adapter = getProviderAdapter(config.adapterKey);
+    const adapter = getProviderAdapter(config.embeddingAdapterKey);
 
     const batchSize = 25;
     const limit = pLimit(5);
