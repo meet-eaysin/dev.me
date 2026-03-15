@@ -130,6 +130,20 @@ export const env = {
     defaultValue: 'meta-llama/llama-3.3-70b-instruct:free',
   }),
   DEFAULT_LLM_API_KEY: getEnv({ key: 'DEFAULT_LLM_API_KEY', required: false }),
+  DEFAULT_EMBEDDING_PROVIDER_ID: getEnv({
+    key: 'DEFAULT_EMBEDDING_PROVIDER_ID',
+    required: false,
+    defaultValue: 'ollama',
+  }),
+  DEFAULT_EMBEDDING_MODEL_ID: getEnv({
+    key: 'DEFAULT_EMBEDDING_MODEL_ID',
+    required: false,
+    defaultValue: 'nomic-embed-text',
+  }),
+  DEFAULT_EMBEDDING_API_KEY: getEnv({
+    key: 'DEFAULT_EMBEDDING_API_KEY',
+    required: false,
+  }),
   JWT_SECRET: getEnv({ key: 'JWT_SECRET' }),
   JWT_EXPIRES_IN: getEnv({ key: 'JWT_EXPIRES_IN' }),
   REFRESH_TOKEN_SECRET: getEnv({ key: 'REFRESH_TOKEN_SECRET' }),

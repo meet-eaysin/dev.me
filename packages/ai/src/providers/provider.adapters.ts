@@ -43,11 +43,11 @@ const openaiAdapter: ProviderAdapter = {
     ),
   embedText: async (text, config) => {
     const headers: Record<string, string> = {};
-    if (config.apiKey) {
-      headers.Authorization = `Bearer ${config.apiKey}`;
+    if (config.embeddingApiKey) {
+      headers.Authorization = `Bearer ${config.embeddingApiKey}`;
     }
     const response = await axios.post(
-      `${config.baseUrl || 'https://api.openai.com/v1'}/embeddings`,
+      `${config.embeddingBaseUrl || 'https://api.openai.com/v1'}/embeddings`,
       {
         model: config.embeddingModel,
         input: text,
@@ -66,11 +66,11 @@ const openaiAdapter: ProviderAdapter = {
   },
   embedBatch: async (texts, config) => {
     const headers: Record<string, string> = {};
-    if (config.apiKey) {
-      headers.Authorization = `Bearer ${config.apiKey}`;
+    if (config.embeddingApiKey) {
+      headers.Authorization = `Bearer ${config.embeddingApiKey}`;
     }
     const response = await axios.post(
-      `${config.baseUrl || 'https://api.openai.com/v1'}/embeddings`,
+      `${config.embeddingBaseUrl || 'https://api.openai.com/v1'}/embeddings`,
       {
         model: config.embeddingModel,
         input: texts,
@@ -94,11 +94,11 @@ const googleAdapter: ProviderAdapter = {
       config.chatModel,
     ),
   embedText: async (text, config) => {
-    const adapter = new GoogleEmbeddingAdapter(config.apiKey || '');
+    const adapter = new GoogleEmbeddingAdapter(config.embeddingApiKey || '');
     return adapter.embedText(text, config);
   },
   embedBatch: async (texts, config) => {
-    const adapter = new GoogleEmbeddingAdapter(config.apiKey || '');
+    const adapter = new GoogleEmbeddingAdapter(config.embeddingApiKey || '');
     return adapter.embedBatch(texts, config);
   },
 };
@@ -114,7 +114,7 @@ const ollamaAdapter: ProviderAdapter = {
   embedText: async (text, config) => {
     try {
       const response = await axios.post(
-        `${config.baseUrl}/api/embeddings`,
+        `${config.embeddingBaseUrl}/api/embeddings`,
         {
           model: config.embeddingModel,
           prompt: text,
@@ -132,7 +132,7 @@ const ollamaAdapter: ProviderAdapter = {
   },
   embedBatch: async (texts, config) => {
     try {
-      const response = await axios.post(`${config.baseUrl}/api/embed`, {
+      const response = await axios.post(`${config.embeddingBaseUrl}/api/embed`, {
         model: config.embeddingModel,
         input: texts,
       });

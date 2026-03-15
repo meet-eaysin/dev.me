@@ -26,10 +26,10 @@ export class LLMClientFactory {
   resolveConfig(config?: LLMConfig | null): ResolvedLLMConfig {
     const useSystemDefault = !config || config.useSystemDefault;
 
+    // 1. Resolve Chat Configuration
     let providerId: string;
     let modelId: string;
     let apiKey: string | undefined;
-    let embeddingModelId: string | undefined;
 
     if (useSystemDefault) {
       providerId = this.options.defaultProviderId;
@@ -38,17 +38,6 @@ export class LLMClientFactory {
     } else {
       providerId = config.providerId;
       modelId = config.modelId;
-      if (config.embeddingModelId) {
-        embeddingModelId = config.embeddingModelId;
-      }
-
-      const provider =
-        getProviderById(providerId) || PROVIDER_REGISTRY[providerId];
-      if (!provider) {
-        throw new Error(
-          `Configured provider '${providerId}' does not exist in the registry.`,
-        );
-      }
 
       if (config.apiKey && this.options.encryptionKey) {
         try {
@@ -58,12 +47,6 @@ export class LLMClientFactory {
             'Failed to decrypt user API key. The key might be invalid or the encryption key changed.',
           );
         }
-      }
-
-      if (!apiKey && provider.requiresApiKey) {
-        throw new Error(
-          `User configured provider '${providerId}' requires an API key, but none was provided.`,
-        );
       }
     }
 
@@ -79,29 +62,64 @@ export class LLMClientFactory {
         ? this.options.ollamaUrl
         : defaultBaseUrl;
 
-    let resolvedEmbeddingModelId =
-      embeddingModelId ||
-      providerDef?.defaultEmbeddingModelId ||
-      'nomic-embed-text';
-
-    if (
-      providerId === 'google' &&
-      providerDef?.defaultEmbeddingModelId &&
-      !this.isGoogleEmbeddingModel(resolvedEmbeddingModelId, providerDef)
-    ) {
-      resolvedEmbeddingModelId = providerDef.defaultEmbeddingModelId;
-    }
     const adapterKey =
       getProviderAdapterKey(providerId) ||
       (providerId === 'ollama' ? 'ollama' : 'openai');
 
+    // 2. Resolve Embedding Configuration
+    let embeddingProviderId: string = providerId;
+    let resolvedEmbeddingModelId: string;
+    let embeddingApiKey: string | undefined = apiKey;
+
+    // Use separate system default for embeddings if available
+    if (useSystemDefault && this.options.defaultEmbeddingProviderId) {
+      embeddingProviderId = this.options.defaultEmbeddingProviderId;
+      embeddingApiKey = this.options.defaultEmbeddingApiKey;
+    }
+
+    const embeddingProviderDef =
+      getProviderById(embeddingProviderId) ||
+      PROVIDER_REGISTRY[embeddingProviderId];
+
+    resolvedEmbeddingModelId =
+      config?.embeddingModelId ||
+      embeddingProviderDef?.defaultEmbeddingModelId ||
+      'nomic-embed-text';
+
+    // Google specific logic for embedding models
+    if (
+      embeddingProviderId === 'google' &&
+      embeddingProviderDef?.defaultEmbeddingModelId &&
+      !this.isGoogleEmbeddingModel(
+        resolvedEmbeddingModelId,
+        embeddingProviderDef,
+      )
+    ) {
+      resolvedEmbeddingModelId = embeddingProviderDef.defaultEmbeddingModelId;
+    }
+
+    const embeddingDefaultBaseUrl =
+      embeddingProviderDef?.baseURL || 'http://localhost:11434';
+    const embeddingBaseUrl =
+      embeddingProviderId === 'ollama' && this.options.ollamaUrl
+        ? this.options.ollamaUrl
+        : embeddingDefaultBaseUrl;
+
+    const embeddingAdapterKey =
+      getProviderAdapterKey(embeddingProviderId) ||
+      (embeddingProviderId === 'ollama' ? 'ollama' : 'openai');
+
     return {
       provider: providerId,
       chatModel: modelId,
+      embeddingProvider: embeddingProviderId,
       embeddingModel: resolvedEmbeddingModelId,
       apiKey,
+      embeddingApiKey,
       baseUrl,
+      embeddingBaseUrl,
       adapterKey,
+      embeddingAdapterKey,
       allowDevFallback: this.options.allowDevFallback === true,
     };
   }

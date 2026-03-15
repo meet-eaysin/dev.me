@@ -89,8 +89,15 @@ export class IngestionController {
   private async processJob(data: IngestionJobData): Promise<void> {
     const { documentId, userId } = data;
 
+    this.logger.log(
+      `[IngestionController] Starting ingestion for document: ${documentId}, user: ${userId}`,
+    );
+
     const doc = await this.documentRepository.findById(documentId, userId);
     if (!doc) {
+      this.logger.error(
+        `[IngestionController] Document not found: ${documentId} for user: ${userId}`,
+      );
       throw new NotFoundException('Document not found');
     }
 
