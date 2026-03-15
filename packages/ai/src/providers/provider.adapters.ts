@@ -54,7 +54,7 @@ const openaiAdapter: ProviderAdapter = {
       },
       {
         headers,
-        timeout: 30000,
+        timeout: 60000,
       },
     );
     const parsed = OpenAIEmbeddingResponseSchema.parse(response.data);
@@ -77,7 +77,7 @@ const openaiAdapter: ProviderAdapter = {
       },
       {
         headers,
-        timeout: 30000,
+        timeout: 60000,
       },
     );
     const parsed = OpenAIEmbeddingResponseSchema.parse(response.data);
@@ -119,7 +119,7 @@ const ollamaAdapter: ProviderAdapter = {
           model: config.embeddingModel,
           prompt: text,
         },
-        { timeout: 30000 },
+        { timeout: 60000 },
       );
       const parsed = OllamaEmbeddingResponseSchema.parse(response.data);
       return parsed.embedding;
