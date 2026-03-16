@@ -40,7 +40,7 @@ export function SettingsPage() {
   const { data: sessions } = useUserSessions();
   const { data: llmConfig, error: llmError } = useLLMConfig();
   const { data: notionConfig, error: notionError } = useNotionConfig();
- 
+
   const activeConfig = useMemo(() => {
     if (!llmConfig?.configs?.length) return null;
     if (llmConfig.activeConfigId) {
@@ -180,9 +180,7 @@ export function SettingsPage() {
                     LLM config
                   </p>
                   <Badge variant={activeConfig ? 'secondary' : 'outline'}>
-                    {activeConfig
-                      ? activeConfig.providerId
-                      : 'Not configured'}
+                    {activeConfig ? activeConfig.providerId : 'Not configured'}
                   </Badge>
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground">
@@ -294,10 +292,7 @@ export function SettingsPage() {
                 text: 'AI provider setup and Notion workspace sync.',
               },
             ].map(({ icon: Icon, title, text }) => (
-              <div
-                key={title}
-                className="rounded-lg border px-4 py-3"
-              >
+              <div key={title} className="rounded-lg border px-4 py-3">
                 <div className="flex items-center gap-2">
                   <Icon className="size-4 text-muted-foreground" />
                   <p className="text-sm font-medium text-foreground">{title}</p>

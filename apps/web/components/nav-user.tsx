@@ -1,71 +1,71 @@
-"use client"
+'use client';
 
-import * as React from "react"
-import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
+import * as React from 'react';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 
-import { cn } from "@/lib/utils"
-import { useAuthSession, useLogout } from "@/features/auth/hooks"
-import { ThemeToggle } from "@/components/theme-toggle"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { cn } from '@/lib/utils';
+import { useAuthSession, useLogout } from '@/features/auth/hooks';
+import { ThemeToggle } from '@/components/theme-toggle';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar"
+} from '@/components/ui/sidebar';
 import {
   Menu,
   MenuItem,
   MenuPopup,
   MenuSeparator,
   MenuTrigger,
-} from "@/components/ui/menu"
+} from '@/components/ui/menu';
 import {
   User as UserIcon,
   Settings as SettingsIcon,
   LogOut as LogOutIcon,
   ChevronDown as ChevronDownIcon,
   ChevronUp as ChevronUpIcon,
-} from "lucide-react"
+} from 'lucide-react';
 
 export function NavUser() {
-  const { data: session, status } = useAuthSession()
-  const logout = useLogout()
-  const router = useRouter()
-  const pathname = usePathname()
-  const isPlatformPages = pathname?.startsWith("/app/settings/platform")
-  const { isMobile, state } = useSidebar()
-  const [menuOpen, setMenuOpen] = React.useState(false)
+  const { data: session, status } = useAuthSession();
+  const logout = useLogout();
+  const router = useRouter();
+  const pathname = usePathname();
+  const isPlatformPages = pathname?.startsWith('/app/settings/platform');
+  const { isMobile, state } = useSidebar();
+  const [menuOpen, setMenuOpen] = React.useState(false);
 
   const user = React.useMemo(() => {
-    if (!session?.user) return null
-    const displayName = session.user.name ?? "Nameless User"
-    const email = session.user.email ?? ""
-    const username = email.includes("@")
-      ? (email.split("@")[0] ?? "user")
-      : email || displayName.replace(/\s+/g, "").toLowerCase()
+    if (!session?.user) return null;
+    const displayName = session.user.name ?? 'Nameless User';
+    const email = session.user.email ?? '';
+    const username = email.includes('@')
+      ? (email.split('@')[0] ?? 'user')
+      : email || displayName.replace(/\s+/g, '').toLowerCase();
     return {
       name: displayName,
       username,
       email,
-      avatarUrl: session.user.avatarUrl ?? "",
-    }
-  }, [session?.user])
+      avatarUrl: session.user.avatarUrl ?? '',
+    };
+  }, [session?.user]);
 
-  const isPending = status === "loading" || logout.isPending
-  const isCollapsed = state === "collapsed" && !isMobile
+  const isPending = status === 'loading' || logout.isPending;
+  const isCollapsed = state === 'collapsed' && !isMobile;
 
   if (!user && !isPending) {
-    return null
+    return null;
   }
 
-  const initials = (user?.name ?? "U")
-    .split(" ")
+  const initials = (user?.name ?? 'U')
+    .split(' ')
     .map((part) => part[0])
-    .join("")
+    .join('')
     .toUpperCase()
-    .slice(0, 2)
+    .slice(0, 2);
 
   return (
     <SidebarMenu>
@@ -76,8 +76,8 @@ export function NavUser() {
               <SidebarMenuButton
                 size="lg"
                 className={cn(
-                  "aria-expanded:bg-muted",
-                  isCollapsed && "justify-center"
+                  'aria-expanded:bg-muted',
+                  isCollapsed && 'justify-center',
                 )}
                 disabled={isPending}
                 data-testid="user-dropdown-trigger-button"
@@ -100,10 +100,10 @@ export function NavUser() {
               <span className="flex min-w-0 flex-1 items-center justify-between gap-2">
                 <span className="min-w-0">
                   <span className="text-emphasis block truncate text-sm font-semibold leading-tight">
-                    {isPending ? "Loading…" : (user?.name ?? "Nameless User")}
+                    {isPending ? 'Loading…' : (user?.name ?? 'Nameless User')}
                   </span>
                   <span className="text-subtle block truncate text-xs leading-tight">
-                    {user?.email || `@${user?.username ?? "user"}`}
+                    {user?.email || `@${user?.username ?? 'user'}`}
                   </span>
                 </span>
                 {menuOpen ? (
@@ -122,7 +122,7 @@ export function NavUser() {
           </MenuTrigger>
           <MenuPopup
             align="start"
-            side={isMobile ? "bottom" : "right"}
+            side={isMobile ? 'bottom' : 'right'}
             sideOffset={8}
             className="w-64"
           >
@@ -135,10 +135,10 @@ export function NavUser() {
               </Avatar>
               <div className="min-w-0">
                 <p className="text-emphasis truncate text-sm font-semibold">
-                  {user?.name ?? "Nameless User"}
+                  {user?.name ?? 'Nameless User'}
                 </p>
                 <p className="text-subtle truncate text-xs">
-                  {user?.email || `@${user?.username ?? "user"}`}
+                  {user?.email || `@${user?.username ?? 'user'}`}
                 </p>
               </div>
             </div>
@@ -165,11 +165,11 @@ export function NavUser() {
               variant="destructive"
               onClick={async () => {
                 try {
-                  await logout.mutateAsync()
+                  await logout.mutateAsync();
                 } catch {
                   // Ignore logout errors and still redirect.
                 } finally {
-                  router.push("/auth/login")
+                  router.push('/auth/login');
                 }
               }}
             >
@@ -180,5 +180,5 @@ export function NavUser() {
         </Menu>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
+  );
 }

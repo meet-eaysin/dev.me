@@ -69,9 +69,7 @@ export class IngestionController {
       await this.processJob(data);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-      this.logger.error(
-        `Job ${messageId} failed: ${errorMessage}`,
-      );
+      this.logger.error(`Job ${messageId} failed: ${errorMessage}`);
       const { documentId, userId } = data;
       await this.ingestionJobRepository.markFailed(documentId, errorMessage);
       await this.documentRepository.update(documentId, userId, {
@@ -92,7 +90,7 @@ export class IngestionController {
     this.logger.log(
       `Starting ingestion for document: ${documentId}, user: ${userId}`,
     );
- 
+
     const doc = await this.documentRepository.findById(documentId, userId);
     if (!doc) {
       this.logger.error(
@@ -268,20 +266,21 @@ export class IngestionController {
         // if re-indexing happened with different chunk counts
         await this.qdrant.deleteByFilter('mindstack', {
           must: [
-            { key: 'documentId', match: { value: documentId.toString() } }
-          ]
+            { key: 'documentId', match: { value: documentId.toString() } },
+          ],
         });
-        
+
         // Generate deterministic IDs for the points for double-protection
-        const pointsForUpsert = points.map(p => {
+        const pointsForUpsert = points.map((p) => {
           // Create a deterministic UUID from documentId and chunkIndex
-          const hash = crypto.createHash('md5')
+          const hash = crypto
+            .createHash('md5')
             .update(`${documentId.toString()}-${p.payload.chunkIndex}`)
             .digest('hex');
-          
+
           // Format as UUID: 8-4-4-4-12
           const id = `${hash.slice(0, 8)}-${hash.slice(8, 12)}-${hash.slice(12, 16)}-${hash.slice(16, 20)}-${hash.slice(20, 32)}`;
-          
+
           return {
             id,
             vector: p.vector,

@@ -5,13 +5,7 @@ import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import { formatDistanceToNow } from 'date-fns';
-import {
-  Bot,
-  ExternalLink,
-  History,
-  Plus,
-  SendHorizonal,
-} from 'lucide-react';
+import { Bot, ExternalLink, History, Plus, SendHorizonal } from 'lucide-react';
 import type {
   AskResult,
   ChatConversationDetail,
@@ -491,240 +485,236 @@ export function AskAiPage() {
   }));
 
   return (
-      <div className="mt-4 space-y-4">
-        <Drawer
-          direction="right"
-          open={historyOpen}
-          onOpenChange={setHistoryOpen}
-        >
-          <Card>
-            <CardHeader>
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div className="space-y-1">
-                  <CardTitle>
-                    {conversation?.title ?? 'Start a new conversation'}
-                  </CardTitle>
-                  <CardDescription>
-                    Ask a question and MindStack AI will answer with sources
-                    from your library.
-                  </CardDescription>
-                </div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <DrawerTrigger asChild>
-                    <Button variant="outline">
-                      <History className="size-4" />
-                      Previous conversations
-                    </Button>
-                  </DrawerTrigger>
-                  {conversationId ? (
-                    <Button variant="outline" onClick={startNewConversation}>
-                      <Plus className="size-4" />
-                      New chat
-                    </Button>
-                  ) : null}
-                </div>
-              </div>
-            </CardHeader>
-            <CardPanel className="space-y-5">
-              <Field>
-                <FieldLabel>Your question</FieldLabel>
-                <InputGroup data-align="block-end">
-                  <InputGroupTextarea
-                    value={question}
-                    onChange={(event) => setQuestion(event.target.value)}
-                    placeholder="Ask about a document, summarize a topic, or continue the current thread."
-                    onKeyDown={(event) => {
-                      if (
-                        event.key === 'Enter' &&
-                        (event.metaKey || event.ctrlKey)
-                      ) {
-                        event.preventDefault();
-                        void submitQuestion();
-                      }
-                    }}
-                  />
-                  <InputGroupAddon
-                    align="block-end"
-                    className="justify-between"
-                  >
-                    <InputGroupText>
-                      {streaming.isStreaming ? (
-                        <>
-                          <Spinner className="size-4" />
-                          Streaming response
-                        </>
-                      ) : (
-                        'Press Ctrl/Cmd + Enter to send'
-                      )}
-                    </InputGroupText>
-                    <Button
-                      onClick={() => void submitQuestion()}
-                      disabled={streaming.isStreaming}
-                    >
-                      <SendHorizonal className="size-4" />
-                      Ask AI
-                    </Button>
-                  </InputGroupAddon>
-                </InputGroup>
-              </Field>
-
-              <Collapsible open={scopeOpen} onOpenChange={setScopeOpen}>
-                <div className="space-y-3 rounded-lg border px-4 py-3">
-                  <div className="flex items-center justify-between gap-3">
-                    <div>
-                      <p className="text-sm font-medium text-foreground">
-                        Optional scope
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {selectedDocumentIds.length > 0
-                          ? `${selectedDocumentIds.length} document${selectedDocumentIds.length > 1 ? 's' : ''} selected`
-                          : 'Search across your whole library'}
-                      </p>
-                    </div>
-                    <CollapsibleTrigger className="text-sm font-medium text-foreground">
-                      {scopeOpen ? 'Hide' : 'Adjust'}
-                    </CollapsibleTrigger>
-                  </div>
-                  <CollapsibleContent>
-                    <Separator className="mb-3" />
-                    <ScopeSelector
-                      documents={availableDocuments}
-                      selectedDocumentIds={selectedDocumentIds}
-                      setSelectedDocumentIds={setSelectedDocumentIds}
-                    />
-                  </CollapsibleContent>
-                </div>
-              </Collapsible>
-
-              {streaming.error ? (
-                <Alert variant="error">
-                  <AlertTitle>Request failed</AlertTitle>
-                  <AlertDescription>{streaming.error}</AlertDescription>
-                </Alert>
-              ) : null}
-              <Separator />
+    <div className="mt-4 space-y-4">
+      <Drawer
+        direction="right"
+        open={historyOpen}
+        onOpenChange={setHistoryOpen}
+      >
+        <Card>
+          <CardHeader>
+            <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="space-y-1">
-                <h3 className="text-sm font-semibold text-foreground">
-                  Conversation
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  Responses stream live and are saved to history automatically.
-                </p>
+                <CardTitle>
+                  {conversation?.title ?? 'Start a new conversation'}
+                </CardTitle>
+                <CardDescription>
+                  Ask a question and MindStack AI will answer with sources from
+                  your library.
+                </CardDescription>
               </div>
-              <ScrollArea className="h-[55vh]">
-                <div className="space-y-4 pe-3">
-                  {conversationLoading ? (
-                    Array.from({ length: 3 }).map((_, index) => (
-                      <div key={index} className="rounded-lg border p-4">
-                        <Skeleton className="h-5 w-24" />
-                        <Skeleton className="mt-3 h-20 w-full" />
-                      </div>
-                    ))
-                  ) : displayedMessages.length > 0 ? (
-                    displayedMessages.map((message) => (
-                      <div
-                        key={message.id}
-                        className={cn(
-                          'rounded-lg border p-4',
-                          message.role === 'assistant'
-                            ? 'bg-background'
-                            : 'bg-muted/35',
-                        )}
-                      >
-                        <div className="mb-3 flex items-center justify-between gap-3">
-                          <div className="flex items-center gap-2">
-                            {message.role === 'assistant' ? (
-                              <Bot className="size-4 text-primary" />
-                            ) : (
-                              <SendHorizonal className="size-4 text-muted-foreground" />
-                            )}
-                            <p className="text-sm font-medium text-foreground">
-                              {message.role === 'assistant'
-                                ? 'MindStack AI'
-                                : 'You'}
-                            </p>
-                          </div>
-                          <p className="text-xs text-muted-foreground">
-                            {formatDistanceToNow(new Date(message.createdAt), {
-                              addSuffix: true,
-                            })}
+              <div className="flex flex-wrap items-center gap-2">
+                <DrawerTrigger asChild>
+                  <Button variant="outline">
+                    <History className="size-4" />
+                    Previous conversations
+                  </Button>
+                </DrawerTrigger>
+                {conversationId ? (
+                  <Button variant="outline" onClick={startNewConversation}>
+                    <Plus className="size-4" />
+                    New chat
+                  </Button>
+                ) : null}
+              </div>
+            </div>
+          </CardHeader>
+          <CardPanel className="space-y-5">
+            <Field>
+              <FieldLabel>Your question</FieldLabel>
+              <InputGroup data-align="block-end">
+                <InputGroupTextarea
+                  value={question}
+                  onChange={(event) => setQuestion(event.target.value)}
+                  placeholder="Ask about a document, summarize a topic, or continue the current thread."
+                  onKeyDown={(event) => {
+                    if (
+                      event.key === 'Enter' &&
+                      (event.metaKey || event.ctrlKey)
+                    ) {
+                      event.preventDefault();
+                      void submitQuestion();
+                    }
+                  }}
+                />
+                <InputGroupAddon align="block-end" className="justify-between">
+                  <InputGroupText>
+                    {streaming.isStreaming ? (
+                      <>
+                        <Spinner className="size-4" />
+                        Streaming response
+                      </>
+                    ) : (
+                      'Press Ctrl/Cmd + Enter to send'
+                    )}
+                  </InputGroupText>
+                  <Button
+                    onClick={() => void submitQuestion()}
+                    disabled={streaming.isStreaming}
+                  >
+                    <SendHorizonal className="size-4" />
+                    Ask AI
+                  </Button>
+                </InputGroupAddon>
+              </InputGroup>
+            </Field>
+
+            <Collapsible open={scopeOpen} onOpenChange={setScopeOpen}>
+              <div className="space-y-3 rounded-lg border px-4 py-3">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-medium text-foreground">
+                      Optional scope
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {selectedDocumentIds.length > 0
+                        ? `${selectedDocumentIds.length} document${selectedDocumentIds.length > 1 ? 's' : ''} selected`
+                        : 'Search across your whole library'}
+                    </p>
+                  </div>
+                  <CollapsibleTrigger className="text-sm font-medium text-foreground">
+                    {scopeOpen ? 'Hide' : 'Adjust'}
+                  </CollapsibleTrigger>
+                </div>
+                <CollapsibleContent>
+                  <Separator className="mb-3" />
+                  <ScopeSelector
+                    documents={availableDocuments}
+                    selectedDocumentIds={selectedDocumentIds}
+                    setSelectedDocumentIds={setSelectedDocumentIds}
+                  />
+                </CollapsibleContent>
+              </div>
+            </Collapsible>
+
+            {streaming.error ? (
+              <Alert variant="error">
+                <AlertTitle>Request failed</AlertTitle>
+                <AlertDescription>{streaming.error}</AlertDescription>
+              </Alert>
+            ) : null}
+            <Separator />
+            <div className="space-y-1">
+              <h3 className="text-sm font-semibold text-foreground">
+                Conversation
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                Responses stream live and are saved to history automatically.
+              </p>
+            </div>
+            <ScrollArea className="h-[55vh]">
+              <div className="space-y-4 pe-3">
+                {conversationLoading ? (
+                  Array.from({ length: 3 }).map((_, index) => (
+                    <div key={index} className="rounded-lg border p-4">
+                      <Skeleton className="h-5 w-24" />
+                      <Skeleton className="mt-3 h-20 w-full" />
+                    </div>
+                  ))
+                ) : displayedMessages.length > 0 ? (
+                  displayedMessages.map((message) => (
+                    <div
+                      key={message.id}
+                      className={cn(
+                        'rounded-lg border p-4',
+                        message.role === 'assistant'
+                          ? 'bg-background'
+                          : 'bg-muted/35',
+                      )}
+                    >
+                      <div className="mb-3 flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-2">
+                          {message.role === 'assistant' ? (
+                            <Bot className="size-4 text-primary" />
+                          ) : (
+                            <SendHorizonal className="size-4 text-muted-foreground" />
+                          )}
+                          <p className="text-sm font-medium text-foreground">
+                            {message.role === 'assistant'
+                              ? 'MindStack AI'
+                              : 'You'}
                           </p>
                         </div>
-
-                        {message.role === 'assistant' ? (
-                          <AnswerDocument
-                            className="text-pretty"
-                            content={message.content || 'Thinking...'}
-                          />
-                        ) : (
-                          <p className="whitespace-pre-wrap text-sm leading-7 text-foreground">
-                            {message.content}
-                          </p>
-                        )}
-
-                        {message.role === 'assistant' &&
-                        message.sources.length > 0 ? (
-                          <div className="mt-5 space-y-3 border-t pt-4">
-                            <p className="text-xs font-medium text-muted-foreground">
-                              Sources
-                            </p>
-                            <div className="space-y-2">
-                              {message.sources.map((source) => (
-                                <Link
-                                  key={`${message.id}-${source.documentId}`}
-                                  href={`/app/library/${source.documentId}`}
-                                  className="flex items-center justify-between rounded-lg border p-3 transition hover:bg-accent/30"
-                                >
-                                  <div className="min-w-0">
-                                    <p className="truncate text-sm font-medium text-foreground">
-                                      {source.title}
-                                    </p>
-                                    <p className="text-xs text-muted-foreground">
-                                      {source.author || 'Unknown author'}
-                                      {source.publishedAt
-                                        ? ` · ${source.publishedAt}`
-                                        : ''}
-                                    </p>
-                                  </div>
-                                  <ExternalLink className="size-4 text-muted-foreground" />
-                                </Link>
-                              ))}
-                            </div>
-                          </div>
-                        ) : null}
+                        <p className="text-xs text-muted-foreground">
+                          {formatDistanceToNow(new Date(message.createdAt), {
+                            addSuffix: true,
+                          })}
+                        </p>
                       </div>
-                    ))
-                  ) : (
-                    <Alert>
-                      <AlertTitle>No messages yet</AlertTitle>
-                      <AlertDescription>
-                        Ask your first question to start a grounded
-                        conversation.
-                      </AlertDescription>
-                    </Alert>
-                  )}
-                </div>
-              </ScrollArea>
-            </CardPanel>
-          </Card>
-          <DrawerContent className="sm:max-w-md">
-            <DrawerHeader>
-              <DrawerTitle>Previous conversations</DrawerTitle>
-              <DrawerDescription>
-                Reopen a saved thread and continue asking.
-              </DrawerDescription>
-            </DrawerHeader>
-            <div className="px-4 pb-4">
-              <ConversationList
-                activeConversationId={conversationId}
-                conversations={conversations}
-                isLoading={conversationsLoading}
-                onNewChat={startNewConversation}
-                onSelect={openConversation}
-              />
-            </div>
-          </DrawerContent>
-        </Drawer>
-      </div>
+
+                      {message.role === 'assistant' ? (
+                        <AnswerDocument
+                          className="text-pretty"
+                          content={message.content || 'Thinking...'}
+                        />
+                      ) : (
+                        <p className="whitespace-pre-wrap text-sm leading-7 text-foreground">
+                          {message.content}
+                        </p>
+                      )}
+
+                      {message.role === 'assistant' &&
+                      message.sources.length > 0 ? (
+                        <div className="mt-5 space-y-3 border-t pt-4">
+                          <p className="text-xs font-medium text-muted-foreground">
+                            Sources
+                          </p>
+                          <div className="space-y-2">
+                            {message.sources.map((source) => (
+                              <Link
+                                key={`${message.id}-${source.documentId}`}
+                                href={`/app/library/${source.documentId}`}
+                                className="flex items-center justify-between rounded-lg border p-3 transition hover:bg-accent/30"
+                              >
+                                <div className="min-w-0">
+                                  <p className="truncate text-sm font-medium text-foreground">
+                                    {source.title}
+                                  </p>
+                                  <p className="text-xs text-muted-foreground">
+                                    {source.author || 'Unknown author'}
+                                    {source.publishedAt
+                                      ? ` · ${source.publishedAt}`
+                                      : ''}
+                                  </p>
+                                </div>
+                                <ExternalLink className="size-4 text-muted-foreground" />
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      ) : null}
+                    </div>
+                  ))
+                ) : (
+                  <Alert>
+                    <AlertTitle>No messages yet</AlertTitle>
+                    <AlertDescription>
+                      Ask your first question to start a grounded conversation.
+                    </AlertDescription>
+                  </Alert>
+                )}
+              </div>
+            </ScrollArea>
+          </CardPanel>
+        </Card>
+        <DrawerContent className="sm:max-w-md">
+          <DrawerHeader>
+            <DrawerTitle>Previous conversations</DrawerTitle>
+            <DrawerDescription>
+              Reopen a saved thread and continue asking.
+            </DrawerDescription>
+          </DrawerHeader>
+          <div className="px-4 pb-4">
+            <ConversationList
+              activeConversationId={conversationId}
+              conversations={conversations}
+              isLoading={conversationsLoading}
+              onNewChat={startNewConversation}
+              onSelect={openConversation}
+            />
+          </div>
+        </DrawerContent>
+      </Drawer>
+    </div>
   );
 }

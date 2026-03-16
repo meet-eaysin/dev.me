@@ -48,7 +48,10 @@ export class LLMClientFactory {
             'Failed to decrypt user API key. The key might be invalid or the encryption key changed.',
           );
         }
-      } else if (this.options.providerKeys && this.options.providerKeys[providerId]) {
+      } else if (
+        this.options.providerKeys &&
+        this.options.providerKeys[providerId]
+      ) {
         // Fallback to system-wide provider key if user didn't provide one
         apiKey = this.options.providerKeys[providerId];
       }
@@ -79,10 +82,14 @@ export class LLMClientFactory {
     if (useSystemDefault && this.options.defaultEmbeddingProviderId) {
       embeddingProviderId = this.options.defaultEmbeddingProviderId;
       embeddingApiKey = this.options.defaultEmbeddingApiKey;
-    } else if (!useSystemDefault && this.options.providerKeys && this.options.providerKeys[embeddingProviderId]) {
+    } else if (
+      !useSystemDefault &&
+      this.options.providerKeys &&
+      this.options.providerKeys[embeddingProviderId]
+    ) {
       // If user specified a chat provider, and we have a system key for that same provider,
       // use it for embedding too if the user didn't provide their own key.
-      embeddingApiKey = apiKey; 
+      embeddingApiKey = apiKey;
     }
 
     const embeddingProviderDef =
@@ -161,7 +168,11 @@ export class LLMClientFactory {
       .select('llmUserSettings')
       .lean();
 
-    if (!user || !user.llmUserSettings || !user.llmUserSettings.configs.length) {
+    if (
+      !user ||
+      !user.llmUserSettings ||
+      !user.llmUserSettings.configs.length
+    ) {
       return this.resolveConfig(null);
     }
 

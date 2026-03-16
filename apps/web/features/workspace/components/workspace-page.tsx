@@ -28,23 +28,20 @@ export function WorkspacePage() {
   const threadStream = useThreadStream();
   const activeStream = threadStream.activeStream;
 
-  // If there's an active stream, show the inline chat
-  if (activeStream) {
-    return <InlineChat />;
-  }
+  if (activeStream) return <InlineChat />;
 
   return (
     <PageContainer>
       <OmniBox />
 
-      <div className="space-y-4">
-        <div className="text-center">
+      <section className="space-y-4 pt-10">
+        <div className="flex items-center justify-between">
           <h2 className="text-xs font-semibold uppercase text-muted-foreground">
             Your Daily Synthesis
           </h2>
         </div>
         <HomeContent />
-      </div>
+      </section>
     </PageContainer>
   );
 }
@@ -65,18 +62,6 @@ function InlineChat() {
   const [error, setError] = React.useState<string | null>(null);
 
   const { data: conversation } = useSearchChat(conversationId);
-
-  // Clear context once stream is done and conversation is fetched
-  React.useEffect(() => {
-    if (
-      activeStream &&
-      !activeStream.isStreaming &&
-      conversation &&
-      conversation.messages.length > 0
-    ) {
-      // Don't clear — just mark that we can show persisted data
-    }
-  }, [activeStream, conversation]);
 
   const goBack = () => {
     threadStream.clearStream();

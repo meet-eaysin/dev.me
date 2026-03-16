@@ -1,13 +1,17 @@
-"use client"
+'use client';
 
-import * as React from "react"
+import * as React from 'react';
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
-import { useArchiveChat, useDeleteChat, useSearchChats } from "@/features/search/hooks"
-import { NavUser } from "@/components/nav-user"
-import { Button } from "@/components/ui/button"
+import {
+  useArchiveChat,
+  useDeleteChat,
+  useSearchChats,
+} from '@/features/search/hooks';
+import { NavUser } from '@/components/nav-user';
+import { Button } from '@/components/ui/button';
 import {
   Sidebar,
   SidebarContent,
@@ -23,9 +27,15 @@ import {
   SidebarInput,
   SidebarRail,
   useSidebar,
-} from "@/components/ui/sidebar"
-import { SearchIcon, MessageSquareIcon, ArchiveIcon, Trash2Icon, PlusIcon } from "lucide-react"
-import { ApplicationIcon } from "./application-logo"
+} from '@/components/ui/sidebar';
+import {
+  SearchIcon,
+  MessageSquareIcon,
+  ArchiveIcon,
+  Trash2Icon,
+  PlusIcon,
+} from 'lucide-react';
+import { ApplicationIcon } from './application-logo';
 
 function SidebarSearch({
   value,
@@ -33,25 +43,25 @@ function SidebarSearch({
   focusKey,
   onRequestFocus,
 }: {
-  value: string
-  onChange: (value: string) => void
-  focusKey: number
-  onRequestFocus: () => void
+  value: string;
+  onChange: (value: string) => void;
+  focusKey: number;
+  onRequestFocus: () => void;
 }) {
-  const { state, setOpen } = useSidebar()
+  const { state, setOpen } = useSidebar();
 
   return (
     <SidebarGroup>
       <SidebarGroupContent>
-        {state === "collapsed" ? (
+        {state === 'collapsed' ? (
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton
                 tooltip="Search"
                 className="justify-center"
                 onClick={() => {
-                  onRequestFocus()
-                  setOpen(true)
+                  onRequestFocus();
+                  setOpen(true);
                 }}
               >
                 <SearchIcon />
@@ -72,26 +82,26 @@ function SidebarSearch({
         )}
       </SidebarGroupContent>
     </SidebarGroup>
-  )
+  );
 }
 
 function SidebarChatList({ query }: { query: string }) {
-  const { data: chats, isLoading } = useSearchChats()
-  const pathname = usePathname()
-  const archiveChat = useArchiveChat()
-  const deleteChat = useDeleteChat()
+  const { data: chats, isLoading } = useSearchChats();
+  const pathname = usePathname();
+  const archiveChat = useArchiveChat();
+  const deleteChat = useDeleteChat();
 
   const filteredChats = React.useMemo(() => {
-    if (!chats) return []
-    const trimmed = query.trim()
-    if (!trimmed) return chats
-    const lower = trimmed.toLowerCase()
+    if (!chats) return [];
+    const trimmed = query.trim();
+    if (!trimmed) return chats;
+    const lower = trimmed.toLowerCase();
     return chats.filter(
       (chat) =>
         chat.title.toLowerCase().includes(lower) ||
-        chat.lastMessagePreview?.toLowerCase().includes(lower)
-    )
-  }, [chats, query])
+        chat.lastMessagePreview?.toLowerCase().includes(lower),
+    );
+  }, [chats, query]);
 
   return (
     <SidebarGroup>
@@ -129,7 +139,7 @@ function SidebarChatList({ query }: { query: string }) {
                     <span className="flex min-w-0 flex-col group-data-[collapsible=icon]:hidden">
                       <span className="truncate">{chat.title}</span>
                       <span className="line-clamp-1 text-xs text-muted-foreground">
-                        {chat.lastMessagePreview || "No preview available"}
+                        {chat.lastMessagePreview || 'No preview available'}
                       </span>
                     </span>
                   </SidebarMenuButton>
@@ -138,9 +148,9 @@ function SidebarChatList({ query }: { query: string }) {
                       variant="ghost"
                       size="icon-xs"
                       onClick={(event) => {
-                        event.preventDefault()
-                        event.stopPropagation()
-                        archiveChat.mutate({ id: chat.id, isArchived: true })
+                        event.preventDefault();
+                        event.stopPropagation();
+                        archiveChat.mutate({ id: chat.id, isArchived: true });
                       }}
                       aria-label={`Archive ${chat.title}`}
                     >
@@ -150,9 +160,9 @@ function SidebarChatList({ query }: { query: string }) {
                       variant="ghost"
                       size="icon-xs"
                       onClick={(event) => {
-                        event.preventDefault()
-                        event.stopPropagation()
-                        deleteChat.mutate(chat.id)
+                        event.preventDefault();
+                        event.stopPropagation();
+                        deleteChat.mutate(chat.id);
                       }}
                       aria-label={`Delete ${chat.title}`}
                     >
@@ -171,12 +181,12 @@ function SidebarChatList({ query }: { query: string }) {
         )}
       </SidebarMenu>
     </SidebarGroup>
-  )
+  );
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const [searchQuery, setSearchQuery] = React.useState("")
-  const [searchFocusKey, setSearchFocusKey] = React.useState(0)
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const [searchFocusKey, setSearchFocusKey] = React.useState(0);
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -199,5 +209,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarRail />
       </div>
     </Sidebar>
-  )
+  );
 }

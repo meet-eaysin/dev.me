@@ -723,7 +723,7 @@ export function GraphExplorer() {
                 />
               </InputGroup>
 
-            <ScrollArea className="h-72 rounded-lg border bg-muted/15">
+              <ScrollArea className="h-72 rounded-lg border bg-muted/15">
                 <div className="space-y-1 p-2">
                   {filteredDocumentNodes.length > 0 ? (
                     filteredDocumentNodes.map((node) => {

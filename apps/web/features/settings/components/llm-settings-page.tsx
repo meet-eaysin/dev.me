@@ -71,7 +71,10 @@ export function LlmSettingsPage() {
   const activeConfig = useMemo(() => {
     if (!data?.configs?.length) return null;
     if (data.activeConfigId) {
-      return data.configs.find((c) => c.id === data.activeConfigId) || data.configs[0];
+      return (
+        data.configs.find((c) => c.id === data.activeConfigId) ||
+        data.configs[0]
+      );
     }
     return data.configs[0];
   }, [data]);

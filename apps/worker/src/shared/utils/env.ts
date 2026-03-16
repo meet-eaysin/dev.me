@@ -151,7 +151,10 @@ export const env = {
     required: false,
   }),
   GROQ_API_KEY: getEnv({ key: 'GROQ_API_KEY', required: false }),
-  GOOGLE_AI_STUDIO_KEY: getEnv({ key: 'GOOGLE_AI_STUDIO_KEY', required: false }),
+  GOOGLE_AI_STUDIO_KEY: getEnv({
+    key: 'GOOGLE_AI_STUDIO_KEY',
+    required: false,
+  }),
   FILE_UPLOAD_DIR: getEnv({ key: 'FILE_UPLOAD_DIR' }),
   ENCRYPTION_KEY: getEnv({ key: 'ENCRYPTION_KEY' }),
 };

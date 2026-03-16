@@ -1,13 +1,13 @@
-"use client"
+'use client';
 
-import Link from "next/link"
+import Link from 'next/link';
 
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
-import { BrainIcon } from "lucide-react"
+} from '@/components/ui/sidebar';
+import { BrainIcon } from 'lucide-react';
 
 export function ApplicationIcon() {
   return (
@@ -30,5 +30,5 @@ export function ApplicationIcon() {
         </SidebarMenuButton>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
+  );
 }

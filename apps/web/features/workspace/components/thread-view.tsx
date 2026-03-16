@@ -284,17 +284,17 @@ export function ThreadView() {
         open={!!previewId}
         onOpenChange={(open) => !open && setPreviewId(null)}
       >
-      <DrawerContent className="h-full sm:max-w-2xl">
-        <DrawerHeader className="border-b flex flex-row items-center justify-between">
-          <DrawerTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-            Document Preview
-          </DrawerTitle>
-          <DrawerClose asChild>
-            <Button variant="ghost" size="sm">
-              Close
-            </Button>
-          </DrawerClose>
-        </DrawerHeader>
+        <DrawerContent className="h-full sm:max-w-2xl">
+          <DrawerHeader className="border-b flex flex-row items-center justify-between">
+            <DrawerTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+              Document Preview
+            </DrawerTitle>
+            <DrawerClose asChild>
+              <Button variant="ghost" size="sm">
+                Close
+              </Button>
+            </DrawerClose>
+          </DrawerHeader>
           <div className="flex-1 overflow-hidden">
             <ScrollArea className="h-full">
               <div className="p-6">

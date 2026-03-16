@@ -19,7 +19,15 @@ const turndownService = new TurndownService({
 });
 
 // Remove unnecessary tags that might persist in HTML
-turndownService.remove(['script', 'style', 'noscript', 'iframe', 'button', 'nav', 'footer']);
+turndownService.remove([
+  'script',
+  'style',
+  'noscript',
+  'iframe',
+  'button',
+  'nav',
+  'footer',
+]);
 
 export class UrlExtractor {
   async extractFromUrl(url: string, retryCount = 1): Promise<UrlExtractResult> {

@@ -20,8 +20,13 @@ export class UserLlmSettingsController {
     @User('userId') userId: string,
   ): Promise<LLMSettingsResponse> {
     const { UserModel } = await import('@repo/db');
-    const user = await UserModel.findById(userId).select('llmUserSettings').lean();
-    const settings = user?.llmUserSettings || { configs: [], activeConfigId: undefined };
+    const user = await UserModel.findById(userId)
+      .select('llmUserSettings')
+      .lean();
+    const settings = user?.llmUserSettings || {
+      configs: [],
+      activeConfigId: undefined,
+    };
 
     return {
       registry: getProviderRegistry(),

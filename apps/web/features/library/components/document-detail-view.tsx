@@ -331,7 +331,11 @@ export function DocumentDetailView({ id }: { id: string }) {
             <div className="absolute right-3 top-3 z-10 flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
               {document.sourceUrl && (
                 <a href={document.sourceUrl} rel="noreferrer" target="_blank">
-                  <Button size="icon-sm" variant="secondary" className="h-7 w-7">
+                  <Button
+                    size="icon-sm"
+                    variant="secondary"
+                    className="h-7 w-7"
+                  >
                     <ArrowUpRight className="size-3.5" />
                   </Button>
                 </a>
@@ -387,7 +391,10 @@ export function DocumentDetailView({ id }: { id: string }) {
             <Separator />
             <CardContent className="space-y-5 px-5 py-5">
               {/* Composer */}
-              <form onSubmit={handleCreateNote} className="space-y-4 rounded-lg border bg-muted/10 p-4">
+              <form
+                onSubmit={handleCreateNote}
+                className="space-y-4 rounded-lg border bg-muted/10 p-4"
+              >
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-2 text-xs font-medium text-foreground/80">
                     <StickyNote className="size-3.5" />

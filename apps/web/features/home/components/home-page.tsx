@@ -484,7 +484,11 @@ export function HomePage() {
             and continue your research threads.
           </p>
         </div>
-        <Button variant="default" size="default" render={<Link href="/app/library/new" />}>
+        <Button
+          variant="default"
+          size="default"
+          render={<Link href="/app/library/new" />}
+        >
           <Plus className="mr-2 size-4" />
           Add Document
         </Button>
