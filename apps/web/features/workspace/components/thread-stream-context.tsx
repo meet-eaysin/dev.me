@@ -15,6 +15,7 @@ type ThreadStreamContextValue = {
   activeAbortSignal: AbortSignal | null;
   clearStream: () => void;
   setStream: (state: StreamState) => AbortSignal;
+  updateStream: (partial: Partial<StreamState>) => void;
   updateAnswer: (chunk: string) => void;
   completeStream: () => void;
   failStream: (error: string) => void;
@@ -49,6 +50,13 @@ export function ThreadStreamProvider({
     setActiveStream((prev) => {
       if (!prev) return prev;
       return { ...prev, answer: prev.answer + chunk };
+    });
+  }, []);
+
+  const updateStream = React.useCallback((partial: Partial<StreamState>) => {
+    setActiveStream((prev) => {
+      if (!prev) return prev;
+      return { ...prev, ...partial };
     });
   }, []);
 
@@ -95,6 +103,7 @@ export function ThreadStreamProvider({
       completeStream,
       failStream,
       setStream,
+      updateStream,
       updateAnswer,
       abortStream,
     }),
@@ -104,6 +113,7 @@ export function ThreadStreamProvider({
       completeStream,
       failStream,
       setStream,
+      updateStream,
       updateAnswer,
       abortStream,
     ],

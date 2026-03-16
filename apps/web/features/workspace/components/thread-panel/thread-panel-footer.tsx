@@ -31,7 +31,7 @@ export function ThreadPanelFooter({
             description="Are you sure you want to clear all your chat history? This action cannot be undone."
             confirmLabel="Clear All"
             tone="destructive"
-            onConfirm={onClearHistory}
+            confirmAction={onClearHistory}
             trigger={
               <Button
                 variant="ghost"

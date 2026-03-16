@@ -20,8 +20,8 @@ type ConfirmationDialogProps = {
   description: React.ReactNode;
   footerVariant?: 'bare' | 'default';
   isPending?: boolean;
-  onConfirm: () => void | Promise<void>;
-  onOpenChange?: (open: boolean) => void;
+  confirmAction: () => void | Promise<void>;
+  openChangeAction?: (open: boolean) => void;
   open?: boolean;
   title: React.ReactNode;
   tone?: 'default' | 'destructive';
@@ -35,8 +35,8 @@ export function ConfirmationDialog({
   description,
   footerVariant = 'bare',
   isPending = false,
-  onConfirm,
-  onOpenChange,
+  confirmAction,
+  openChangeAction,
   open: controlledOpen,
   title,
   tone = 'default',
@@ -50,11 +50,11 @@ export function ConfirmationDialog({
     if (!isControlled) {
       setUncontrolledOpen(nextOpen);
     }
-    onOpenChange?.(nextOpen);
+    openChangeAction?.(nextOpen);
   }
 
   async function handleConfirm() {
-    await onConfirm();
+    await confirmAction();
     setOpen(false);
   }
 

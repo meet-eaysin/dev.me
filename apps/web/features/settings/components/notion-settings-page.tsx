@@ -383,7 +383,7 @@ export function NotionSettingsPage() {
                     confirmLabel="Disconnect"
                     description="This removes the saved Notion integration and stops future sync actions."
                     isPending={disconnectNotion.isPending}
-                    onConfirm={() => disconnectNotion.mutateAsync()}
+                    confirmAction={() => disconnectNotion.mutateAsync()}
                     title="Disconnect this Notion workspace?"
                     tone="destructive"
                     trigger={

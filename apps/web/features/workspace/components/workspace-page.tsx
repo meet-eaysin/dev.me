@@ -60,6 +60,7 @@ function InlineChat() {
   const [streamingAnswer, setStreamingAnswer] = React.useState('');
   const [streamingQuestion, setStreamingQuestion] = React.useState('');
   const [previewId, setPreviewId] = React.useState<string | null>(null);
+  const followUpAbortRef = React.useRef<AbortController | null>(null);
 
   const [error, setError] = React.useState<string | null>(null);
 
@@ -93,9 +94,16 @@ function InlineChat() {
     setQuestion('');
 
     try {
+      if (followUpAbortRef.current) {
+        followUpAbortRef.current.abort();
+      }
+      const controller = new AbortController();
+      followUpAbortRef.current = controller;
+
       await searchApi.streamAsk(
         { conversationId, question: trimmed },
         {
+          signal: controller.signal,
           onEvent: (event) => {
             if (event.type === 'delta') {
               setStreamingAnswer((prev) => prev + event.chunk);
@@ -103,6 +111,7 @@ function InlineChat() {
               console.error(event.message);
               setError(event.message);
               setIsStreaming(false);
+              followUpAbortRef.current = null;
               queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.SEARCH.chat(conversationId),
               });
@@ -119,6 +128,7 @@ function InlineChat() {
               setIsStreaming(false);
               setStreamingAnswer('');
               setStreamingQuestion('');
+              followUpAbortRef.current = null;
             }
           },
         },
@@ -128,10 +138,15 @@ function InlineChat() {
       const msg = error instanceof Error ? error.message : String(error);
       setError(msg);
       setIsStreaming(false);
+      followUpAbortRef.current = null;
     }
   };
 
   const stopGeneration = () => {
+    if (followUpAbortRef.current) {
+      followUpAbortRef.current.abort();
+      followUpAbortRef.current = null;
+    }
     threadStream.abortStream();
     setIsStreaming(false);
   };
@@ -151,7 +166,9 @@ function InlineChat() {
   const persistedMessages = conversation?.messages ?? [];
   const showInitialStream =
     activeStream &&
-    (activeStream.isStreaming || activeStream.answer.length > 0);
+    (activeStream.isStreaming ||
+      activeStream.answer.length > 0 ||
+      !!activeStream.error);
   // If conversation has messages AND stream is done, show persisted only
   const usePersistedOnly =
     persistedMessages.length > 0 && activeStream && !activeStream.isStreaming;

@@ -43,13 +43,9 @@ export function OmniBox() {
           signal,
           onEvent: (event) => {
             if (event.type === 'conversation') {
-              // Set context — WorkspacePage will detect this and render chat inline
-              threadStream.setStream({
-                answer: '',
+              // Update conversation id without aborting the active stream
+              threadStream.updateStream({
                 conversationId: event.conversationId,
-                error: null,
-                isStreaming: true,
-                question: trimmed,
               });
               // Silently update URL for bookmarkability — no navigation
               window.history.replaceState(

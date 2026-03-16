@@ -779,8 +779,8 @@ export function DocumentDetailView({ id }: { id: string }) {
 
       <ConfirmationDialog
         open={deleteDocumentOpen}
-        onOpenChange={setDeleteDocumentOpen}
-        onConfirm={handleDeleteDocument}
+        openChangeAction={setDeleteDocumentOpen}
+        confirmAction={handleDeleteDocument}
         isPending={deleteDocument.isPending}
         title="Delete document?"
         description={`This will permanently delete "${document.title}" and remove its notes, summary, and related data.`}
@@ -790,8 +790,8 @@ export function DocumentDetailView({ id }: { id: string }) {
 
       <ConfirmationDialog
         open={removeSummaryOpen}
-        onOpenChange={setRemoveSummaryOpen}
-        onConfirm={handleRemoveSummary}
+        openChangeAction={setRemoveSummaryOpen}
+        confirmAction={handleRemoveSummary}
         isPending={deleteSummary.isPending}
         title="Remove summary?"
         description="This removes the generated summary from the document. You can generate it again later."
@@ -801,10 +801,10 @@ export function DocumentDetailView({ id }: { id: string }) {
 
       <ConfirmationDialog
         open={deletingNoteId !== null}
-        onOpenChange={(open) => {
+        openChangeAction={(open) => {
           if (!open) setDeletingNoteId(null);
         }}
-        onConfirm={() => handleDeleteNote(deletingNoteId!)}
+        confirmAction={() => handleDeleteNote(deletingNoteId!)}
         isPending={deleteNote.isPending}
         title="Delete note?"
         description="This note will be removed permanently from the document."

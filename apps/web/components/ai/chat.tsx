@@ -206,6 +206,12 @@ export function Chat({
         />
       ) : null}
 
+      {isEmpty && !append && !suggestions ? (
+        <div className="flex flex-1 items-center justify-center text-center text-sm text-muted-foreground px-6">
+          No messages yet. Ask a question to start this conversation.
+        </div>
+      ) : null}
+
       {messages.length > 0 ? (
         <ChatMessages messages={messages}>
           <MessageList

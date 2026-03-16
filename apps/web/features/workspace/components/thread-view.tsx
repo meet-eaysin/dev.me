@@ -37,6 +37,7 @@ export function ThreadView() {
   const [streamingAnswer, setStreamingAnswer] = React.useState('');
   const [streamingQuestion, setStreamingQuestion] = React.useState('');
   const [previewId, setPreviewId] = React.useState<string | null>(null);
+  const followUpAbortRef = React.useRef<AbortController | null>(null);
 
   const { data: conversation, isLoading } = useSearchChat(threadId);
 
@@ -45,7 +46,9 @@ export function ThreadView() {
   const hasOmniStream =
     omniStream !== null &&
     omniStream.conversationId === threadId &&
-    (omniStream.isStreaming || omniStream.answer.length > 0);
+    (omniStream.isStreaming ||
+      omniStream.answer.length > 0 ||
+      !!omniStream.error);
 
   // Clear the omni stream once the conversation data has been fetched
   // and the stream is complete
@@ -74,13 +77,11 @@ export function ThreadView() {
     setQuestion('');
 
     try {
-      const signal = threadStream.setStream({
-        answer: '',
-        conversationId: threadId ?? '',
-        error: null,
-        isStreaming: true,
-        question: trimmed,
-      });
+      if (followUpAbortRef.current) {
+        followUpAbortRef.current.abort();
+      }
+      const controller = new AbortController();
+      followUpAbortRef.current = controller;
 
       await searchApi.streamAsk(
         {
@@ -88,16 +89,15 @@ export function ThreadView() {
           question: trimmed,
         },
         {
-          signal,
+          signal: controller.signal,
           onEvent: (event) => {
             if (event.type === 'delta') {
               setStreamingAnswer((prev) => prev + event.chunk);
-              threadStream.updateAnswer(event.chunk);
             } else if (event.type === 'error') {
               console.error(event.message);
               setError(event.message);
               setIsStreaming(false);
-              threadStream.failStream(event.message);
+              followUpAbortRef.current = null;
               queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.SEARCH.chat(threadId ?? ''),
               });
@@ -114,7 +114,7 @@ export function ThreadView() {
               setIsStreaming(false);
               setStreamingAnswer('');
               setStreamingQuestion('');
-              threadStream.completeStream();
+              followUpAbortRef.current = null;
             }
           },
         },
@@ -124,6 +124,7 @@ export function ThreadView() {
       const msg = error instanceof Error ? error.message : String(error);
       setError(msg);
       setIsStreaming(false);
+      followUpAbortRef.current = null;
     }
   };
 
@@ -138,7 +139,8 @@ export function ThreadView() {
     }
   };
 
-  const showOmniStream = hasOmniStream && omniStream;
+  const showOmniStream =
+    hasOmniStream && omniStream && (conversation?.messages.length ?? 0) === 0;
   const showFollowUpStream = isStreaming;
 
   const messages: Message[] = React.useMemo(() => {
@@ -213,6 +215,10 @@ export function ThreadView() {
   ]);
 
   const stopGeneration = () => {
+    if (followUpAbortRef.current) {
+      followUpAbortRef.current.abort();
+      followUpAbortRef.current = null;
+    }
     threadStream.abortStream();
     setIsStreaming(false);
   };

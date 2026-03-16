@@ -132,50 +132,83 @@ export class AskUseCase {
     const resolvedConfig =
       await this.llmClientFactory.resolveConfigForUserId(userId);
 
-    await this.ragService.stream(
-      userId,
-      query.question,
-      resolvedClient,
-      resolvedConfig,
-      {
-        onComplete: async (result) => {
-          const detail = await this.searchChatService.appendExchange({
-            answer: result.answer,
-            conversationId,
-            documentIds: activeDocumentIds,
-            question: query.question,
-            sources: result.sources,
-            tokensUsed: result.tokensUsed,
-            userId,
-          });
+    let errorSent = false;
+    let partialAnswer = '';
+    const onError = async (message: string) => {
+      errorSent = true;
+      await handlers.onError(message);
+    };
+    const onToken = async (chunk: string) => {
+      partialAnswer += chunk;
+      await handlers.onToken(chunk);
+    };
 
-          this.userActivityRepository
-            .recordActivity({
+    try {
+      await this.ragService.stream(
+        userId,
+        query.question,
+        resolvedClient,
+        resolvedConfig,
+        {
+          onComplete: async (result) => {
+            const detail = await this.searchChatService.appendExchange({
+              answer: result.answer,
+              conversationId,
+              documentIds: activeDocumentIds,
+              question: query.question,
+              sources: result.sources,
+              tokensUsed: result.tokensUsed,
               userId,
-              targetId: userId,
-              targetType: 'ask_result',
-              action: 'ask_performed',
-              metadata: {
-                tokensUsed: result.tokensUsed,
-                sourcesCount: result.sources.length,
-              },
-            })
-            .catch((error: unknown) => {
-              const msg =
-                error instanceof Error ? error.message : String(error);
-              this.logger.error(`Failed to log user activity: ${msg}`);
             });
 
-          await handlers.onComplete({
-            ...result,
-            conversationId: detail.id,
-          });
+            this.userActivityRepository
+              .recordActivity({
+                userId,
+                targetId: userId,
+                targetType: 'ask_result',
+                action: 'ask_performed',
+                metadata: {
+                  tokensUsed: result.tokensUsed,
+                  sourcesCount: result.sources.length,
+                },
+              })
+              .catch((error: unknown) => {
+                const msg =
+                  error instanceof Error ? error.message : String(error);
+                this.logger.error(`Failed to log user activity: ${msg}`);
+              });
+
+            await handlers.onComplete({
+              ...result,
+              conversationId: detail.id,
+            });
+          },
+          onError,
+          onToken,
         },
-        onError: handlers.onError,
-        onToken: handlers.onToken,
-      },
-      activeDocumentIds,
-      history,
-    );
+        activeDocumentIds,
+        history,
+      );
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      this.logger.error(`Ask stream failed: ${message}`);
+      if (!errorSent) {
+        await handlers.onError(message);
+      }
+      const persistedAnswer =
+        partialAnswer.trim().length > 0
+          ? `${partialAnswer}\n\nError: ${message}`
+          : message;
+      await this.searchChatService.appendExchange({
+        answer: persistedAnswer,
+        conversationId,
+        documentIds: activeDocumentIds,
+        question: query.question,
+        sources: [],
+        tokensUsed: 0,
+        status: 'error',
+        userId,
+      });
+    }
   }
 }

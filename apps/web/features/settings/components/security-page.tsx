@@ -195,7 +195,7 @@ export function SecurityPage() {
                         revokeSession.isPending &&
                         revokeSession.variables === session.sessionId
                       }
-                      onConfirm={async () => {
+                      confirmAction={async () => {
                         await revokeSession.mutateAsync(session.sessionId);
                       }}
                       title="Revoke this session?"

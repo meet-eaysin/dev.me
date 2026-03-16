@@ -89,8 +89,8 @@ export function CardActions({ document }: CardActionsProps) {
 
       <ConfirmationDialog
         open={deleteOpen}
-        onOpenChange={setDeleteOpen}
-        onConfirm={handleDelete}
+        openChangeAction={setDeleteOpen}
+        confirmAction={handleDelete}
         isPending={deleteDocument.isPending}
         title="Delete document?"
         description={`This will permanently delete "${document.title}" and remove its related data.`}
