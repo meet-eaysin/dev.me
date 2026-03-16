@@ -11,13 +11,12 @@ export default function WorkspaceLayout({ children }: { children: ReactNode }) {
   return (
     <TooltipProvider>
       <ThreadStreamProvider>
-        <SidebarProvider className="[&_[data-slot=sidebar-gap]]:w-0">
+        <SidebarProvider>
           <AppSidebar />
           <SidebarInset>
             <main>{children}</main>
 
             <Dock />
-            {/* <ThreadPanel /> */}
           </SidebarInset>
         </SidebarProvider>
       </ThreadStreamProvider>

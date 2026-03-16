@@ -37,9 +37,9 @@ export function WorkspacePage() {
     <PageContainer>
       <OmniBox />
 
-      <div className="animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-300 fill-mode-both">
-        <div className="text-center mb-8">
-          <h2 className="text-xs font-semibold uppercase text-muted-foreground/60">
+      <div className="space-y-4">
+        <div className="text-center">
+          <h2 className="text-xs font-semibold uppercase text-muted-foreground">
             Your Daily Synthesis
           </h2>
         </div>

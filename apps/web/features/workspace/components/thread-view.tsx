@@ -225,14 +225,16 @@ export function ThreadView() {
 
   if (isLoading && !hasOmniStream) {
     return (
-      <div className="w-full max-w-4xl mx-auto space-y-8 py-8 px-4 md:px-8 mt-12">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="space-y-4">
-            <Skeleton className="h-6 w-32" />
-            <Skeleton className="h-24 w-full rounded-2xl" />
-          </div>
-        ))}
-      </div>
+      <PageContainer>
+        <div className="space-y-8">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="space-y-4">
+              <Skeleton className="h-6 w-32" />
+              <Skeleton className="h-24 w-full" />
+            </div>
+          ))}
+        </div>
+      </PageContainer>
     );
   }
 
@@ -240,7 +242,7 @@ export function ThreadView() {
     <PageContainer isFullHeight>
       <div className="flex flex-col flex-1 h-full w-full min-h-0">
         {/* Header */}
-        <header className="flex items-center gap-4 mb-6 shrink-0 pt-4 w-full max-w-4xl mx-auto px-4 md:px-8">
+        <header className="flex items-center gap-4 pb-4">
           <Button
             variant="ghost"
             size="icon"
@@ -282,17 +284,17 @@ export function ThreadView() {
         open={!!previewId}
         onOpenChange={(open) => !open && setPreviewId(null)}
       >
-        <DrawerContent className="h-full sm:max-w-2xl">
-          <DrawerHeader className="border-b border-subtle flex flex-row items-center justify-between shrink-0">
-            <DrawerTitle className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">
-              Document Preview
-            </DrawerTitle>
-            <DrawerClose asChild>
-              <Button variant="ghost" size="sm" className="rounded-xl">
-                Close
-              </Button>
-            </DrawerClose>
-          </DrawerHeader>
+      <DrawerContent className="h-full sm:max-w-2xl">
+        <DrawerHeader className="border-b flex flex-row items-center justify-between">
+          <DrawerTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+            Document Preview
+          </DrawerTitle>
+          <DrawerClose asChild>
+            <Button variant="ghost" size="sm">
+              Close
+            </Button>
+          </DrawerClose>
+        </DrawerHeader>
           <div className="flex-1 overflow-hidden">
             <ScrollArea className="h-full">
               <div className="p-6">

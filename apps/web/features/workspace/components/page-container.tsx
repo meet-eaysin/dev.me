@@ -19,8 +19,8 @@ export function PageContainer({
       className={cn(
         'w-full',
         !isFullHeight
-          ? 'max-w-5xl mx-auto px-4 md:px-8 pt-4 pb-32'
-          : 'flex-1 flex flex-col h-full min-h-0 pt-4 pb-20',
+          ? 'mx-auto max-w-5xl px-4 py-6 pb-24 md:px-6 lg:px-8'
+          : 'flex min-h-0 flex-1 flex-col px-4 py-6 md:px-6 lg:px-8',
         className,
       )}
     >
