@@ -598,7 +598,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@base-ui/react@npm:^1.2.0":
+"@base-ui/react@npm:^1.3.0":
   version: 1.3.0
   resolution: "@base-ui/react@npm:1.3.0"
   dependencies:
@@ -15417,7 +15417,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "web@workspace:apps/web"
   dependencies:
-    "@base-ui/react": "npm:^1.2.0"
+    "@base-ui/react": "npm:^1.3.0"
     "@hookform/resolvers": "npm:^5.2.2"
     "@repo/eslint-config": "npm:*"
     "@repo/types": "npm:*"

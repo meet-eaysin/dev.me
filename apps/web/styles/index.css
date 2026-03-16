@@ -506,11 +506,11 @@ html[dir='rtl'] .react-tel-input .flag-dropdown {
   --sidebar-accent-foreground: var(--color-neutral-800);
   --sidebar-border: --alpha(var(--color-black) / 6%);
   --sidebar-ring: var(--color-neutral-400);
-  --background: var(--color-white);
-  --foreground: var(--color-neutral-800);
   --code: var(--color-white);
   --code-foreground: var(--foreground);
   --code-highlight: --alpha(var(--color-black) / 4%);
+  --background: var(--color-white);
+  --foreground: var(--color-neutral-800);
 }
 
 /*

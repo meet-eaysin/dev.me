@@ -1,11 +1,10 @@
-'use client';
+"use client";
 
-import { Slider as SliderPrimitive } from '@base-ui/react/slider';
-import * as React from 'react';
+import { Slider as SliderPrimitive } from "@base-ui/react/slider";
+import * as React from "react";
+import { cn } from "@/lib/utils";
 
-import { cn } from '@/lib/utils';
-
-function Slider({
+export function Slider({
   className,
   children,
   defaultValue,
@@ -13,7 +12,7 @@ function Slider({
   min = 0,
   max = 100,
   ...props
-}: SliderPrimitive.Root.Props) {
+}: SliderPrimitive.Root.Props): React.ReactElement {
   const _values = React.useMemo(() => {
     if (value !== undefined) {
       return Array.isArray(value) ? value : [value];
@@ -26,7 +25,7 @@ function Slider({
 
   return (
     <SliderPrimitive.Root
-      className={cn('data-[orientation=horizontal]:w-full', className)}
+      className={cn("data-[orientation=horizontal]:w-full", className)}
       defaultValue={defaultValue}
       max={max}
       min={min}
@@ -61,14 +60,17 @@ function Slider({
   );
 }
 
-function SliderValue({ className, ...props }: SliderPrimitive.Value.Props) {
+export function SliderValue({
+  className,
+  ...props
+}: SliderPrimitive.Value.Props): React.ReactElement {
   return (
     <SliderPrimitive.Value
-      className={cn('flex justify-end text-sm', className)}
+      className={cn("flex justify-end text-sm", className)}
       data-slot="slider-value"
       {...props}
     />
   );
 }
 
-export { Slider, SliderValue, SliderPrimitive };
+export { SliderPrimitive };
