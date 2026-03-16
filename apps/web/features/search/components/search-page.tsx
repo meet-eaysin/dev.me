@@ -4,7 +4,6 @@ import Link from 'next/link';
 import * as React from 'react';
 import { ArrowRight, Bot, Brain, FileText, Search } from 'lucide-react';
 import type { DocumentPublicView, SemanticSearchResult } from '@repo/types';
-import Shell from '@/components/shell';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -129,16 +128,6 @@ export function SearchPage() {
   );
 
   return (
-    <Shell
-      heading="Search"
-      subtitle="Find documents in your library or move to Ask AI for a grounded answer"
-      CTA={
-        <Button render={<Link href="/app/search/ask" />}>
-          <Bot className="size-4" />
-          Ask AI
-        </Button>
-      }
-    >
       <div className="mt-4 space-y-4">
         <Card>
           <CardHeader>
@@ -308,6 +297,5 @@ export function SearchPage() {
           </CardPanel>
         </Card>
       </div>
-    </Shell>
   );
 }

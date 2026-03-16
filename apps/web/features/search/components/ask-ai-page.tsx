@@ -8,7 +8,6 @@ import { formatDistanceToNow } from 'date-fns';
 import {
   Bot,
   ExternalLink,
-  FileSearch,
   History,
   Plus,
   SendHorizonal,
@@ -18,7 +17,6 @@ import type {
   ChatConversationDetail,
   ChatConversationSummary,
 } from '@repo/types';
-import Shell from '@/components/shell';
 import { AnswerDocument } from './answer-document';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -493,16 +491,6 @@ export function AskAiPage() {
   }));
 
   return (
-    <Shell
-      heading="Ask AI"
-      subtitle="Ask grounded questions about your library and continue the conversation when needed"
-      CTA={
-        <Button render={<Link href="/app/search" />} variant="outline">
-          <FileSearch className="size-4" />
-          Back to Search
-        </Button>
-      }
-    >
       <div className="mt-4 space-y-4">
         <Drawer
           direction="right"
@@ -738,6 +726,5 @@ export function AskAiPage() {
           </DrawerContent>
         </Drawer>
       </div>
-    </Shell>
   );
 }

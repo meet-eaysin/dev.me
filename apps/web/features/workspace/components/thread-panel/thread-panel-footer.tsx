@@ -1,7 +1,7 @@
 'use client';
 
 import { Settings, Trash } from 'lucide-react';
-import { UserDropdown } from '@/components/shell/user-dropdown/user-dropdown';
+import { UserDropdown } from '@/components/user-dropdown';
 import { Button } from '@/components/ui/button';
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
 

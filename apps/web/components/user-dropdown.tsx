@@ -20,7 +20,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 
-import { ThemeToggle } from '../theme-toggle';
+import { ThemeToggle } from './theme-toggle';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuthSession, useLogout } from '@/features/auth/hooks';
 

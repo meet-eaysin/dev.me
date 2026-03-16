@@ -24,7 +24,7 @@ import {
   X,
   Zap,
 } from 'lucide-react';
-import { PageBreadcrumbs } from '@/components/shell/page-breadcrumbs';
+import { PageBreadcrumbs } from '@/components/page-breadcrumbs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
