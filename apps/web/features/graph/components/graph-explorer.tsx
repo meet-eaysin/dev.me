@@ -563,7 +563,7 @@ export function GraphExplorer() {
   }
 
   return (
-    <PageContainer isFullHeight className="space-y-8">
+    <PageContainer className="space-y-8">
       <header className="space-y-1">
         <h1 className="text-3xl font-bold tracking-tight">Knowledge Graph</h1>
         <p className="text-muted-foreground">

@@ -39,6 +39,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
+import { PageContainer } from '@/features/workspace/components/page-container';
 import { Switch } from '@/components/ui/switch';
 import { ApiError } from '@/lib/api';
 import {
@@ -174,7 +175,7 @@ export function NotionSettingsPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <PageContainer className="space-y-8">
       <header className="flex items-center gap-4">
         <Button
           variant="ghost"
@@ -495,6 +496,6 @@ export function NotionSettingsPage() {
           </div>
         ) : null}
       </div>
-    </div>
+    </PageContainer>
   );
 }

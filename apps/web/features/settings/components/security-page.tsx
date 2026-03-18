@@ -27,6 +27,7 @@ import {
   EmptyTitle,
 } from '@/components/ui/empty';
 import { Skeleton } from '@/components/ui/skeleton';
+import { PageContainer } from '@/features/workspace/components/page-container';
 import {
   useCurrentSession,
   useRevokeUserSession,
@@ -52,7 +53,7 @@ export function SecurityPage() {
   const revokeSession = useRevokeUserSession();
 
   return (
-    <div className="space-y-8">
+    <PageContainer className="space-y-8">
       <header className="flex items-center gap-4">
         <Button
           variant="ghost"
@@ -213,6 +214,6 @@ export function SecurityPage() {
           </CardPanel>
         </Card>
       </div>
-    </div>
+    </PageContainer>
   );
 }

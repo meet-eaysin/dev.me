@@ -35,6 +35,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Switch } from '@/components/ui/switch';
 import { ApiError } from '@/lib/api';
 import { useLLMConfig, useUpdateLLMConfig, useTestLLMConfig } from '../hooks';
+import { PageContainer } from '@/features/workspace/components/page-container';
 
 const llmSettingsSchema = z.object({
   useSystemDefault: z.boolean(),
@@ -167,15 +168,15 @@ export function LlmSettingsPage() {
 
   if (isLoading) {
     return (
-      <div className="space-y-8">
+      <PageContainer className="space-y-8">
         <Skeleton className="h-20 w-full" />
         <Skeleton className="h-64 w-full" />
-      </div>
+      </PageContainer>
     );
   }
 
   return (
-    <div className="space-y-8">
+    <PageContainer className="space-y-8">
       <header className="flex items-center gap-4">
         <Button
           variant="ghost"
@@ -443,6 +444,6 @@ export function LlmSettingsPage() {
           </div>
         </div>
       </div>
-    </div>
+    </PageContainer>
   );
 }
