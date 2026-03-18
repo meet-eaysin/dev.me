@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, ExternalLink } from 'lucide-react';
+import { ArrowLeft, ExternalLink, X } from 'lucide-react';
 
 import { useSearchChat } from '@/features/search/hooks';
 import { searchApi } from '@/features/search/api';
@@ -14,7 +14,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { DocumentDetailView } from '@/features/library/components/document-detail-view';
 import {
   Drawer,
-  DrawerPopup as DrawerContent,
+  DrawerPopup,
   DrawerHeader,
   DrawerTitle,
   DrawerClose,
@@ -223,6 +223,8 @@ export function ThreadView() {
     setIsStreaming(false);
   };
 
+  const scrollRef = React.useRef<HTMLDivElement>(null);
+
   if (isLoading && !hasOmniStream) {
     return (
       <PageContainer>
@@ -239,35 +241,41 @@ export function ThreadView() {
   }
 
   return (
-    <PageContainer isFullHeight>
+    <PageContainer
+      isFullHeight
+      className="px-0 py-0 md:px-0 lg:px-0"
+      ref={scrollRef}
+    >
       <div className="flex flex-col flex-1 h-full w-full min-h-0">
         {/* Header */}
-        <div className="w-full max-w-4xl mx-auto px-4 md:px-8">
-          <header className="flex items-center gap-4 pb-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => router.push('/app')}
-              className="shrink-0"
-            >
-              <ArrowLeft className="size-4" />
-            </Button>
-            <div className="min-w-0">
-              <h1 className="text-xl font-bold tracking-tight truncate">
-                {conversation?.title || omniStream?.question || 'New Thread'}
-              </h1>
-              {conversation && (
-                <p className="text-xs text-muted-foreground">
-                  Started {formatDistanceToNow(new Date(conversation.createdAt))}{' '}
-                  ago
-                </p>
-              )}
-            </div>
-          </header>
+        <div className="sticky top-0 z-20 w-full bg-background/80 backdrop-blur-md">
+          <div className="max-w-4xl mx-auto px-4 md:px-8">
+            <header className="flex items-center gap-4 py-4">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => router.push('/app')}
+                className="shrink-0"
+              >
+                <ArrowLeft className="size-4" />
+              </Button>
+              <div className="min-w-0">
+                <h1 className="text-xl font-bold tracking-tight truncate">
+                  {conversation?.title || omniStream?.question || 'New Thread'}
+                </h1>
+                {conversation && (
+                  <p className="text-xs text-muted-foreground">
+                    Started {formatDistanceToNow(new Date(conversation.createdAt))}{' '}
+                    ago
+                  </p>
+                )}
+              </div>
+            </header>
+          </div>
         </div>
 
         {/* Messages and Input replacing manual blocks */}
-        <div className="flex-1 overflow-hidden pb-4 flex flex-col min-h-0">
+        <div className="flex-1 flex flex-col">
           <Chat
             messages={messages}
             input={question}
@@ -276,18 +284,18 @@ export function ThreadView() {
             isGenerating={isStreaming || !!omniStream?.isStreaming}
             onSourceClick={setPreviewId}
             stop={stopGeneration}
+            scrollRef={scrollRef}
           />
         </div>
       </div>
 
-      {/* Document Preview Drawer */}
       <Drawer
         position="right"
         open={!!previewId}
         onOpenChange={(open) => !open && setPreviewId(null)}
       >
-        <DrawerContent className="h-full sm:max-w-3xl border-l shadow-2xl">
-          <DrawerHeader className="border-b flex flex-row items-center justify-between bg-muted/5 py-4">
+        <DrawerPopup className="h-full sm:max-w-2xl p-0">
+          <DrawerHeader className="flex-row items-center justify-between border-b px-6 py-4">
             <div className="flex items-center gap-3">
               <DrawerTitle className="text-xs font-semibold text-muted-foreground/80">
                 Document Preview
@@ -307,11 +315,12 @@ export function ThreadView() {
                   variant="ghost"
                   size="sm"
                   className="h-8 w-8 rounded-full"
-                />
+                >
+                  <X className="size-4" />
+                  <span className="sr-only">Close</span>
+                </Button>
               }
-            >
-              Close
-            </DrawerClose>
+            />
           </DrawerHeader>
           <div className="flex-1 overflow-hidden">
             <ScrollArea className="h-full">
@@ -322,7 +331,7 @@ export function ThreadView() {
               </div>
             </ScrollArea>
           </div>
-        </DrawerContent>
+        </DrawerPopup>
       </Drawer>
     </PageContainer>
   );

@@ -36,6 +36,7 @@ interface ChatPropsBase {
   setMessages?: (messages: Message[]) => void;
   transcribeAudio?: (blob: Blob | null) => Promise<string>;
   onSourceClick?: (id: string) => void;
+  scrollRef?: React.RefObject<HTMLDivElement | null>;
 }
 
 interface ChatPropsWithoutSuggestions extends ChatPropsBase {
@@ -64,6 +65,7 @@ export function Chat({
   setMessages,
   transcribeAudio,
   onSourceClick,
+  scrollRef,
 }: ChatProps) {
   const lastMessage = messages.at(-1);
   const isEmpty = messages.length === 0;
@@ -197,7 +199,7 @@ export function Chat({
   );
 
   return (
-    <ChatContainer className={cn('h-full', className)}>
+    <ChatContainer className={cn('flex flex-col flex-1', className)}>
       {isEmpty && append && suggestions ? (
         <PromptSuggestions
           label="Try these prompts ✨"
@@ -207,13 +209,13 @@ export function Chat({
       ) : null}
 
       {isEmpty && !append && !suggestions ? (
-        <div className="flex flex-1 items-center justify-center text-center text-sm text-muted-foreground px-6">
+        <div className="flex flex-1 items-center justify-center text-center text-sm text-muted-foreground px-6 py-20">
           No messages yet. Ask a question to start this conversation.
         </div>
       ) : null}
 
       {messages.length > 0 ? (
-        <ChatMessages messages={messages}>
+        <ChatMessages messages={messages} scrollRef={scrollRef}>
           <MessageList
             messages={messages}
             isTyping={isTyping}
@@ -223,7 +225,7 @@ export function Chat({
       ) : null}
 
       <ChatForm
-        className="mt-auto mx-auto w-full max-w-4xl px-4 md:px-8 pb-4"
+        className="sticky bottom-0 z-10 mt-auto mx-auto w-full max-w-4xl px-4 md:px-8 pb-20 pt-12 bg-linear-to-t from-background via-background/90 to-transparent"
         isPending={isGenerating || isTyping}
         handleSubmit={handleSubmit}
       >
@@ -248,8 +250,10 @@ Chat.displayName = 'Chat';
 export function ChatMessages({
   messages,
   children,
+  scrollRef,
 }: React.PropsWithChildren<{
   messages: Message[];
+  scrollRef?: React.RefObject<HTMLDivElement | null>;
 }>) {
   const {
     containerRef,
@@ -257,31 +261,29 @@ export function ChatMessages({
     handleScroll,
     shouldAutoScroll,
     handleTouchStart,
-  } = useAutoScroll([messages]);
+  } = useAutoScroll([messages], scrollRef);
 
   return (
     <div
-      className="grid grid-cols-1 overflow-y-auto pb-4 pt-4 min-h-0 h-full"
+      className="flex flex-col pb-8 pt-4 w-full"
       ref={containerRef}
       onScroll={handleScroll}
       onTouchStart={handleTouchStart}
     >
-      <div className="max-w-4xl mx-auto w-full px-4 md:px-8 col-[1/1] row-[1/1]">
+      <div className="max-w-4xl mx-auto w-full px-4 md:px-8 flex-1">
         {children}
       </div>
 
       {!shouldAutoScroll && (
-        <div className="pointer-events-none flex flex-1 items-end justify-end col-[1/1] row-[1/1] w-full max-w-4xl mx-auto px-4 md:px-8 pb-4">
-          <div className="sticky bottom-0 left-0 flex w-full justify-center">
-            <Button
-              onClick={scrollToBottom}
-              className="pointer-events-auto h-8 w-8 rounded-full ease-in-out animate-in fade-in-0 slide-in-from-bottom-1 bg-background"
-              size="icon"
-              variant="ghost"
-            >
-              <ArrowDown className="h-4 w-4" />
-            </Button>
-          </div>
+        <div className="fixed bottom-28 left-1/2 -translate-x-1/2 z-20">
+          <Button
+            onClick={scrollToBottom}
+            className="h-8 w-8 rounded-full shadow-lg bg-background/80 backdrop-blur border"
+            size="icon"
+            variant="ghost"
+          >
+            <ArrowDown className="h-4 w-4" />
+          </Button>
         </div>
       )}
     </div>
@@ -295,7 +297,7 @@ export const ChatContainer = forwardRef<
   return (
     <div
       ref={ref}
-      className={cn('grid max-h-full w-full grid-rows-[1fr_auto]', className)}
+      className={cn('flex flex-col flex-1 w-full', className)}
       {...props}
     />
   );

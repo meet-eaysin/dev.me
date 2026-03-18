@@ -17,10 +17,8 @@ export default async function WorkspaceLayout({ children }: { children: ReactNod
           <div className="relative flex min-h-svh w-full overflow-hidden">
             <AppSidebar />
             <SidebarInset className="relative flex h-svh flex-1 flex-col overflow-hidden bg-background">
-              <main className="relative flex-1 overflow-y-auto overflow-x-hidden pt-2 scroll-smooth">
-                <div className="flex min-h-full flex-col pb-28">
-                  {children}
-                </div>
+              <main className="relative flex flex-1 flex-col min-h-0 overflow-hidden pt-2">
+                {children}
               </main>
               <Dock />
             </SidebarInset>

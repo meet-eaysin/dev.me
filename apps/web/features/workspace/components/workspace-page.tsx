@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, X } from 'lucide-react';
 import { OmniBox } from './omni-box';
 import { HomeContent } from '@/features/home/components/home-page';
 import { useThreadStream } from './thread-stream-context';
@@ -10,11 +10,10 @@ import { useSearchChat } from '@/features/search/hooks';
 import { searchApi } from '@/features/search/api';
 import { QUERY_KEYS } from '@/lib/query-keys';
 import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { DocumentDetailView } from '@/features/library/components/document-detail-view';
 import {
   Drawer,
-  DrawerContent,
+  DrawerPopup,
   DrawerHeader,
   DrawerTitle,
   DrawerClose,
@@ -232,34 +231,40 @@ function InlineChat() {
     error,
   ]);
 
+  const scrollRef = React.useRef<HTMLDivElement>(null);
+
   return (
-    <PageContainer isFullHeight>
+    <PageContainer isFullHeight ref={scrollRef} className="px-0 py-0">
       <div className="flex flex-1 flex-col">
         {/* Header */}
-        <header className="flex items-center gap-4 pb-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={goBack}
-            className="shrink-0"
-          >
-            <ArrowLeft className="size-4" />
-          </Button>
-          <div className="min-w-0">
-            <h1 className="text-lg font-bold tracking-tight truncate">
-              {conversation?.title || activeStream?.question || 'New Thread'}
-            </h1>
-            {conversation && (
-              <p className="text-xs text-muted-foreground">
-                Started {formatDistanceToNow(new Date(conversation.createdAt))}{' '}
-                ago
-              </p>
-            )}
+        <div className="sticky top-0 z-20 w-full bg-background/80 backdrop-blur-md">
+          <div className="max-w-4xl mx-auto px-4 md:px-8">
+            <header className="flex items-center gap-4 py-4">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={goBack}
+                className="shrink-0"
+              >
+                <ArrowLeft className="size-4" />
+              </Button>
+              <div className="min-w-0">
+                <h1 className="text-lg font-bold tracking-tight truncate">
+                  {conversation?.title || activeStream?.question || 'New Thread'}
+                </h1>
+                {conversation && (
+                  <p className="text-xs text-muted-foreground">
+                    Started {formatDistanceToNow(new Date(conversation.createdAt))}{' '}
+                    ago
+                  </p>
+                )}
+              </div>
+            </header>
           </div>
-        </header>
+        </div>
 
         {/* Messages and Input replacing manual blocks */}
-        <div className="flex-1 overflow-hidden pb-4 flex flex-col">
+        <div className="flex-1 flex flex-col">
           <Chat
             messages={messages}
             input={question}
@@ -268,6 +273,7 @@ function InlineChat() {
             isGenerating={isStreaming || !!activeStream?.isStreaming}
             onSourceClick={setPreviewId}
             stop={stopGeneration}
+            scrollRef={scrollRef}
           />
         </div>
       </div>
@@ -278,25 +284,26 @@ function InlineChat() {
         open={!!previewId}
         onOpenChange={(open) => !open && setPreviewId(null)}
       >
-        <DrawerContent className="h-full sm:max-w-2xl">
-          <DrawerHeader className="border-b flex flex-row items-center justify-between">
-            <DrawerTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+        <DrawerPopup className="h-full sm:max-w-2xl p-0">
+          <DrawerHeader className="p-4 border-b flex flex-row items-center justify-between">
+            <DrawerTitle className="text-lg font-semibold">
               Document Preview
             </DrawerTitle>
-            <DrawerClose>
-              <Button variant="ghost" size="sm">
-                Close
-              </Button>
-            </DrawerClose>
+            <DrawerClose
+              render={
+                <Button variant="ghost" size="icon" className="rounded-full">
+                  <X className="size-4" />
+                  <span className="sr-only">Close</span>
+                </Button>
+              }
+            />
           </DrawerHeader>
-          <div className="flex-1 overflow-hidden">
-            <ScrollArea className="h-full">
-              <div className="p-6">
-                {previewId && <DocumentDetailView id={previewId} />}
-              </div>
-            </ScrollArea>
+          <div className="flex-1 overflow-y-auto p-4">
+            {previewId && (
+              <DocumentDetailView id={previewId} isCompact={true} />
+            )}
           </div>
-        </DrawerContent>
+        </DrawerPopup>
       </Drawer>
     </PageContainer>
   );
