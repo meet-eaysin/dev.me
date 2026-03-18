@@ -1,5 +1,7 @@
 'use client';
 
+import * as React from 'react';
+
 import {
   Card,
   CardFrame,
@@ -63,6 +65,7 @@ import {
 } from 'lucide-react';
 import { type ReviewItem, DocumentStatus } from '@repo/types';
 import type { DocumentRow } from '@/features/library/types';
+import { format } from 'date-fns';
 
 const STATUS_ICON_MAP: Record<DocumentStatus, React.ElementType> = {
   [DocumentStatus.TO_READ]: BookOpen,
@@ -212,9 +215,9 @@ function RecentWorkRow({ document }: { document: DocumentRow }) {
             </DropdownMenu>
             <span className="text-xs font-medium text-muted-foreground/32 flex items-center gap-1">
               <Clock3 className="size-3" />
-              {new Date(document.updatedAt || Date.now()).toLocaleDateString(
-                undefined,
-                { month: 'short', day: 'numeric' },
+              {format(
+                new Date(document.updatedAt || Date.now()),
+                'MMM d',
               )}
             </span>
           </div>
@@ -477,7 +480,10 @@ export function HomePage() {
         <div className="space-y-3">
           <div className="flex items-center gap-3">
             <div className="h-8 w-1 bg-primary rounded-full" />
-            <h1 className="text-3xl font-black tracking-tighter sm:text-4xl">
+            <h1
+              className="text-3xl font-black tracking-tighter sm:text-4xl"
+              suppressHydrationWarning
+            >
               {greeting}.
             </h1>
           </div>

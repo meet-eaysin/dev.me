@@ -301,14 +301,16 @@ export function ThreadView() {
                 Open Full Page
               </Button>
             </div>
-            <DrawerClose>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 w-8 rounded-full"
-              >
-                Close
-              </Button>
+            <DrawerClose
+              render={
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 rounded-full"
+                />
+              }
+            >
+              Close
             </DrawerClose>
           </DrawerHeader>
           <div className="flex-1 overflow-hidden">

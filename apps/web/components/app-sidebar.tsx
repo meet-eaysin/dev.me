@@ -206,7 +206,7 @@ function SidebarChatList({ query }: { query: string }) {
           <SidebarMenu>
             {Array.from({ length: 6 }).map((_, index) => (
               <SidebarMenuItem key={`chat-skeleton-${index}`}>
-                <SidebarMenuSkeleton showIcon />
+                <SidebarMenuSkeleton showIcon index={index} />
               </SidebarMenuItem>
             ))}
           </SidebarMenu>
