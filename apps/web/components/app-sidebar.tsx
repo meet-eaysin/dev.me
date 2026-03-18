@@ -213,13 +213,10 @@ function SidebarChatList({ query }: { query: string }) {
         </SidebarGroup>
       ) : (
         <>
-          {!isLoading && filteredChats.length === 0 && (
+          {!isLoading && state === 'expanded' && filteredChats.length === 0 && (
             <SidebarGroup>
               <SidebarMenu>
                 <SidebarMenuItem>
-                  <div className="px-2 py-1 text-xs text-muted-foreground">
-                    No chats found.
-                  </div>
                 </SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroup>
