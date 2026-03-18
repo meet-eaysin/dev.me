@@ -242,27 +242,29 @@ export function ThreadView() {
     <PageContainer isFullHeight>
       <div className="flex flex-col flex-1 h-full w-full min-h-0">
         {/* Header */}
-        <header className="flex items-center gap-4 pb-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => router.push('/app')}
-            className="shrink-0"
-          >
-            <ArrowLeft className="size-4" />
-          </Button>
-          <div className="min-w-0">
-            <h1 className="text-xl font-bold tracking-tight truncate">
-              {conversation?.title || omniStream?.question || 'New Thread'}
-            </h1>
-            {conversation && (
-              <p className="text-xs text-muted-foreground">
-                Started {formatDistanceToNow(new Date(conversation.createdAt))}{' '}
-                ago
-              </p>
-            )}
-          </div>
-        </header>
+        <div className="w-full max-w-4xl mx-auto px-4 md:px-8">
+          <header className="flex items-center gap-4 pb-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => router.push('/app')}
+              className="shrink-0"
+            >
+              <ArrowLeft className="size-4" />
+            </Button>
+            <div className="min-w-0">
+              <h1 className="text-xl font-bold tracking-tight truncate">
+                {conversation?.title || omniStream?.question || 'New Thread'}
+              </h1>
+              {conversation && (
+                <p className="text-xs text-muted-foreground">
+                  Started {formatDistanceToNow(new Date(conversation.createdAt))}{' '}
+                  ago
+                </p>
+              )}
+            </div>
+          </header>
+        </div>
 
         {/* Messages and Input replacing manual blocks */}
         <div className="flex-1 overflow-hidden pb-4 flex flex-col min-h-0">
