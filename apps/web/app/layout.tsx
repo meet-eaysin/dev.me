@@ -45,7 +45,7 @@ export default function RootLayout({
         geistMono.variable,
       )}
     >
-      <body className="min-h-screen antialiased">
+      <body className="min-h-svh bg-background antialiased selection:bg-primary selection:text-primary-foreground">
         <QueryProvider>
           <ToastProvider>
             <AnchoredToastProvider>

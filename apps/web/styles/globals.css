@@ -119,6 +119,9 @@
   --code-highlight: --alpha(var(--color-black) / 4%);
   --background: var(--color-white);
   --foreground: var(--color-neutral-800);
+
+  /* Layout stability */
+  scrollbar-gutter: stable;
 }
 
 .dark {
@@ -170,11 +173,13 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;}
+    @apply bg-background text-foreground;
+  }
   code, kbd, samp, pre {
-    font-family: var(--font-mono);}
+    font-family: var(--font-mono);
+  }
 }
 
-.backdrop-blur-sm {
-  @apply backdrop-blur-none bg-black/70;
+.backdrop-blur-xl {
+  @apply backdrop-blur-xl bg-background/70;
 }

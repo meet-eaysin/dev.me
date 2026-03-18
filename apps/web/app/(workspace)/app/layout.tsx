@@ -12,17 +12,17 @@ export default function WorkspaceLayout({ children }: { children: ReactNode }) {
     <TooltipProvider>
       <ThreadStreamProvider>
         <SidebarProvider>
-          <AppSidebar />
-          <SidebarInset className="relative flex flex-col overflow-hidden bg-background">
-            <main className="flex-1 overflow-auto">
-              <div className="pb-24 flex min-h-full flex-col">
-                {children}
-              </div>
-            </main>
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50">
+          <div className="relative flex min-h-svh w-full overflow-hidden">
+            <AppSidebar />
+            <SidebarInset className="relative flex h-svh flex-1 flex-col overflow-hidden bg-background">
+              <main className="relative flex-1 overflow-y-auto overflow-x-hidden pt-2 scroll-smooth">
+                <div className="flex min-h-full flex-col pb-28">
+                  {children}
+                </div>
+              </main>
               <Dock />
-            </div>
-          </SidebarInset>
+            </SidebarInset>
+          </div>
         </SidebarProvider>
       </ThreadStreamProvider>
     </TooltipProvider>
