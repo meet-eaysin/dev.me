@@ -1,10 +1,23 @@
 'use client';
 
 import * as React from 'react';
-import { LoaderCircle, Sparkles } from 'lucide-react';
+import { Info, LoaderCircle, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  PopoverTitle,
+} from '@/components/ui/popover';
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
 import { useDocumentDetail } from '../context';
+
+const HIGHLIGHTS = [
+  'Automated key theme extraction',
+  'Saves ~15 mins of reading time',
+  'Context-aware synthesis',
+  'Instant retrieval ready',
+];
 
 export function SummaryTab() {
   const { id, document, actions } = useDocumentDetail();
@@ -18,14 +31,46 @@ export function SummaryTab() {
   }
 
   return (
-    <div className="grid gap-8 lg:grid-cols-4">
-      <div className="lg:col-span-3 space-y-6">
+    <div className="max-w-5xl mx-auto space-y-6 pb-20">
+      <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <h3 className="text-xl font-bold flex items-center gap-2">
-              <Sparkles className="size-5 text-primary animate-pulse" />
-              AI-Generated Insights
-            </h3>
+            <div className="flex items-center gap-2">
+              <h3 className="text-xl font-bold flex items-center gap-2">
+                <Sparkles className="size-5 text-primary animate-pulse" />
+                AI-Generated Insights
+              </h3>
+              <Popover>
+                <PopoverTrigger>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 rounded-full text-muted-foreground/40 hover:text-primary hover:bg-primary/5 transition-colors"
+                  >
+                    <Info className="size-3.5" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent
+                  side="right"
+                  align="start"
+                  className="w-64 p-4 shadow-xl border-primary/10"
+                >
+                  <PopoverTitle className="text-xs font-bold tracking-widest text-primary mb-3">
+                    Highlights
+                  </PopoverTitle>
+                  <ul className="space-y-2.5">
+                    {HIGHLIGHTS.map((item, idx) => (
+                      <li key={idx} className="flex items-start gap-2.5 text-xs">
+                        <div className="mt-1.5 size-1 rounded-full bg-primary/40 shrink-0" />
+                        <span className="text-foreground/70 leading-relaxed">
+                          {item}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </PopoverContent>
+              </Popover>
+            </div>
             <p className="text-sm text-muted-foreground">
               A comprehensive distillation of the document&apos;s core concepts.
             </p>
@@ -79,7 +124,8 @@ export function SummaryTab() {
                   Ready to distill this content?
                 </h4>
                 <p className="text-sm text-muted-foreground max-w-xs mx-auto leading-relaxed">
-                  Our AI will analyze the entire document to provide you with key takeaways and core arguments.
+                  Our AI will analyze the entire document to provide you with
+                  key takeaways and core arguments.
                 </p>
               </div>
               <Button
@@ -93,32 +139,6 @@ export function SummaryTab() {
           )}
         </div>
       </div>
-
-      <aside className="space-y-6">
-        <div className="rounded-2xl border bg-muted/20 p-6 space-y-6">
-          <div className="space-y-2">
-            <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
-              Highlights
-            </h4>
-            <div className="h-0.5 w-8 bg-primary/30 rounded-full" />
-          </div>
-          <ul className="space-y-5">
-            {[
-              "Automated key theme extraction",
-              "Saves ~15 mins of reading time",
-              "Context-aware synthesis",
-              "Instant retrieval ready"
-            ].map((feature, idx) => (
-              <li key={idx} className="flex items-start gap-3">
-                <div className="mt-1.5 size-1.5 rounded-full bg-primary/40 shrink-0" />
-                <span className="text-xs font-medium leading-snug text-foreground/70">
-                  {feature}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </aside>
 
       <ConfirmationDialog
         open={removeSummaryOpen}
