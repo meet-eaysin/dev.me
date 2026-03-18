@@ -59,6 +59,7 @@ import {
   Search,
   Sparkles,
   Youtube,
+  Archive,
 } from 'lucide-react';
 import { type ReviewItem, DocumentStatus } from '@repo/types';
 import type { DocumentRow } from '@/features/library/types';
@@ -71,6 +72,7 @@ const STATUS_ICON_MAP: Record<DocumentStatus, React.ElementType> = {
   [DocumentStatus.UPCOMING]: CalendarDays,
   [DocumentStatus.COMPLETED]: Check,
   [DocumentStatus.PENDING_COMPLETION]: History,
+  [DocumentStatus.ARCHIVED]: Archive,
 };
 
 function formatPriority(score: number) {

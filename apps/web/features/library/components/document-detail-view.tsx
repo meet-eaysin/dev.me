@@ -8,7 +8,6 @@ import { DocumentStatus, IngestionStatus } from '@repo/types';
 import {
   ArrowUpRight,
   Brain,
-  Check,
   ChevronLeft,
   Clock,
   FileText,
@@ -26,7 +25,7 @@ import {
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
 import {
   Empty,
@@ -49,9 +48,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { toastManager } from '@/components/ui/toast';
 import {
   useCreateNote,
@@ -95,7 +101,7 @@ export function DocumentDetailView({ id }: { id: string }) {
   const { data: document, error, isLoading } = useDocument(id);
   const { data: ingestion } = useDocumentIngestion(id);
   const isYoutubeDocument = document?.type === 'youtube';
-  const { data: transcriptResponse, error: transcriptError } =
+  const { data: transcriptResponse } =
     useDocumentTranscript(id, isYoutubeDocument);
   const { data: notes = [] } = useNotes(id);
   const updateDocument = useUpdateDocument(id);
@@ -214,27 +220,45 @@ export function DocumentDetailView({ id }: { id: string }) {
 
   return (
     <div className="space-y-5">
-      <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0 space-y-2">
-          <h1 className="text-xl font-semibold tracking-tight leading-snug">
+      <div className="flex items-start justify-between gap-4 pb-3 mb-2">
+        <div className="min-w-0 space-y-3">
+          <div className="flex items-center gap-2 text-muted-foreground mb-1">
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              className="-ml-2 h-8 w-8"
+              render={<Link href="/app/library" />}
+            >
+              <ChevronLeft className="size-4" />
+            </Button>
+            <span className="text-xs font-medium uppercase tracking-wider">Document Library</span>
+          </div>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground/90">
             {document.title}
           </h1>
 
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-3">
             <Badge
               variant={getStatusBadgeVariant(document.status)}
-              className="rounded-full px-2.5 py-0.5 text-xs"
+              className="rounded-full px-3 py-1 text-xs font-semibold"
             >
-              {getStatusLabel(document.status)}
+              <div className="flex items-center gap-1.5">
+                <div className={`size-1.5 rounded-full ${
+                  document.status === DocumentStatus.ARCHIVED ? 'bg-muted-foreground' :
+                  'bg-green-500'
+                }`} />
+                {getStatusLabel(document.status)}
+              </div>
             </Badge>
             {document.type && (
-              <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-                <FileText className="size-3 opacity-60" />
+              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground bg-muted/50 px-2 py-1 rounded-md">
+                <FileText className="size-3.5 opacity-70" />
                 {getTypeLabel(document.type)}
               </span>
             )}
-            <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-              <Clock className="size-3 opacity-60" />
+            <Separator orientation="vertical" className="h-4 hidden sm:block" />
+            <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+              <Clock className="size-3.5 opacity-70" />
               Updated{' '}
               {formatDistanceToNow(new Date(document.updatedAt), {
                 addSuffix: true,
@@ -243,19 +267,19 @@ export function DocumentDetailView({ id }: { id: string }) {
           </div>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0 pt-0.5">
+        <div className="flex items-center gap-3 shrink-0 pt-10">
           <Select
             onValueChange={(value) =>
               updateDocument.mutate({ status: value as DocumentStatus })
             }
             value={document.status}
           >
-            <SelectTrigger className="h-8 w-36 text-xs">
+            <SelectTrigger className="h-9 w-40 text-sm font-medium">
               <SelectValue>{getStatusLabel(document.status)}</SelectValue>
             </SelectTrigger>
             <SelectContent>
               {STATUS_OPTIONS.map((status) => (
-                <SelectItem key={status} value={status} className="text-xs">
+                <SelectItem key={status} value={status} className="text-sm">
                   {getStatusLabel(status)}
                 </SelectItem>
               ))}
@@ -265,12 +289,12 @@ export function DocumentDetailView({ id }: { id: string }) {
           <Menu>
             <MenuTrigger
               render={
-                <Button size="icon-sm" variant="outline">
-                  <MoreHorizontal className="size-4" />
+                <Button size="icon" variant="outline" className="h-9 w-9">
+                  <MoreHorizontal className="size-4.5" />
                 </Button>
               }
             />
-            <MenuPopup align="end" className="w-44">
+            <MenuPopup align="end" className="w-48">
               {document.sourceUrl && (
                 <MenuItem
                   render={
@@ -282,7 +306,7 @@ export function DocumentDetailView({ id }: { id: string }) {
                   }
                 >
                   <ArrowUpRight className="size-4" />
-                  Open Source
+                  Open Original Source
                 </MenuItem>
               )}
               <MenuSeparator />
@@ -298,452 +322,431 @@ export function DocumentDetailView({ id }: { id: string }) {
         </div>
       </div>
 
-      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_21rem]">
-        <div className="space-y-5">
-          <div
-            className={`group relative overflow-hidden border bg-background ${
-              readerExpanded ? 'ring-2 ring-ring/50' : ''
-            }`}
-          >
-            <div className="absolute right-3 top-3 z-10 flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
-              {document.sourceUrl && (
-                <a href={document.sourceUrl} rel="noreferrer" target="_blank">
-                  <Button
-                    size="icon-sm"
-                    variant="secondary"
-                    className="h-7 w-7"
-                  >
-                    <ArrowUpRight className="size-3.5" />
-                  </Button>
-                </a>
-              )}
-              <Button
-                size="icon-sm"
-                variant="secondary"
-                className="h-7 w-7"
-                onClick={() => setReaderExpanded((v) => !v)}
-              >
-                {readerExpanded ? (
-                  <Minimize2 className="size-3.5" />
-                ) : (
-                  <Maximize2 className="size-3.5" />
-                )}
-              </Button>
-            </div>
-
-            <div
-              className={`w-full transition-all duration-300 ${
-                readerExpanded
-                  ? 'h-[calc(100vh-7rem)] min-h-[82vh]'
-                  : 'h-[clamp(32rem,72vh,56rem)]'
-              }`}
+      <section className="space-y-8">
+        <div
+          className={`group relative overflow-hidden rounded-xl border bg-card shadow-sm transition-all duration-300 ${
+            readerExpanded ? 'ring-2 ring-primary/20 scale-[1.01]' : 'hover:shadow-md'
+          }`}
+        >
+          <div className="absolute right-4 top-4 z-10 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-200 translate-y-1 group-hover:translate-y-0">
+            {document.sourceUrl && (
+              <a href={document.sourceUrl} rel="noreferrer" target="_blank">
+                <Button
+                  size="icon-sm"
+                  variant="secondary"
+                  className="h-8 w-8 bg-background/80 backdrop-blur-sm border shadow-sm"
+                >
+                  <ArrowUpRight className="size-4" />
+                </Button>
+              </a>
+            )}
+            <Button
+              size="icon-sm"
+              variant="secondary"
+              className="h-8 w-8 bg-background/80 backdrop-blur-sm border shadow-sm"
+              onClick={() => setReaderExpanded((v) => !v)}
             >
-              {hasContent ? (
-                <DocumentPreviewSurface document={document} />
+              {readerExpanded ? (
+                <Minimize2 className="size-4" />
               ) : (
-                <DocumentPreviewUnavailable sourceUrl={document.sourceUrl} />
+                <Maximize2 className="size-4" />
               )}
-            </div>
+            </Button>
           </div>
 
-          <Card className="overflow-hidden">
-            <CardHeader className="flex flex-row items-center justify-between gap-3 px-5 py-4">
-              <div>
-                <CardTitle className="text-sm font-semibold">Notes</CardTitle>
-                <p className="mt-0.5 text-xs text-muted-foreground">
-                  Keep working notes beside the source
-                </p>
-              </div>
+          <div
+            className={`w-full transition-all duration-500 ease-in-out ${
+              readerExpanded
+                ? 'h-[calc(100vh-12rem)] min-h-[82vh]'
+                : 'h-[clamp(36rem,75vh,60rem)] shadow-inner'
+            }`}
+          >
+            {hasContent ? (
+              <DocumentPreviewSurface document={document} />
+            ) : (
+              <DocumentPreviewUnavailable sourceUrl={document.sourceUrl} />
+            )}
+          </div>
+        </div>
+
+        <Tabs defaultValue="summary" className="w-full">
+          <TabsList className="h-11 w-full justify-start rounded-none border-b bg-transparent p-0">
+            <TabsTrigger
+              value="summary"
+              className="relative rounded-none border-b-2 border-transparent px-6 py-2.5 font-semibold text-muted-foreground transition-all data-[state=active]:border-primary data-[state=active]:text-primary"
+            >
+              <Sparkles className="mr-2 size-4" />
+              Summary
+            </TabsTrigger>
+            <TabsTrigger
+              value="notes"
+              className="relative rounded-none border-b-2 border-transparent px-6 py-2.5 font-semibold text-muted-foreground transition-all data-[state=active]:border-primary data-[state=active]:text-primary"
+            >
+              <StickyNote className="mr-2 size-4" />
+              Notes
               {notes.length > 0 && (
-                <Badge
-                  variant="secondary"
-                  className="rounded-full tabular-nums text-xs"
-                >
+                <Badge variant="secondary" className="ml-2 h-5 px-1.5 tabular-nums">
                   {notes.length}
                 </Badge>
               )}
-            </CardHeader>
-            <Separator />
-            <CardContent className="space-y-5 px-5 py-5">
-              <form
-                onSubmit={handleCreateNote}
-                className="space-y-4 rounded-lg border bg-muted/10 p-4"
+            </TabsTrigger>
+            {isYoutubeDocument && (
+              <TabsTrigger
+                value="transcript"
+                className="relative rounded-none border-b-2 border-transparent px-6 py-2.5 font-semibold text-muted-foreground transition-all data-[state=active]:border-primary data-[state=active]:text-primary"
               >
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-2 text-xs font-medium text-foreground/80">
-                    <StickyNote className="size-3.5" />
-                    Quick note
-                  </div>
-                  <span className="text-[11px] text-muted-foreground">
-                    Ctrl/Cmd + Enter to save
-                  </span>
-                </div>
-                <Textarea
-                  onChange={(e) => setNoteDraft(e.target.value)}
-                  onKeyDown={(event) => {
-                    if (
-                      (event.metaKey || event.ctrlKey) &&
-                      event.key === 'Enter'
-                    ) {
-                      event.preventDefault();
-                      const form = event.currentTarget.form;
-                      form?.requestSubmit();
-                    }
-                  }}
-                  placeholder="Capture a takeaway, next step, or reference while you read..."
-                  value={noteDraft}
-                  className="min-h-[120px] text-sm"
-                />
-                <div className="flex items-end justify-between gap-4">
-                  <p className="max-w-xl text-xs leading-5 text-muted-foreground">
-                    Notes are saved to your workspace and stay attached to this
-                    document.
-                  </p>
-                  <Button
-                    size="sm"
-                    className="h-8 shrink-0 gap-1.5 rounded-lg px-3 text-xs"
-                    disabled={!noteDraft.trim() || createNote.isPending}
-                  >
-                    {createNote.isPending ? (
-                      <LoaderCircle className="size-3 animate-spin" />
-                    ) : (
-                      <StickyNote className="size-3" />
-                    )}
-                    {createNote.isPending ? 'Saving…' : 'Add Note'}
-                  </Button>
-                </div>
-              </form>
+                <Brain className="mr-2 size-4" />
+                Transcript
+              </TabsTrigger>
+            )}
+            <TabsTrigger
+              value="details"
+              className="relative rounded-none border-b-2 border-transparent px-6 py-2.5 font-semibold text-muted-foreground transition-all data-[state=active]:border-primary data-[state=active]:text-primary"
+            >
+              <Zap className="mr-2 size-4" />
+              Technical Details
+            </TabsTrigger>
+          </TabsList>
 
-              {notes.length === 0 ? (
-                <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed bg-muted/10 px-6 py-10 text-center">
-                  <div className="rounded-full bg-muted p-3">
-                    <StickyNote className="size-4 text-muted-foreground/50" />
+          <div className="mt-8">
+            <TabsContent value="summary" className="focus-visible:outline-none">
+              <div className="grid gap-6 lg:grid-cols-3">
+                <Card className="lg:col-span-2 overflow-hidden border-none shadow-none bg-transparent">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold flex items-center gap-2">
+                       <Sparkles className="size-5 text-primary" />
+                       AI Summary
+                    </h3>
+                    <div className="flex items-center gap-2">
+                      {document.summary && (
+                        <Button
+                          onClick={() => setRemoveSummaryOpen(true)}
+                          size="sm"
+                          variant="ghost"
+                          className="text-muted-foreground hover:text-destructive transition-colors"
+                        >
+                          Remove
+                        </Button>
+                      )}
+                      <Button
+                        onClick={() => generateSummary.mutate(id)}
+                        size="sm"
+                        disabled={generateSummary.isPending}
+                        className="gap-2 shadow-sm"
+                      >
+                        {generateSummary.isPending ? (
+                          <LoaderCircle className="size-4 animate-spin" />
+                        ) : (
+                          <Sparkles className="size-4" />
+                        )}
+                        {document.summary ? 'Regenerate' : 'Generate Summary'}
+                      </Button>
+                    </div>
                   </div>
+
+                  <div className="prose prose-sm max-w-none prose-slate dark:prose-invert">
+                    {document.summary ? (
+                      <div className="rounded-xl border bg-card/50 p-6 shadow-sm backdrop-blur-sm">
+                        <p className="text-base leading-relaxed text-foreground/80 whitespace-pre-wrap">
+                          {document.summary}
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center gap-4 rounded-xl border border-dashed bg-muted/20 py-16 text-center">
+                        <div className="rounded-full bg-primary/10 p-4 ring-8 ring-primary/5">
+                          <Sparkles className="size-8 text-primary/60" />
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-lg font-medium text-foreground/80">
+                            Enhance your reading
+                          </p>
+                          <p className="text-sm text-muted-foreground max-w-xs mx-auto">
+                            Generate a concise, AI-powered summary to capture the core concepts and key takeaways.
+                          </p>
+                        </div>
+                        <Button
+                           onClick={() => generateSummary.mutate(id)}
+                           variant="outline"
+                           className="mt-2"
+                        >
+                           Generate Now
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </Card>
+
+                <div className="space-y-6">
+                   <Card className="p-5 border-primary/10 bg-primary/5 dark:bg-primary/10">
+                      <h4 className="text-sm font-bold uppercase tracking-widest text-primary mb-4">Quick Insights</h4>
+                      <ul className="space-y-3">
+                        <li className="flex items-start gap-3 text-sm">
+                           <div className="mt-1 size-1.5 rounded-full bg-primary shrink-0" />
+                           <span className="text-foreground/70">Automatically identifies key themes and topics.</span>
+                        </li>
+                        <li className="flex items-start gap-3 text-sm">
+                           <div className="mt-1 size-1.5 rounded-full bg-primary shrink-0" />
+                           <span className="text-foreground/70">Saves you time by distilling long content.</span>
+                        </li>
+                        <li className="flex items-start gap-3 text-sm">
+                           <div className="mt-1 size-1.5 rounded-full bg-primary shrink-0" />
+                           <span className="text-foreground/70">Context-aware generation based on your library.</span>
+                        </li>
+                      </ul>
+                   </Card>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="notes" className="focus-visible:outline-none">
+              <div className="max-w-4xl mx-auto space-y-8">
+                <div className="flex items-center justify-between">
                   <div className="space-y-1">
-                    <p className="text-sm font-medium text-foreground/80">
-                      No notes yet
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      Start with a quick takeaway or an action item from this
-                      document.
-                    </p>
+                    <h3 className="text-xl font-bold">Research Notes</h3>
+                    <p className="text-sm text-muted-foreground">Capture your thoughts and takeaways as you digest the content.</p>
                   </div>
                 </div>
-              ) : (
-                <div className="space-y-3 pt-1">
-                  {notes.map((note) => (
-                    <article
-                      key={note.id}
-                      className="group/note rounded-lg border bg-background p-4 transition-colors hover:bg-muted/10"
+
+                <form
+                  onSubmit={handleCreateNote}
+                  className="group relative rounded-2xl border bg-card p-6 shadow-sm transition-all focus-within:ring-2 focus-within:ring-primary/20 hover:shadow-md"
+                >
+                  <Textarea
+                    onChange={(e) => setNoteDraft(e.target.value)}
+                    onKeyDown={(event) => {
+                      if (
+                        (event.metaKey || event.ctrlKey) &&
+                        event.key === 'Enter'
+                      ) {
+                        event.preventDefault();
+                        const form = event.currentTarget.form;
+                        form?.requestSubmit();
+                      }
+                    }}
+                    placeholder="Type your note here... (Cmd + Enter to save)"
+                    value={noteDraft}
+                    className="min-h-[140px] resize-none border-none bg-transparent p-0 text-base shadow-none focus-visible:ring-0 leading-relaxed"
+                  />
+                  <div className="mt-4 flex items-center justify-between border-t pt-4">
+                    <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+                      <Clock className="size-3" />
+                      Notes are private to your workspace.
+                    </p>
+                    <Button
+                      disabled={!noteDraft.trim() || createNote.isPending}
+                      className="px-6 h-9"
                     >
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
-                            Note
-                          </p>
-                          <span className="text-[11px] text-muted-foreground">
-                            {formatDistanceToNow(new Date(note.createdAt), {
-                              addSuffix: true,
-                            })}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover/note:opacity-100">
-                          {editingNoteId === note.id ? (
-                            <>
+                      {createNote.isPending ? (
+                        <LoaderCircle className="size-4 animate-spin mr-2" />
+                      ) : (
+                        <StickyNote className="size-4 mr-2" />
+                      )}
+                      Add Note
+                    </Button>
+                  </div>
+                </form>
+
+                {notes.length === 0 ? (
+                  <div className="flex flex-col items-center gap-4 py-12 text-center">
+                    <div className="rounded-full bg-muted p-6">
+                      <StickyNote className="size-8 text-muted-foreground/30" />
+                    </div>
+                    <p className="text-sm text-muted-foreground max-w-xs">
+                      No notes captured for this document yet. Start typing above to save your first insight.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    {notes.map((note) => (
+                      <article
+                        key={note.id}
+                        className="group/note flex flex-col rounded-xl border bg-card p-5 transition-all hover:border-primary/30 hover:shadow-sm"
+                      >
+                        <div className="flex items-center justify-between mb-3 pb-3 border-b border-muted">
+                           <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                             {formatDistanceToNow(new Date(note.createdAt), { addSuffix: true })}
+                           </span>
+                           <div className="flex items-center gap-1 opacity-0 group-hover/note:opacity-100 transition-opacity">
                               <Button
-                                onClick={() => void handleSaveNote(note.id)}
-                                size="sm"
+                                onClick={() => handleStartEditingNote(note.id, note.content)}
+                                size="icon-sm"
                                 variant="ghost"
-                                className="h-7 gap-1.5 px-2 text-xs"
-                                disabled={
-                                  !editingNoteDraft.trim() ||
-                                  updateNote.isPending
-                                }
+                                className="h-7 w-7"
                               >
-                                {updateNote.isPending ? (
-                                  <LoaderCircle className="size-3 animate-spin" />
-                                ) : (
-                                  <Check className="size-3" />
-                                )}
-                                Save
-                              </Button>
-                              <Button
-                                onClick={handleCancelEditingNote}
-                                size="sm"
-                                variant="ghost"
-                                className="h-7 w-7 p-0 text-muted-foreground"
-                                disabled={updateNote.isPending}
-                              >
-                                <X className="size-3" />
-                              </Button>
-                            </>
-                          ) : (
-                            <>
-                              <Button
-                                onClick={() =>
-                                  handleStartEditingNote(note.id, note.content)
-                                }
-                                size="sm"
-                                variant="ghost"
-                                className="h-7 gap-1.5 px-2 text-xs text-muted-foreground"
-                              >
-                                <PencilLine className="size-3" />
-                                Edit
+                                <PencilLine className="size-3.5" />
                               </Button>
                               <Button
                                 onClick={() => setDeletingNoteId(note.id)}
-                                size="sm"
+                                size="icon-sm"
                                 variant="ghost"
-                                className="h-7 w-7 p-0 text-muted-foreground hover:text-destructive"
+                                className="h-7 w-7 text-muted-foreground hover:text-destructive"
                               >
-                                <Trash2 className="size-3" />
+                                <Trash2 className="size-3.5" />
                               </Button>
-                            </>
-                          )}
+                           </div>
                         </div>
-                      </div>
 
-                      {editingNoteId === note.id ? (
-                        <div className="mt-3 space-y-2">
-                          <Textarea
-                            value={editingNoteDraft}
-                            onChange={(event) =>
-                              setEditingNoteDraft(event.target.value)
-                            }
-                            onKeyDown={(event) => {
-                              if (
-                                (event.metaKey || event.ctrlKey) &&
-                                event.key === 'Enter'
-                              ) {
-                                event.preventDefault();
-                                void handleSaveNote(note.id);
-                              }
-                              if (event.key === 'Escape') {
-                                event.preventDefault();
-                                handleCancelEditingNote();
-                              }
-                            }}
-                            className="min-h-[112px] resize-none text-sm"
-                          />
-                          <p className="text-[11px] text-muted-foreground">
-                            Press Esc to cancel or Ctrl/Cmd + Enter to save.
+                        {editingNoteId === note.id ? (
+                          <div className="space-y-3">
+                            <Textarea
+                              value={editingNoteDraft}
+                              onChange={(event) => setEditingNoteDraft(event.target.value)}
+                              autoFocus
+                              className="min-h-[100px] text-sm resize-none"
+                            />
+                            <div className="flex justify-end gap-2">
+                              <Button onClick={handleCancelEditingNote} variant="ghost" size="sm">Cancel</Button>
+                              <Button onClick={() => void handleSaveNote(note.id)} size="sm">Save</Button>
+                            </div>
+                          </div>
+                        ) : (
+                          <p className="text-sm leading-relaxed text-foreground/85 whitespace-pre-wrap flex-1">
+                            {note.content}
                           </p>
-                        </div>
-                      ) : (
-                        <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-foreground/85">
-                          {note.content}
-                        </p>
-                      )}
-                    </article>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card className="overflow-hidden">
-            <CardHeader className="flex flex-row items-center justify-between gap-3 px-5 py-4">
-              <div>
-                <CardTitle className="text-sm font-semibold">Summary</CardTitle>
-                <p className="mt-0.5 text-xs text-muted-foreground">
-                  AI-generated overview
-                </p>
-              </div>
-              <div className="flex items-center gap-1.5">
-                {document.summary && (
-                  <Button
-                    onClick={() => setRemoveSummaryOpen(true)}
-                    size="sm"
-                    variant="ghost"
-                    className="h-7 text-xs text-muted-foreground"
-                  >
-                    Remove
-                  </Button>
+                        )}
+                      </article>
+                    ))}
+                  </div>
                 )}
-                <Button
-                  onClick={() => generateSummary.mutate(id)}
-                  size="sm"
-                  variant="outline"
-                  className="h-7 gap-1.5 text-xs"
-                >
-                  {generateSummary.isPending ? (
-                    <LoaderCircle className="size-3 animate-spin" />
-                  ) : (
-                    <Sparkles className="size-3" />
-                  )}
-                  Generate
-                </Button>
               </div>
-            </CardHeader>
-            <Separator />
-            <CardContent className="px-5 py-4">
-              {document.summary ? (
-                <p className="text-sm leading-relaxed text-foreground/80 whitespace-pre-wrap">
-                  {document.summary}
-                </p>
-              ) : (
-                <div className="flex flex-col items-center gap-2.5 py-8 text-center">
-                  <div className="rounded-full bg-muted p-3">
-                    <Sparkles className="size-5 text-muted-foreground/50" />
-                  </div>
-                  <p className="text-sm font-medium text-muted-foreground">
-                    No summary yet
-                  </p>
-                  <p className="text-xs text-muted-foreground/60">
-                    Click Generate to create an AI summary
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+            </TabsContent>
 
-        <div className="space-y-4">
-          {isYoutubeDocument && (
-            <Card className="overflow-hidden">
-              <CardHeader className="flex flex-row items-center justify-between gap-3 px-5 py-4">
-                <div>
-                  <CardTitle className="text-sm font-semibold">
-                    Transcript
-                  </CardTitle>
-                  <p className="mt-0.5 text-xs text-muted-foreground">
-                    Extracted text content
-                  </p>
-                </div>
-                <Button
-                  onClick={handleGenerateTranscript}
-                  size="sm"
-                  variant="outline"
-                  className="h-7 gap-1.5 text-xs"
-                >
-                  {generateTranscript.isPending ? (
-                    <LoaderCircle className="size-3 animate-spin" />
-                  ) : (
-                    <Brain className="size-3" />
-                  )}
-                  Generate
-                </Button>
-              </CardHeader>
-              <Separator />
-              <CardContent className="px-5 py-4">
-                {transcriptResponse?.content ? (
-                  <div className="max-h-64 overflow-y-auto rounded-lg bg-muted/40 px-3 py-3">
-                    <p className="text-xs leading-relaxed text-muted-foreground whitespace-pre-wrap">
-                      {transcriptResponse.content}
-                    </p>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center gap-2.5 py-6 text-center">
-                    <div className="rounded-full bg-muted p-2.5">
-                      <Brain className="size-4 text-muted-foreground/50" />
+            {isYoutubeDocument && (
+              <TabsContent value="transcript" className="focus-visible:outline-none">
+                <div className="max-w-4xl mx-auto space-y-6">
+                   <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-xl font-bold">Video Transcript</h3>
+                      <p className="text-sm text-muted-foreground">Full extraction of the audio content from the video source.</p>
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      {transcriptError
-                        ? 'Transcript unavailable for this document.'
-                        : 'No transcript generated yet.'}
-                    </p>
+                    <Button
+                      onClick={handleGenerateTranscript}
+                      disabled={generateTranscript.isPending}
+                      variant="outline"
+                      className="gap-2"
+                    >
+                      {generateTranscript.isPending ? (
+                        <LoaderCircle className="size-4 animate-spin" />
+                      ) : (
+                        <Brain className="size-4" />
+                      )}
+                      {transcriptResponse?.content ? 'Regenerate Transcript' : 'Generate Transcript'}
+                    </Button>
                   </div>
-                )}
-              </CardContent>
-            </Card>
-          )}
 
-          <Card className="overflow-hidden">
-            <CardHeader className="flex flex-row items-center justify-between gap-3 px-5 py-4">
-              <div>
-                <CardTitle className="text-sm font-semibold">Details</CardTitle>
-                <p className="mt-0.5 text-xs text-muted-foreground">
-                  Ingestion & metadata
-                </p>
-              </div>
-              <Button
-                onClick={() => retryIngestion.mutate(id)}
-                size="sm"
-                variant="outline"
-                className="h-7 gap-1.5 text-xs"
-                disabled={!canRetryIngestion || retryIngestion.isPending}
-              >
-                {retryIngestion.isPending ? (
-                  <LoaderCircle className="size-3 animate-spin" />
-                ) : (
-                  <RefreshCcw className="size-3" />
-                )}
-                Retry
-              </Button>
-            </CardHeader>
-            <Separator />
-            <CardContent className="px-5 py-4 space-y-3">
-              <div className="flex items-center justify-between rounded-lg bg-muted/50 px-3 py-2">
-                <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <Zap className="size-3" />
-                  Ingestion
-                </span>
-                <span
-                  className={`text-xs font-medium ${
-                    ingestion?.ingestionStatus === IngestionStatus.COMPLETED
-                      ? 'text-green-600 dark:text-green-400'
-                      : ingestion?.ingestionStatus === IngestionStatus.FAILED
-                        ? 'text-destructive'
-                        : 'text-amber-600 dark:text-amber-400'
-                  }`}
-                >
-                  {ingestion?.ingestionStatus ?? 'Unknown'}
-                </span>
-              </div>
-
-              <div className="divide-y divide-border/50">
-                <MetaRow
-                  label="Embeddings"
-                  value={ingestion?.embeddingsReady ? 'Ready' : 'Pending'}
-                />
-                <MetaRow
-                  label="Source type"
-                  value={document.sourceType ?? '—'}
-                />
-                <MetaRow
-                  label="Created"
-                  value={new Date(document.createdAt).toLocaleString()}
-                />
-                <MetaRow
-                  label="Updated"
-                  value={new Date(document.updatedAt).toLocaleString()}
-                />
-                <MetaRow
-                  label="Last opened"
-                  value={
-                    document.lastOpenedAt
-                      ? new Date(document.lastOpenedAt).toLocaleString()
-                      : 'Not tracked'
-                  }
-                />
-              </div>
-
-              {ingestion?.currentStage && (
-                <p className="text-xs text-muted-foreground">
-                  {ingestion.currentStage}
-                </p>
-              )}
-
-              {ingestion?.ingestionError && (
-                <div className="rounded-md bg-destructive/10 px-3 py-2 text-xs text-destructive">
-                  {ingestion.ingestionError}
+                  {transcriptResponse?.content ? (
+                    <div className="rounded-2xl border bg-muted/30 overflow-hidden">
+                       <ScrollArea className="h-[60vh] max-h-[800px]">
+                          <div className="p-8">
+                             <p className="text-base leading-relaxed text-foreground/80 whitespace-pre-wrap font-mono-subtle">
+                                {transcriptResponse.content}
+                             </p>
+                          </div>
+                       </ScrollArea>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center gap-5 py-20 text-center rounded-2xl border border-dashed">
+                      <div className="rounded-full bg-muted p-6">
+                        <Brain className="size-10 text-muted-foreground/30" />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="font-medium text-lg">No transcript available</p>
+                        <p className="text-sm text-muted-foreground max-w-sm">
+                           Generate a transcript to search through video content and save highlights.
+                        </p>
+                      </div>
+                      <Button onClick={handleGenerateTranscript} className="mt-2">
+                        Start Processing
+                      </Button>
+                    </div>
+                  )}
                 </div>
-              )}
+              </TabsContent>
+            )}
 
-              {Object.keys(document.metadata).length > 0 && (
-                <div className="space-y-1.5 pt-1">
-                  <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                    Metadata
-                  </p>
-                  <pre className="overflow-x-auto rounded-lg bg-muted px-3 py-2.5 text-[11px] leading-relaxed text-muted-foreground">
-                    {JSON.stringify(document.metadata, null, 2)}
-                  </pre>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+            <TabsContent value="details" className="focus-visible:outline-none">
+              <div className="grid gap-8 lg:grid-cols-2">
+                <Card className="p-6 space-y-6 shadow-sm">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-bold flex items-center gap-2">
+                      <Zap className="size-5 text-amber-500" />
+                      Ingestion Pipeline
+                    </h3>
+                    <Button
+                      onClick={() => retryIngestion.mutate(id)}
+                      size="sm"
+                      variant="outline"
+                      disabled={!canRetryIngestion || retryIngestion.isPending}
+                      className="h-8 gap-2"
+                    >
+                      {retryIngestion.isPending ? (
+                        <LoaderCircle className="size-3.5 animate-spin" />
+                      ) : (
+                        <RefreshCcw className="size-3.5" />
+                      )}
+                      Retry Pipeline
+                    </Button>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between p-4 rounded-xl bg-muted/40">
+                      <span className="text-sm font-medium text-muted-foreground">Pipeline Status</span>
+                      <Badge
+                         className={`px-3 py-1 font-semibold ${
+                          ingestion?.ingestionStatus === IngestionStatus.COMPLETED
+                            ? 'bg-green-100 text-green-700 hover:bg-green-100 dark:bg-green-500/10 dark:text-green-400'
+                            : ingestion?.ingestionStatus === IngestionStatus.FAILED
+                              ? 'bg-red-100 text-red-700 hover:bg-red-100 dark:bg-red-500/10 dark:text-red-400'
+                              : 'bg-amber-100 text-amber-700 hover:bg-amber-100 dark:bg-amber-500/10 dark:text-amber-400'
+                        }`}
+                      >
+                         {ingestion?.ingestionStatus ?? 'Unknown'}
+                      </Badge>
+                    </div>
+
+                    <div className="grid gap-1 border rounded-xl overflow-hidden divide-y">
+                      <MetaRow label="Embedding Vector" value={ingestion?.embeddingsReady ? 'Ready & Indexed' : 'Pending'} />
+                      <MetaRow label="Semantic Stage" value={ingestion?.currentStage ?? 'Ready'} />
+                      <MetaRow label="Source Connector" value={document.sourceType ?? 'Direct Upload'} />
+                      <MetaRow label="Original ID" value={document.id} />
+                    </div>
+
+                    {ingestion?.ingestionError && (
+                      <div className="p-4 rounded-xl border border-red-200 bg-red-50 dark:bg-red-500/5 dark:border-red-500/20 text-sm text-red-600 dark:text-red-400 flex items-start gap-3">
+                         <X className="size-5 shrink-0 mt-0.5" />
+                         <p className="font-medium italic">{ingestion.ingestionError}</p>
+                      </div>
+                    )}
+                  </div>
+                </Card>
+
+                <Card className="p-6 space-y-6 shadow-sm">
+                   <h3 className="font-bold">Lifecycle & Metadata</h3>
+                   <div className="grid gap-1 border rounded-xl overflow-hidden divide-y">
+                      <MetaRow label="Created On" value={new Date(document.createdAt).toLocaleString()} />
+                      <MetaRow label="Last Modified" value={new Date(document.updatedAt).toLocaleString()} />
+                      <MetaRow
+                        label="Last Read"
+                        value={document.lastOpenedAt ? new Date(document.lastOpenedAt).toLocaleString() : 'Never opened'}
+                      />
+                   </div>
+
+                   {Object.keys(document.metadata).length > 0 && (
+                     <div className="space-y-3">
+                       <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Raw JSON Metadata</p>
+                       <ScrollArea className="h-48 rounded-xl border bg-muted/20 p-4">
+                         <pre className="text-xs leading-relaxed font-mono">
+                           {JSON.stringify(document.metadata, null, 2)}
+                         </pre>
+                       </ScrollArea>
+                     </div>
+                   )}
+                </Card>
+              </div>
+            </TabsContent>
+          </div>
+        </Tabs>
+      </section>
 
       <ConfirmationDialog
         open={deleteDocumentOpen}
@@ -785,9 +788,9 @@ export function DocumentDetailView({ id }: { id: string }) {
 
 function MetaRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-start justify-between gap-3 py-2">
-      <span className="shrink-0 text-xs text-muted-foreground">{label}</span>
-      <span className="max-w-[58%] wrap-break-word text-right text-xs">
+    <div className="flex items-start justify-between gap-4 py-3 px-4 transition-colors hover:bg-muted/30">
+      <span className="shrink-0 text-xs font-semibold text-muted-foreground uppercase tracking-wider">{label}</span>
+      <span className="max-w-[65%] text-right text-xs font-medium text-foreground/80 break-all">
         {value}
       </span>
     </div>

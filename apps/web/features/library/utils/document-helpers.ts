@@ -37,6 +37,7 @@ const STATUS_BADGE_MAP: Record<DocumentStatus, BadgeVariant> = {
   [DocumentStatus.UPCOMING]: 'outline',
   [DocumentStatus.COMPLETED]: 'success',
   [DocumentStatus.PENDING_COMPLETION]: 'warning',
+  [DocumentStatus.ARCHIVED]: 'secondary',
 };
 
 export function getStatusBadgeVariant(status: DocumentStatus): BadgeVariant {
@@ -51,6 +52,7 @@ const STATUS_LABEL_MAP: Record<DocumentStatus, string> = {
   [DocumentStatus.UPCOMING]: 'Upcoming',
   [DocumentStatus.COMPLETED]: 'Completed',
   [DocumentStatus.PENDING_COMPLETION]: 'Pending',
+  [DocumentStatus.ARCHIVED]: 'Archived',
 };
 
 export function getStatusLabel(status: DocumentStatus): string {

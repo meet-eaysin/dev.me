@@ -16,6 +16,7 @@ export enum DocumentStatus {
   UPCOMING = 'upcoming',
   COMPLETED = 'completed',
   PENDING_COMPLETION = 'pending_completion',
+  ARCHIVED = 'archived',
 }
 
 export enum SourceType {
