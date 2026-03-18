@@ -611,7 +611,7 @@ function SidebarMenuSkeleton({
         />
       )}
       <Skeleton
-        className="h-4 max-w-(--skeleton-width) flex-1"
+        className="h-4 max-w-(--skeleton-width) flex-1 group-data-[collapsible=icon]:hidden"
         data-sidebar="menu-skeleton-text"
         style={
           {

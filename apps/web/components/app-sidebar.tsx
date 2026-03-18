@@ -179,6 +179,7 @@ function SidebarChatList({ query }: { query: string }) {
     </SidebarMenuItem>
   );
 
+  const { state } = useSidebar();
   return (
     <>
       <SidebarGroup>
@@ -201,6 +202,7 @@ function SidebarChatList({ query }: { query: string }) {
 
       {isLoading ? (
         <SidebarGroup>
+          {state === 'expanded' && <SidebarGroupLabel>Recent Chats</SidebarGroupLabel>}
           <SidebarMenu>
             {Array.from({ length: 6 }).map((_, index) => (
               <SidebarMenuItem key={`chat-skeleton-${index}`}>
