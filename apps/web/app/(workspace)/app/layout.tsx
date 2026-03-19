@@ -18,15 +18,17 @@ export default async function WorkspaceLayout({
     <TooltipProvider>
       <ThreadStreamProvider>
         <SidebarProvider defaultOpen={defaultOpen}>
-          <div className="relative flex min-h-svh w-full overflow-hidden">
-            <AppSidebar />
-            <SidebarInset className="relative flex h-svh flex-1 flex-col overflow-hidden bg-background">
-              <main className="relative flex flex-1 flex-col min-h-0 overflow-hidden pt-2">
-                {children}
-              </main>
-              <Dock />
-            </SidebarInset>
-          </div>
+          <>
+            <div className="relative flex min-h-svh w-full">
+              <AppSidebar />
+              <SidebarInset className="relative flex min-h-svh flex-1 flex-col bg-background">
+                <main className="relative flex flex-1 flex-col pt-2 pb-24">
+                  {children}
+                </main>
+              </SidebarInset>
+            </div>
+            <Dock />
+          </>
         </SidebarProvider>
       </ThreadStreamProvider>
     </TooltipProvider>

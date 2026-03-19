@@ -16,19 +16,15 @@ export const PageContainer = React.forwardRef<
   return (
     <div
       ref={ref}
-      className="w-full flex-1 min-h-0 flex flex-col overflow-y-auto scroll-smooth"
+      className={cn(
+        'w-full flex flex-col min-h-0',
+        !isFullHeight
+          ? 'mx-auto max-w-7xl px-4 md:px-6 lg:px-8 py-6 md:py-8 lg:py-10 pb-28 md:pb-28 lg:pb-28'
+          : 'flex-1 px-4 md:px-6 lg:px-8 py-6 md:py-8 lg:py-10 pb-28 md:pb-28 lg:pb-28',
+        className,
+      )}
     >
-      <div
-        className={cn(
-          'w-full flex flex-col min-h-full',
-          !isFullHeight
-            ? 'mx-auto max-w-5xl px-4 py-6 pb-24 md:px-6 lg:px-8'
-            : 'flex-1 px-4 py-6 md:px-6 lg:px-8',
-          className,
-        )}
-      >
-        {children}
-      </div>
+      {children}
     </div>
   );
 });

@@ -29,7 +29,7 @@ export function Dock() {
   const pathname = usePathname();
 
   return (
-    <div className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2">
+    <div className="fixed bottom-6 left-1/2 z-100 w-max -translate-x-1/2 max-w-[calc(100vw-2rem)]">
       <nav className="flex items-center gap-1 rounded-full border border-border/40 bg-background/60 backdrop-blur-2xl p-1.5 shadow-2xl shadow-black/10 dark:shadow-black/40">
         {navItems.map((item) => {
           const isActive =

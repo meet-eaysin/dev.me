@@ -15,62 +15,72 @@ export function useAutoScroll(
   const [shouldAutoScroll, setShouldAutoScroll] = useState(true);
 
   const scrollToBottom = React.useCallback(() => {
-    if (containerRef.current) {
-      containerRef.current.scrollTop = containerRef.current.scrollHeight;
-    }
-  }, [containerRef]);
+    window.scrollTo({
+      top: document.documentElement.scrollHeight,
+      behavior: 'auto',
+    });
+  }, []);
 
   const handleScroll = React.useCallback(() => {
-    if (containerRef.current) {
-      const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight;
+    const clientHeight = document.documentElement.clientHeight;
 
-      const distanceFromBottom = Math.abs(
-        scrollHeight - scrollTop - clientHeight,
-      );
+    const distanceFromBottom = Math.abs(
+      scrollHeight - scrollTop - clientHeight,
+    );
 
-      const isScrollingUp = previousScrollTop.current
-        ? scrollTop < previousScrollTop.current
-        : false;
+    const isScrollingUp = previousScrollTop.current
+      ? scrollTop < previousScrollTop.current
+      : false;
 
-      const scrollUpDistance = previousScrollTop.current
-        ? previousScrollTop.current - scrollTop
-        : 0;
+    const scrollUpDistance = previousScrollTop.current
+      ? previousScrollTop.current - scrollTop
+      : 0;
 
-      const isDeliberateScrollUp =
-        isScrollingUp && scrollUpDistance > MIN_SCROLL_UP_THRESHOLD;
+    const isDeliberateScrollUp =
+      isScrollingUp && scrollUpDistance > MIN_SCROLL_UP_THRESHOLD;
 
-      if (isDeliberateScrollUp) {
-        setShouldAutoScroll(false);
-      } else {
-        const isScrolledToBottom = distanceFromBottom < ACTIVATION_THRESHOLD;
-        setShouldAutoScroll(isScrolledToBottom);
-      }
-
-      previousScrollTop.current = scrollTop;
+    if (isDeliberateScrollUp) {
+      setShouldAutoScroll(false);
+    } else {
+      const isScrolledToBottom = distanceFromBottom < ACTIVATION_THRESHOLD;
+      setShouldAutoScroll(isScrolledToBottom);
     }
-  }, [containerRef]);
+
+    previousScrollTop.current = scrollTop;
+  }, []);
 
   const handleTouchStart = React.useCallback(() => {
     setShouldAutoScroll(false);
   }, []);
 
   useEffect(() => {
-    if (containerRef.current) {
-      previousScrollTop.current = containerRef.current.scrollTop;
-    }
-  }, [containerRef]);
+    previousScrollTop.current = window.scrollY || document.documentElement.scrollTop;
+  }, []);
 
   useEffect(() => {
     if (shouldAutoScroll) {
       scrollToBottom();
     }
-  }, [shouldAutoScroll, scrollToBottom, dependencies]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shouldAutoScroll, scrollToBottom, ...dependencies]);
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('touchstart', handleTouchStart);
+    };
+  }, [handleScroll, handleTouchStart]);
 
   return {
     containerRef,
     scrollToBottom,
-    handleScroll,
+    handleScroll: undefined, // no longer needed for internal divs
     shouldAutoScroll,
-    handleTouchStart,
+    handleTouchStart: undefined, // no longer needed for internal divs
   };
 }
