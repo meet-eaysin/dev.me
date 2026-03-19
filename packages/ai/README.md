@@ -1,6 +1,6 @@
 # `@repo/ai`
 
-This package encapsulates all artificial intelligence and vector database operations for Mind Stack.
+This package encapsulates all artificial intelligence and vector database operations for Recall.
 
 ## 🚀 Purpose
 

@@ -488,7 +488,7 @@ export function HomePage() {
             </h1>
           </div>
           <p className="max-w-xl text-base font-medium text-muted-foreground/60 leading-relaxed">
-            Ready to synchronize your mind-stack? Review your high-intent items
+            Ready to pick up where you left off? Review your high-intent items
             and continue your research threads.
           </p>
         </div>

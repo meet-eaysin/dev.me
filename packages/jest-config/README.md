@@ -1,6 +1,6 @@
 # `@repo/jest-config`
 
-Shared Jest configuration for the Mind Stack monorepo.
+Shared Jest configuration for the Recall monorepo.
 
 ## 📦 Usage
 

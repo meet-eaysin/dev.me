@@ -1,6 +1,6 @@
 # `@repo/crypto`
 
-This package provides cryptographic utilities for Mind Stack.
+This package provides cryptographic utilities for Recall.
 
 ## 🚀 Purpose
 

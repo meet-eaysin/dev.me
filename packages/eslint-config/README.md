@@ -1,6 +1,6 @@
 # `@repo/eslint-config`
 
-Shared ESLint configuration for the Mind Stack monorepo.
+Shared ESLint configuration for the Recall monorepo.
 
 ## 📦 Usage
 

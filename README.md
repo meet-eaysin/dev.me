@@ -1,4 +1,4 @@
-# 🧠 Mind Stack
+# 🧠 Recall
 
 ![License](https://img.shields.io/badge/license-UNLICENSED-blue.svg)
 ![Node](https://img.shields.io/badge/Node.js-24.x-brightgreen.svg)
@@ -6,11 +6,11 @@
 ![Next.js](https://img.shields.io/badge/Next.js-16.x-black.svg)
 ![NestJS](https://img.shields.io/badge/NestJS-11.x-red.svg)
 
-Mind Stack is a robust, production-ready monorepo built for advanced document processing, AI-driven knowledge extraction, and scalable Web applications. It combines a high-performance **NestJS backend pipeline** with a modern **Next.js front-end**, all orchestrated by **Turborepo**.
+Recall is a robust, production-ready monorepo built for advanced document processing, AI-driven knowledge extraction, and scalable Web applications. It combines a high-performance **NestJS backend pipeline** with a modern **Next.js front-end**, all orchestrated by **Turborepo**.
 
 ## 🏗 System Architecture
 
-Mind Stack utilizes a service-oriented architecture, splitting responsibilities between a client-facing web app, a core API API, and a background worker.
+Recall utilizes a service-oriented architecture, splitting responsibilities between a client-facing web app, a core API API, and a background worker.
 
 ```mermaid
 graph TD
@@ -66,7 +66,7 @@ Ensure you have the following installed on your system:
 
    ```bash
    git clone <repository_url>
-   cd mind-stack
+   cd recall
    ```
 
 2. Install dependencies:

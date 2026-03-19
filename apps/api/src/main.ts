@@ -78,9 +78,9 @@ export async function bootstrap(): Promise<INestApplication> {
   // Swagger OpenAPI Configuration
   if (env.NODE_ENV !== 'production') {
     const config = new DocumentBuilder()
-      .setTitle('Mind Stack API')
+      .setTitle('Recall API')
       .setDescription(
-        'Production-grade API documentation for the Mind Stack backend.',
+        'Production-grade API documentation for the Recall backend.',
       )
       .setVersion('1.0')
       .addBearerAuth(
@@ -102,7 +102,7 @@ export async function bootstrap(): Promise<INestApplication> {
         tagsSorter: 'alpha',
         operationsSorter: 'alpha',
       },
-      customSiteTitle: 'Mind Stack API Documentation',
+      customSiteTitle: 'Recall API Documentation',
     });
   }
 

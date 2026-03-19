@@ -36,7 +36,7 @@ export function HeroSection() {
             <p className="font-mono text-xs">NEW</p>
           </div>
 
-          <span className="text-xs">Your personal AI brain - dev.me</span>
+          <span className="text-xs">Your personal knowledge engine — Recall</span>
           <span className="block h-5 border-l" />
 
           <div className="pr-1">
@@ -59,7 +59,7 @@ export function HeroSection() {
             'fade-in slide-in-from-bottom-10 animate-in fill-mode-backwards delay-200 duration-500 ease-out',
           )}
         >
-          dev.me turns your docs, links, and PDFs into a private brain you can
+          Recall turns your docs, links, and PDFs into a private brain you can
           search, explore, and ask.
         </p>
 

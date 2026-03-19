@@ -135,7 +135,7 @@ export class OAuthProviderService {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         Accept: 'application/vnd.github+json',
-        'User-Agent': 'mind-stack-auth',
+        'User-Agent': 'recall-auth',
       },
     });
 
@@ -156,7 +156,7 @@ export class OAuthProviderService {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           Accept: 'application/vnd.github+json',
-          'User-Agent': 'mind-stack-auth',
+          'User-Agent': 'recall-auth',
         },
       });
 

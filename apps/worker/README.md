@@ -1,6 +1,6 @@
-# Mind Stack - Worker
+# Recall - Worker
 
-This is the background processing service for Mind Stack, built as a standalone **NestJS 11** application.
+This is the background processing service for Recall, built as a standalone **NestJS 11** application.
 
 ## 🚀 Purpose
 

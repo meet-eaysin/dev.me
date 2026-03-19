@@ -1,6 +1,6 @@
 # `@repo/typescript-config`
 
-Shared TypeScript compiler options (`tsconfig.json`) for the Mind Stack monorepo.
+Shared TypeScript compiler options (`tsconfig.json`) for the Recall monorepo.
 
 ## 📦 Usage
 

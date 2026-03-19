@@ -1,6 +1,6 @@
-# Mind Stack - Core API
+# Recall - Core API
 
-This is the core backend application for Mind Stack, built with **NestJS 11**.
+This is the core backend application for Recall, built with **NestJS 11**.
 
 ## 🚀 Tech Stack
 

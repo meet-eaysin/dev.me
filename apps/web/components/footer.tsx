@@ -21,7 +21,7 @@ export function Footer() {
           </a>
 
           <p className="max-w-md text-balance text-muted-foreground text-sm leading-relaxed">
-            dev.me is a personal AI brain designed to help you organize
+            Recall is a personal knowledge engine designed to help you organize
             everything you read, watch, and research. Open source and private by
             default.
           </p>
@@ -42,7 +42,7 @@ export function Footer() {
 
           <div className="pt-8 w-full border-t">
             <p className="text-muted-foreground text-xs font-light">
-              &copy; {new Date().getFullYear()} dev.me. Built with passion for
+              &copy; {new Date().getFullYear()} Recall. Built with passion for
               knowledge explorers.
             </p>
           </div>
@@ -55,7 +55,7 @@ export function Footer() {
 const socialLinks = [
   {
     icon: <GithubIcon className="size-5" />,
-    link: 'https://github.com/meet-eaysin/dev.me',
+    link: 'https://github.com/meet-eaysin/recall',
   },
   {
     icon: <XIcon className="size-4" />,

@@ -1,6 +1,6 @@
 # `@repo/cache`
 
-This package handles caching strategies and integrations for Mind Stack.
+This package handles caching strategies and integrations for Recall.
 
 ## 🚀 Purpose
 

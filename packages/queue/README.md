@@ -1,6 +1,6 @@
 # `@repo/queue`
 
-This package handles background job dispatching and routing for Mind Stack.
+This package handles background job dispatching and routing for Recall.
 
 ## 🚀 Purpose
 

@@ -1,6 +1,6 @@
 # `@repo/db`
 
-This package manages the MongoDB connections and schemas for Mind Stack.
+This package manages the MongoDB connections and schemas for Recall.
 
 ## 🚀 Purpose
 

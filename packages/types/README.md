@@ -1,6 +1,6 @@
 # `@repo/types`
 
-This package contains shared TypeScript types, interfaces, and enums for Mind Stack.
+This package contains shared TypeScript types, interfaces, and enums for Recall.
 
 ## 🚀 Purpose
 

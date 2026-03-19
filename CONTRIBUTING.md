@@ -1,6 +1,6 @@
-# Contributing to Mind Stack
+# Contributing to Recall
 
-Thank you for your interest in contributing to Mind Stack! This guide outlines the process, standards, and expectations for all contributions to ensure consistency and quality across the codebase.
+Thank you for your interest in contributing to Recall! This guide outlines the process, standards, and expectations for all contributions to ensure consistency and quality across the codebase.
 
 ## 🚀 Getting Started
 

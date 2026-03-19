@@ -118,7 +118,7 @@ function SetupVisual() {
             Redis
           </span>
           <span className="rounded-sm border bg-card px-2 py-1 text-foreground">
-            Dev.me
+            Recall
           </span>
         </div>
       </div>
@@ -252,7 +252,7 @@ function PresenceVisual() {
         <div className="space-y-2">
           <FeatureTitle className="text-base">Knowledge Graph</FeatureTitle>
           <FeatureDescription>
-            Explore your personal knowledge graph. dev.me automatically connects
+            Explore your personal knowledge graph. Recall automatically connects
             your docs and ideas.
           </FeatureDescription>
         </div>

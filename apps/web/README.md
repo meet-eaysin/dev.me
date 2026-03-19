@@ -1,6 +1,6 @@
-# Mind Stack - Web App
+# Recall - Web App
 
-This is the frontend application for Mind Stack, built with **Next.js 16 (App Router)**.
+This is the frontend application for Recall, built with **Next.js 16 (App Router)**.
 
 ## 🚀 Tech Stack
 
