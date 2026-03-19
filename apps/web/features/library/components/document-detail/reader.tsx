@@ -20,7 +20,9 @@ export function DocumentDetailReader() {
   return (
     <div
       className={`group relative overflow-hidden rounded-xl border bg-card shadow-sm transition-all duration-300 ${
-        readerExpanded ? 'ring-2 ring-primary/20 scale-[1.01]' : 'hover:shadow-md'
+        readerExpanded
+          ? 'ring-2 ring-primary/20 scale-[1.01]'
+          : 'hover:shadow-md'
       }`}
     >
       <div className="absolute right-4 top-4 z-10 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-200 translate-y-1 group-hover:translate-y-0">

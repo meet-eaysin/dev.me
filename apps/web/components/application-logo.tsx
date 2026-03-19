@@ -22,7 +22,9 @@ export function ApplicationIcon() {
             <RotateCcwSquare className="size-5 transition-transform duration-500 group-hover/menu-button:rotate-12 group-data-[collapsible=icon]:size-4" />
           </div>
           <div className="grid flex-1 text-left text-sm leading-tight ml-1">
-            <span className="truncate font-bold tracking-tight text-sidebar-foreground">Recall</span>
+            <span className="truncate font-bold tracking-tight text-sidebar-foreground">
+              Recall
+            </span>
             <span className="truncate text-[10px] font-medium uppercase tracking-wider text-muted-foreground/70">
               Workspace
             </span>

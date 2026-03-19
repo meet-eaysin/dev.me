@@ -149,7 +149,7 @@ function SidebarChatList({ query }: { query: string }) {
           </span>
         </div>
       </SidebarMenuButton>
-      
+
       <div className="absolute right-1 top-1/2 flex -translate-y-1/2 items-center gap-0.5 opacity-0 transition-all duration-200 group-hover/menu-item:opacity-100 group-data-[collapsible=icon]:hidden">
         <SidebarMenuAction
           showOnHover
@@ -202,7 +202,9 @@ function SidebarChatList({ query }: { query: string }) {
 
       {isLoading ? (
         <SidebarGroup>
-          {state === 'expanded' && <SidebarGroupLabel>Recent Chats</SidebarGroupLabel>}
+          {state === 'expanded' && (
+            <SidebarGroupLabel>Recent Chats</SidebarGroupLabel>
+          )}
           <SidebarMenu>
             {Array.from({ length: 6 }).map((_, index) => (
               <SidebarMenuItem key={`chat-skeleton-${index}`}>
@@ -216,30 +218,35 @@ function SidebarChatList({ query }: { query: string }) {
           {!isLoading && state === 'expanded' && filteredChats.length === 0 && (
             <SidebarGroup>
               <SidebarMenu>
-                <SidebarMenuItem>
-                </SidebarMenuItem>
+                <SidebarMenuItem></SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroup>
           )}
-          
+
           {groupedChats.today.length > 0 && (
             <SidebarGroup>
               <SidebarGroupLabel>Today</SidebarGroupLabel>
-              <SidebarMenu>{groupedChats.today.map(renderChatItem)}</SidebarMenu>
+              <SidebarMenu>
+                {groupedChats.today.map(renderChatItem)}
+              </SidebarMenu>
             </SidebarGroup>
           )}
-          
+
           {groupedChats.previous7Days.length > 0 && (
             <SidebarGroup>
               <SidebarGroupLabel>Previous 7 Days</SidebarGroupLabel>
-              <SidebarMenu>{groupedChats.previous7Days.map(renderChatItem)}</SidebarMenu>
+              <SidebarMenu>
+                {groupedChats.previous7Days.map(renderChatItem)}
+              </SidebarMenu>
             </SidebarGroup>
           )}
 
           {groupedChats.older.length > 0 && (
             <SidebarGroup>
               <SidebarGroupLabel>Older</SidebarGroupLabel>
-              <SidebarMenu>{groupedChats.older.map(renderChatItem)}</SidebarMenu>
+              <SidebarMenu>
+                {groupedChats.older.map(renderChatItem)}
+              </SidebarMenu>
             </SidebarGroup>
           )}
         </>

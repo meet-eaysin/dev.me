@@ -22,7 +22,12 @@ export function TranscriptTab({ isCompact = false }: { isCompact?: boolean }) {
     >
       <div className="flex items-center justify-between">
         <div className="space-y-1">
-          <h3 className={cn('text-2xl font-bold tracking-tight', isCompact && 'text-xl')}>
+          <h3
+            className={cn(
+              'text-2xl font-bold tracking-tight',
+              isCompact && 'text-xl',
+            )}
+          >
             Video Transcript
           </h3>
           {!isCompact && (
@@ -81,8 +86,8 @@ export function TranscriptTab({ isCompact = false }: { isCompact?: boolean }) {
           <div className="space-y-2">
             <h4 className="font-semibold text-lg">No transcript available</h4>
             <p className="text-sm text-muted-foreground max-w-sm mx-auto leading-relaxed">
-              Unlock full-text search and AI insights for this video by generating
-              a transcript.
+              Unlock full-text search and AI insights for this video by
+              generating a transcript.
             </p>
           </div>
           <Button

@@ -65,9 +65,7 @@ export function Dock() {
                 variant="ghost"
                 size="icon"
                 onClick={() =>
-                  window.dispatchEvent(
-                    new CustomEvent('recall:toggle-threads'),
-                  )
+                  window.dispatchEvent(new CustomEvent('recall:toggle-threads'))
                 }
                 aria-label="History"
               />

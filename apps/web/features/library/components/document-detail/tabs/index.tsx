@@ -10,7 +10,11 @@ import { NotesTab } from './notes-tab';
 import { TranscriptTab } from './transcript-tab';
 import { DetailsTab } from './details-tab';
 
-export function DocumentDetailTabs({ isCompact = false }: { isCompact?: boolean }) {
+export function DocumentDetailTabs({
+  isCompact = false,
+}: {
+  isCompact?: boolean;
+}) {
   const { document, notes } = useDocumentDetail();
 
   if (!document) return null;

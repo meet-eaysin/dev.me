@@ -6,7 +6,11 @@ import { ThreadStreamProvider } from '@/features/workspace/components/thread-str
 import { AppSidebar } from '@/components/app-sidebar';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 
-export default async function WorkspaceLayout({ children }: { children: ReactNode }) {
+export default async function WorkspaceLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   const cookieStore = await cookies();
   const defaultOpen = cookieStore.get('sidebar_state')?.value !== 'false';
 

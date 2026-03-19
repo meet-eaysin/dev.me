@@ -215,10 +215,7 @@ function RecentWorkRow({ document }: { document: DocumentRow }) {
             </DropdownMenu>
             <span className="text-xs font-medium text-muted-foreground/32 flex items-center gap-1">
               <Clock3 className="size-3" />
-              {format(
-                new Date(document.updatedAt || Date.now()),
-                'MMM d',
-              )}
+              {format(new Date(document.updatedAt || Date.now()), 'MMM d')}
             </span>
           </div>
         </div>

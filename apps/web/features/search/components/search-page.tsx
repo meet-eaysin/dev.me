@@ -138,169 +138,169 @@ export function SearchPage() {
       </header>
       <div className="space-y-4">
         <Card>
-        <CardHeader>
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div className="space-y-1">
-              <CardTitle>Search your library</CardTitle>
-              <CardDescription>
-                Use keyword search for exact matches or semantic search when you
-                only know the idea.
-              </CardDescription>
+          <CardHeader>
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div className="space-y-1">
+                <CardTitle>Search your library</CardTitle>
+                <CardDescription>
+                  Use keyword search for exact matches or semantic search when
+                  you only know the idea.
+                </CardDescription>
+              </div>
+              <Tabs
+                value={mode}
+                onValueChange={(value) => setMode(value as 'normal' | 'ai')}
+              >
+                <TabsList>
+                  <TabsTrigger value="normal">
+                    <FileText className="size-4" />
+                    Keyword
+                  </TabsTrigger>
+                  <TabsTrigger value="ai">
+                    <Brain className="size-4" />
+                    Semantic
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
             </div>
-            <Tabs
-              value={mode}
-              onValueChange={(value) => setMode(value as 'normal' | 'ai')}
+          </CardHeader>
+          <CardPanel>
+            <form
+              className="space-y-3"
+              onSubmit={(event) => {
+                event.preventDefault();
+                setSubmittedQuery(query.trim());
+              }}
             >
-              <TabsList>
-                <TabsTrigger value="normal">
-                  <FileText className="size-4" />
-                  Keyword
-                </TabsTrigger>
-                <TabsTrigger value="ai">
-                  <Brain className="size-4" />
-                  Semantic
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
-          </div>
-        </CardHeader>
-        <CardPanel>
-          <form
-            className="space-y-3"
-            onSubmit={(event) => {
-              event.preventDefault();
-              setSubmittedQuery(query.trim());
-            }}
-          >
-            <Field>
-              <FieldLabel>Search query</FieldLabel>
-              <InputGroup>
-                <InputGroupAddon>
-                  <InputGroupText>
-                    <Search className="size-4" />
-                  </InputGroupText>
-                </InputGroupAddon>
-                <InputGroupInput
-                  value={query}
-                  onChange={(event) => setQuery(event.target.value)}
-                  placeholder={
-                    mode === 'ai'
-                      ? 'Search by concept or topic'
-                      : 'Search by title, phrase, or document text'
-                  }
-                />
-                <InputGroupAddon align="inline-end">
-                  <Button type="submit" size="sm">
-                    Search
-                  </Button>
-                </InputGroupAddon>
-              </InputGroup>
-              <FieldDescription>
-                {mode === 'ai'
-                  ? 'Semantic mode ranks conceptually related documents.'
-                  : 'Keyword mode works best for exact text and titles.'}
-              </FieldDescription>
-            </Field>
-          </form>
-        </CardPanel>
-      </Card>
+              <Field>
+                <FieldLabel>Search query</FieldLabel>
+                <InputGroup>
+                  <InputGroupAddon>
+                    <InputGroupText>
+                      <Search className="size-4" />
+                    </InputGroupText>
+                  </InputGroupAddon>
+                  <InputGroupInput
+                    value={query}
+                    onChange={(event) => setQuery(event.target.value)}
+                    placeholder={
+                      mode === 'ai'
+                        ? 'Search by concept or topic'
+                        : 'Search by title, phrase, or document text'
+                    }
+                  />
+                  <InputGroupAddon align="inline-end">
+                    <Button type="submit" size="sm">
+                      Search
+                    </Button>
+                  </InputGroupAddon>
+                </InputGroup>
+                <FieldDescription>
+                  {mode === 'ai'
+                    ? 'Semantic mode ranks conceptually related documents.'
+                    : 'Keyword mode works best for exact text and titles.'}
+                </FieldDescription>
+              </Field>
+            </form>
+          </CardPanel>
+        </Card>
 
-      {error ? (
-        <Alert variant="error">
-          <AlertTitle>Search failed</AlertTitle>
-          <AlertDescription>{(error as Error).message}</AlertDescription>
-        </Alert>
-      ) : null}
+        {error ? (
+          <Alert variant="error">
+            <AlertTitle>Search failed</AlertTitle>
+            <AlertDescription>{(error as Error).message}</AlertDescription>
+          </Alert>
+        ) : null}
 
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between gap-3">
-            <div className="space-y-1">
-              <CardTitle>Results</CardTitle>
-              <CardDescription>
-                {submittedQuery
-                  ? `${data?.total ?? 0} matches for "${submittedQuery}".`
-                  : 'Run a search to see matching documents.'}
-              </CardDescription>
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between gap-3">
+              <div className="space-y-1">
+                <CardTitle>Results</CardTitle>
+                <CardDescription>
+                  {submittedQuery
+                    ? `${data?.total ?? 0} matches for "${submittedQuery}".`
+                    : 'Run a search to see matching documents.'}
+                </CardDescription>
+              </div>
+              {isFetching ? (
+                <div className="inline-flex items-center gap-2 text-sm text-muted-foreground">
+                  <Spinner className="size-4" />
+                  Updating
+                </div>
+              ) : null}
             </div>
-            {isFetching ? (
-              <div className="inline-flex items-center gap-2 text-sm text-muted-foreground">
-                <Spinner className="size-4" />
-                Updating
+          </CardHeader>
+          <CardPanel>
+            {!submittedQuery ? (
+              <Card className="border-dashed shadow-none">
+                <Empty className="py-10">
+                  <EmptyHeader>
+                    <EmptyMedia variant="icon">
+                      <Search className="size-4" />
+                    </EmptyMedia>
+                    <EmptyTitle>Search your library</EmptyTitle>
+                    <EmptyDescription>
+                      Use keyword search for exact matches or semantic search
+                      for related ideas.
+                    </EmptyDescription>
+                  </EmptyHeader>
+                </Empty>
+              </Card>
+            ) : null}
+
+            {submittedQuery && isLoading ? <SearchSkeleton /> : null}
+
+            {submittedQuery &&
+            !isLoading &&
+            !error &&
+            (data?.items.length ?? 0) > 0 ? (
+              <div className="divide-y rounded-lg border">
+                {data?.items.map((item, index) => (
+                  <div
+                    key={
+                      mode === 'ai'
+                        ? (item as SemanticSearchResult).documentId
+                        : (item as DocumentPublicView).id
+                    }
+                    className={cn(
+                      index === 0 && 'rounded-t-lg',
+                      'last:rounded-b-lg',
+                    )}
+                  >
+                    <SearchResultRow item={item} mode={mode} />
+                  </div>
+                ))}
               </div>
             ) : null}
-          </div>
-        </CardHeader>
-        <CardPanel>
-          {!submittedQuery ? (
-            <Card className="border-dashed shadow-none">
-              <Empty className="py-10">
-                <EmptyHeader>
-                  <EmptyMedia variant="icon">
-                    <Search className="size-4" />
-                  </EmptyMedia>
-                  <EmptyTitle>Search your library</EmptyTitle>
-                  <EmptyDescription>
-                    Use keyword search for exact matches or semantic search for
-                    related ideas.
-                  </EmptyDescription>
-                </EmptyHeader>
-              </Empty>
-            </Card>
-          ) : null}
 
-          {submittedQuery && isLoading ? <SearchSkeleton /> : null}
-
-          {submittedQuery &&
-          !isLoading &&
-          !error &&
-          (data?.items.length ?? 0) > 0 ? (
-            <div className="divide-y rounded-lg border">
-              {data?.items.map((item, index) => (
-                <div
-                  key={
-                    mode === 'ai'
-                      ? (item as SemanticSearchResult).documentId
-                      : (item as DocumentPublicView).id
-                  }
-                  className={cn(
-                    index === 0 && 'rounded-t-lg',
-                    'last:rounded-b-lg',
-                  )}
-                >
-                  <SearchResultRow item={item} mode={mode} />
-                </div>
-              ))}
-            </div>
-          ) : null}
-
-          {submittedQuery &&
-          !isLoading &&
-          !error &&
-          (data?.items.length ?? 0) === 0 ? (
-            <Card className="border-dashed shadow-none">
-              <Empty className="py-10">
-                <EmptyHeader>
-                  <EmptyMedia variant="icon">
-                    <FileText className="size-4" />
-                  </EmptyMedia>
-                  <EmptyTitle>No matches found</EmptyTitle>
-                  <EmptyDescription>
-                    Try a broader query or continue in Ask AI for a grounded
-                    response.
-                  </EmptyDescription>
-                </EmptyHeader>
-                <EmptyContent>
-                  <Button
-                    render={<Link href="/app/search/ask" />}
-                    variant="outline"
-                  >
-                    <Bot className="size-4" />
-                    Open Ask AI
-                  </Button>
-                </EmptyContent>
-              </Empty>
-            </Card>
+            {submittedQuery &&
+            !isLoading &&
+            !error &&
+            (data?.items.length ?? 0) === 0 ? (
+              <Card className="border-dashed shadow-none">
+                <Empty className="py-10">
+                  <EmptyHeader>
+                    <EmptyMedia variant="icon">
+                      <FileText className="size-4" />
+                    </EmptyMedia>
+                    <EmptyTitle>No matches found</EmptyTitle>
+                    <EmptyDescription>
+                      Try a broader query or continue in Ask AI for a grounded
+                      response.
+                    </EmptyDescription>
+                  </EmptyHeader>
+                  <EmptyContent>
+                    <Button
+                      render={<Link href="/app/search/ask" />}
+                      variant="outline"
+                    >
+                      <Bot className="size-4" />
+                      Open Ask AI
+                    </Button>
+                  </EmptyContent>
+                </Empty>
+              </Card>
             ) : null}
           </CardPanel>
         </Card>

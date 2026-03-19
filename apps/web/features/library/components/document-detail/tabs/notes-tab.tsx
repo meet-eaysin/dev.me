@@ -2,7 +2,13 @@
 
 import * as React from 'react';
 import { formatDistanceToNow } from 'date-fns';
-import { Clock, LoaderCircle, PencilLine, StickyNote, Trash2 } from 'lucide-react';
+import {
+  Clock,
+  LoaderCircle,
+  PencilLine,
+  StickyNote,
+  Trash2,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
@@ -13,7 +19,9 @@ import { cn } from '@/lib/utils';
 export function NotesTab({ isCompact = false }: { isCompact?: boolean }) {
   const { id, notes, actions } = useDocumentDetail();
   const [noteDraft, setNoteDraft] = React.useState('');
-  const [deletingNoteId, setDeletingNoteId] = React.useState<string | null>(null);
+  const [deletingNoteId, setDeletingNoteId] = React.useState<string | null>(
+    null,
+  );
   const [editingNoteId, setEditingNoteId] = React.useState<string | null>(null);
   const [editingNoteDraft, setEditingNoteDraft] = React.useState('');
 
@@ -51,7 +59,12 @@ export function NotesTab({ isCompact = false }: { isCompact?: boolean }) {
     >
       <div className={cn('flex flex-col gap-8', isCompact && 'gap-4')}>
         <div className="space-y-1">
-          <h3 className={cn('text-2xl font-bold tracking-tight', isCompact && 'text-xl')}>
+          <h3
+            className={cn(
+              'text-2xl font-bold tracking-tight',
+              isCompact && 'text-xl',
+            )}
+          >
             Research Notes
           </h3>
           <p className="text-muted-foreground text-sm">
@@ -112,7 +125,12 @@ export function NotesTab({ isCompact = false }: { isCompact?: boolean }) {
 
       <div className="space-y-6">
         {notes.length === 0 ? (
-          <div className={cn('flex flex-col items-center gap-4 py-24 text-center', isCompact && 'py-12')}>
+          <div
+            className={cn(
+              'flex flex-col items-center gap-4 py-24 text-center',
+              isCompact && 'py-12',
+            )}
+          >
             <div className="rounded-3xl bg-muted/30 p-8 ring-1 ring-border shadow-inner">
               <StickyNote className="size-10 text-muted-foreground/20" />
             </div>
@@ -145,7 +163,9 @@ export function NotesTab({ isCompact = false }: { isCompact?: boolean }) {
                   </span>
                   <div className="flex items-center gap-0.5">
                     <Button
-                      onClick={() => handleStartEditingNote(note.id, note.content)}
+                      onClick={() =>
+                        handleStartEditingNote(note.id, note.content)
+                      }
                       size="icon-sm"
                       variant="ghost"
                       className="h-7 w-7 rounded-full text-muted-foreground/60 hover:text-foreground"
@@ -167,7 +187,9 @@ export function NotesTab({ isCompact = false }: { isCompact?: boolean }) {
                   <div className="space-y-4">
                     <Textarea
                       value={editingNoteDraft}
-                      onChange={(event) => setEditingNoteDraft(event.target.value)}
+                      onChange={(event) =>
+                        setEditingNoteDraft(event.target.value)
+                      }
                       autoFocus
                       className="min-h-[120px] text-base resize-none bg-muted/10"
                     />

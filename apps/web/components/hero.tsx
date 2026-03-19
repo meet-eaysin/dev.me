@@ -36,7 +36,9 @@ export function HeroSection() {
             <p className="font-mono text-xs">NEW</p>
           </div>
 
-          <span className="text-xs">Your personal knowledge engine — Recall</span>
+          <span className="text-xs">
+            Your personal knowledge engine — Recall
+          </span>
           <span className="block h-5 border-l" />
 
           <div className="pr-1">

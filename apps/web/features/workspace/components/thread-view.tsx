@@ -265,8 +265,8 @@ export function ThreadView() {
                 </h1>
                 {conversation && (
                   <p className="text-xs text-muted-foreground">
-                    Started {formatDistanceToNow(new Date(conversation.createdAt))}{' '}
-                    ago
+                    Started{' '}
+                    {formatDistanceToNow(new Date(conversation.createdAt))} ago
                   </p>
                 )}
               </div>

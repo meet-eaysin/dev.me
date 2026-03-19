@@ -250,12 +250,14 @@ function InlineChat() {
               </Button>
               <div className="min-w-0">
                 <h1 className="text-lg font-bold tracking-tight truncate">
-                  {conversation?.title || activeStream?.question || 'New Thread'}
+                  {conversation?.title ||
+                    activeStream?.question ||
+                    'New Thread'}
                 </h1>
                 {conversation && (
                   <p className="text-xs text-muted-foreground">
-                    Started {formatDistanceToNow(new Date(conversation.createdAt))}{' '}
-                    ago
+                    Started{' '}
+                    {formatDistanceToNow(new Date(conversation.createdAt))} ago
                   </p>
                 )}
               </div>

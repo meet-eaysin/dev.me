@@ -105,7 +105,7 @@ export function DetailsTab({ isCompact = false }: { isCompact?: boolean }) {
               History and system-level metadata.
             </p>
           </div>
-          
+
           <div className="rounded-2xl border bg-card shadow-sm overflow-hidden divide-y divide-border/50">
             <MetaRow
               label="Created"

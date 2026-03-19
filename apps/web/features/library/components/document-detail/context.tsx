@@ -43,7 +43,8 @@ interface DocumentDetailContextType {
   };
 }
 
-const DocumentDetailContext = React.createContext<DocumentDetailContextType | null>(null);
+const DocumentDetailContext =
+  React.createContext<DocumentDetailContextType | null>(null);
 
 export function DocumentDetailProvider({
   id,
@@ -119,7 +120,9 @@ export function DocumentDetailProvider({
 export function useDocumentDetail() {
   const context = React.useContext(DocumentDetailContext);
   if (!context) {
-    throw new Error('useDocumentDetail must be used within a DocumentDetailProvider');
+    throw new Error(
+      'useDocumentDetail must be used within a DocumentDetailProvider',
+    );
   }
   return context;
 }

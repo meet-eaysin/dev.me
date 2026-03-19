@@ -68,7 +68,10 @@ export function SummaryTab({ isCompact = false }: { isCompact?: boolean }) {
                   </PopoverTitle>
                   <ul className="space-y-2.5">
                     {HIGHLIGHTS.map((item, idx) => (
-                      <li key={idx} className="flex items-start gap-2.5 text-xs">
+                      <li
+                        key={idx}
+                        className="flex items-start gap-2.5 text-xs"
+                      >
                         <div className="mt-1.5 size-1 rounded-full bg-primary/40 shrink-0" />
                         <span className="text-foreground/70 leading-relaxed">
                           {item}
